@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <title>Product Manage</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <h1 class="text-center alert alert-danger">Products Management</h1>
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <div>
+                    <h2>Products List
+                        <div class="float-right">
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Add
+                                Products</button>
+                            <a href="/logout" class="btn btn-danger">logout</a>
+                    </h2>
+                </div>
+            </div>
+            {%with messages = get_flashed_messages()%}
+            {%if messages%}
+            {% for message in messages %}
+            <div class="alert alert-success alert-dismissable" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{message}}
+            </div>
+            {%endfor%}
+            {%endif%}
+            {%endwith%}
+
+            <!-- Add Modal -->
+            <div id="myModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title text-primary" style="align-content: center;">Please Add New Product
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+
+                        <div class="modal-body">
+
+                            <form action="{{ url_for('product_add')}}" method="POST">
+                                <div class="form-group">
+                                    <label>Product Name</label>
+                                    <input type="text" name="product_name" class="form-control"
+                                        placeholder="Enter Product Name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Price</label>
+                                    <input type="text" name="price" class="form-control" id="price"
+                                        placeholder="Enter Price">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Quantity</label>
+                                    <input type="number" name="quantity" class="form-control"
+                                        placeholder="Enter Quantity">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Row</label>
+                                    <div class="form-check">
+                                        <input type="radio" name="row" id="num1" class="form-check-input" value="1">
+                                        <label class="form-check-label" for="num1">1</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" name="row" id="num2" class="form-check-input" value="2">
+                                        <label class="form-check-label" for="num2">2</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" name="row" id="num3" class="form-check-input" value="3">
+                                        <label class="form-check-label" for="num3">3</label>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <input type="text" name="description" class="form-control"
+                                        placeholder="Enter Description">
+                                </div>
+
+                                <button type="submit" class="btn btn-primary mb-2">Save</button>
+
+                            </form>
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- End of Add Modal -->
+
+
+
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col" width="20%">Product</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Row</th>
+                        <th scope="col" width="30%">Description</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in products %}
+                    <tr>
+                        <td>{{data.product_id}}</td>
+                        <td>{{data.product_name}}</td>
+                        <td>{{ "{:,.2f}".format(data.price) }}</td>
+                        <td>{{data.quantity}}</td>
+                        <td>{{data.row}}</td>
+                        <td>{{data.description}}</td>
+                        <td>
+                            <a href="/update/{{data.product_id}}" class="btn btn-warning btn-sm" data-toggle="modal"
+                                data-target="#modaledit{{data['product_id']}}">Edit</a>
+                            <a href="/delete/{{data.product_id}}" onclick="return confirm('Are Sure Want To Deleted ?')"
+                                class="btn btn-danger btn-sm">Delete</a>
+
+                        </td>
+                    </tr>
+
+
+                    <!-- Edit Modal -->
+                    <div id="modaledit{{data.product_id}}" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title text-primary" style="align-content: center;">Update Product
+                                        Details</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+
+                                <div class="modal-body">
+
+                                    <form action="{{ url_for('update')}}" method="POST">
+                                        <input value="{{data.product_id}}" type="hidden" name="product_id">
+                                        <div class="form-group">
+                                            <label>Product Name</label>
+                                            <input value="{{data.product_name}}" type="text" name="product_name"
+                                                class="form-control" placeholder="Enter Product Name">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Price</label>
+                                            <input value="{{data.price}}" type="text" name="price" max="5000"
+                                                class="form-control price" placeholder="Enter Price">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Quantity</label>
+                                            <input value="{{data.quantity}}" type="number" name="quantity"
+                                                class="form-control" placeholder="Enter Quantity">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Row</label>
+                                            <div class="form-check">
+                                                <input type="radio" name="row" id="num1" class="form-check-input"
+                                                    value="1" {{'checked' if data.row==1 else '' }}>
+                                                <label class="form-check-label" for="num1">1</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="radio" name="row" id="num2" class="form-check-input"
+                                                    value="2" {{'checked' if data.row==2 else '' }}>
+                                                <label class="form-check-label" for="num2">2</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="radio" name="row" id="num3" class="form-check-input"
+                                                    value="3" {{'checked' if data.row==3 else '' }}>
+                                                <label class="form-check-label" for="num3">3</label>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <input value="{{data.description}}" type="text" name="description"
+                                                class="form-control" placeholder="Enter Description">
+                                        </div>
+
+                                        <button type="submit" class="btn btn-success mb-2">Update</button>
+
+                                    </form>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- End of Edit Modal -->
+
+
+
+
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+
+
+        <div class="col-sm-2"></div>
+
+    </div>
+    </div>
+    <script>
+        // Get all input fields with the 'price' class
+        const inputs = document.querySelectorAll('.price');
+
+        // Loop through each input field and add an event listener to it
+        inputs.forEach(function (input) {
+            input.addEventListener('input', function () {
+                // Get the current value of the input field
+                let value = input.value;
+
+                // Remove any commas from the input value
+                value = value.replace(',', '');
+
+                // Convert the input value to a number and limit it to two decimal places
+                let number = parseFloat(value);
+                number = Math.round(number * 100) / 100;
+
+                // If the input value is not a number, set it to zero
+                if (isNaN(number)) {
+                    number = 0;
+                }
+
+                // Format the number with thousands separators and two decimal places
+                value = number.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+                // If the formatted value is different from the input value, update the input field
+                if (value !== input.value) {
+                    input.value = value;
+                }
+            });
+        });
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

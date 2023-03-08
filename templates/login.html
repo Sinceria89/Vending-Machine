@@ -1,0 +1,53 @@
+<html>
+<title>Administrator Login</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
+
+<body>
+
+    <div class="container h-100">
+        <h4 align="center">Login</h4>
+        <div class="d-flex justify-content-center h-100">
+            <div>
+                <div class="d-flex justify-content-center">
+                    <form method="post" action="/submit">
+                        <div class=" mb-3">
+                            <div>
+                            </div>
+                            <input type="text" name="UsernameInput"
+                                value="{% if 'username' in request.cookies %} {{ request.cookies.get('username') }} {% endif %}"
+                                placeholder="username" required class="form-control input_user">
+                        </div>
+                        <div class="mb-2">
+                            <div>
+                            </div>
+                            <input type="password" name="PasswordInput"
+                                value="{% if 'password' in request.cookies %} {{ request.cookies.get('password') }} {% endif %}"
+                                placeholder="Password" autocomplete="off" required class="form-control input_pass"
+                                value="">
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <input type="submit" value="Login" class="btn">
+                        </div>
+                    </form>
+                </div>
+
+                <div class="mt-4">
+                    <div>
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-danger" role="alert">{{ message }}</div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
