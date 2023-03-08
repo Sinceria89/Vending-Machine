@@ -18,8 +18,18 @@ mysql = MySQL(app)
 
 @app.route('/')
 def index():
-    return render_template("index.html")
-
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM products")
+        rows = cursor.fetchall()
+        return render_template('index.html', products=rows)
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close() 
+        conn.close()
+ 
 
 @app.route('/login')
 def login():
