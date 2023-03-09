@@ -1,10 +1,26 @@
 img {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 5px;
-    width: 300px;
-  }
-  
-  img:hover {
-    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
-  }
+    width: 100%;
+    margin: auto;
+    display: block;
+    display: flex;
+    justify-content: center;
+}
+
+
+
+.display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+}
+
+
+
+
+.box {
+    display: flex;
+    justify-content: center;
+    width: 200px;
+    height: 300px;
+}

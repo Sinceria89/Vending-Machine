@@ -18,7 +18,7 @@ app.config['MYSQL_DATABASE_DB'] = 'vending'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql = MySQL(app)
 
-UPLOAD_FOLDER = 'static'
+UPLOAD_FOLDER = 'static/upload'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -130,33 +130,14 @@ def product_add():
         description = request.form['description']
         conn = mysql.connect()
         cur = conn.cursor(pymysql.cursors.DictCursor)
-        for file in image:
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         cur.execute("INSERT INTO products (product_name, price, quantity, row, image, description) VALUES (%s, %s, %s, %s, %s, %s)", (product_name, price, quantity, row, filename, description))
         conn.commit()
-        print(file)
+        print(image)
         return redirect(url_for('products'))
-
-
-@app.route("/upload",methods=["POST","GET"])
-def upload():
-    cursor = mysql.connection.cursor()
-    cur = mysql.connection.cursor(pymysql.cursors.DictCursor)
-    if request.method == 'POST':
-        #print(files)
-        for file in files:
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))  
-                cur.execute("INSERT INTO products (image) VALUES ( %s)",[filename])
-                mysql.connection.commit()
-            print(file)
-        cur.close()   
-        flash('File(s) successfully uploaded')    
-    return redirect('/')
-        
+      
 
 @app.route('/product_edit', methods= ['POST', 'GET'])
 def update():

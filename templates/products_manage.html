@@ -58,7 +58,7 @@
 
                         <div class="modal-body">
 
-                            <form action="{{ url_for('product_add')}}" method="POST">
+                            <form enctype="multipart/form-data" action="{{ url_for('product_add')}}" method="POST">
                                 <div class="form-group">
                                     <label>Product Name</label>
                                     <input type="text" name="product_name" class="form-control"
@@ -139,7 +139,7 @@
                     {% for data in products %}
                     <tr>
                         <td>{{data.product_id}}</td>
-                        <td><img src="/static/{{ data.image }}"></td>
+                        <td class="box"><img src="/static/upload/{{ data.image }}"></td>
                         <td>{{data.product_name}}</td>
                         <td>{{ "{:,.2f}".format(data.price) }}</td>
                         <td>{{data.quantity}}</td>
