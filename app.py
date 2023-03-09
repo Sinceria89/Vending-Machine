@@ -1,8 +1,11 @@
 from flask import Flask, request, render_template, abort, flash, session, request, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 import logging
 from flaskext.mysql import MySQL
 import pymysql
+import urllib.request
+import os
 
 pymysql.install_as_MySQLdb()
 
@@ -15,12 +18,27 @@ app.config['MYSQL_DATABASE_DB'] = 'vending'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql = MySQL(app)
 
+UPLOAD_FOLDER = 'static/upload'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
 
 @app.route('/')
 def index():
-    return render_template("index.html")
-
-
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM products")
+        rows = cursor.fetchall()
+        return render_template('index.html', products=rows)
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close() 
+        conn.close()
+        
+        
 @app.route('/login')
 def login():
     return render_template("login.html")
@@ -89,11 +107,16 @@ def products():
         return render_template("test.html")
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute("SELECT * FROM products")
+    cur.execute("SELECT * FROM `products` LEFT JOIN `categories` ON products.category_id = categories.category_id")
+    cur1 = conn.cursor(pymysql.cursors.DictCursor)
+    cur1.execute("SELECT * FROM `categories`")
     data = cur.fetchall()
+    cate = cur1.fetchall()
     cur.close()
+    cur1.close()
     #app.logger.info(data)
-    return render_template('products_manage.html', products = data)
+    app.logger.info(cate)
+    return render_template('products_manage.html', products = data, categories = cate)
     
 
 @app.route('/product_add', methods = ['POST'])
@@ -103,12 +126,18 @@ def product_add():
         product_name = request.form['product_name']
         price = request.form['price']
         quantity = request.form['quantity']
+        image = request.files['image']
         row = request.form['row']
+        category = request.form['category']
         description = request.form['description']
         conn = mysql.connect()
         cur = conn.cursor(pymysql.cursors.DictCursor)
-        cur.execute("INSERT INTO products (product_name, price, quantity, row, description) VALUES (%s, %s, %s, %s, %s)", (product_name, price, quantity, row, description))
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        cur.execute("INSERT INTO products (product_name, price, quantity, row, category_id, image, description) VALUES (%s, %s, %s, %s, %s, %s, %s)", (product_name, price, quantity, row, category, filename, description))
         conn.commit()
+        print(image)
         return redirect(url_for('products'))
         
 
@@ -122,13 +151,14 @@ def update():
         price = float(price_value)
         quantity = request.form['quantity']
         row = request.form['row']
+        category = request.form['category']
         description = request.form['description']
         conn = mysql.connect()
         cur = conn.cursor(pymysql.cursors.DictCursor)
         cur.execute("""
-        UPDATE products SET product_name=%s, price=%s, quantity=%s, row=%s, description=%s
+        UPDATE products SET product_name=%s, price=%s, quantity=%s, row=%s, category_id=%s, image=%s, description=%s
         WHERE product_id=%s
-        """, (product_name, price, quantity, row, description, product_id))
+        """, (product_name, price, quantity, row, category, filename, description, product_id))
         flash("Data Updated Successfully")
         conn.commit()
         return redirect(url_for('products'))
