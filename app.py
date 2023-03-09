@@ -24,6 +24,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
+def allowed_file(filename):
+ return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 @app.route('/')
 def index():
     try:
@@ -150,11 +154,15 @@ def update():
         price_value = price_value.replace(',', '')
         price = float(price_value)
         quantity = request.form['quantity']
+        image = request.files['image']
         row = request.form['row']
         category = request.form['category']
         description = request.form['description']
         conn = mysql.connect()
         cur = conn.cursor(pymysql.cursors.DictCursor)
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         cur.execute("""
         UPDATE products SET product_name=%s, price=%s, quantity=%s, row=%s, category_id=%s, image=%s, description=%s
         WHERE product_id=%s

@@ -1,0 +1,11 @@
+.box {
+    display: flex;
+    justify-content: center;
+    width: 400px;
+    height: 400px;
+}
+
+img {
+    display: flex;
+    width: 100%;
+}

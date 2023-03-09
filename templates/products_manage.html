@@ -51,7 +51,7 @@
 
                         <div class="modal-body">
 
-                            <form action="{{ url_for('product_add')}}" method="POST">
+                            <form enctype="multipart/form-data" action="{{ url_for('product_add')}}" method="POST">
                                 <div class="form-group">
                                     <label>Product Name</label>
                                     <input type="text" name="product_name" class="form-control"
@@ -126,6 +126,7 @@
                 <thead>
                     <tr>
                         <th scope="col">ID</th>
+                        <th scope="col">Image</th>
                         <th scope="col" width="20%">Product</th>
                         <th scope="col">Price</th>
                         <th scope="col">Quantity</th>
@@ -139,7 +140,8 @@
                     {% for data in products %}
                     <tr>
                         <td>{{data.product_id}}</td>
-                        <td>{{data.product_name}}</td>
+                        <td><img src="/static/upload/{{ data.image }}"></td>
+                        <td class="box">{{data.product_name}}</td>
                         <td>{{ "{:,.2f}".format(data.price) }}</td>
                         <td>{{data.quantity}}</td>
                         <td>{{data.row}}</td>
@@ -171,7 +173,7 @@
 
                                 <div class="modal-body">
 
-                                    <form action="{{ url_for('update')}}" method="POST">
+                                    <form enctype="multipart/form-data" action="{{ url_for('update')}}" method="POST">
                                         <input value="{{data.product_id}}" type="hidden" name="product_id">
                                         <div class="form-group">
                                             <label>Product Name</label>
