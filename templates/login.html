@@ -9,13 +9,20 @@
         background-color: #D67DC2;    
         text-align: center;
     }
-    /* Make the container wider */
+    /* Center the white container */
     .container {
-        max-width: 800px;
+        max-width: 400px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 </style>
 <body style="background-color: #CDDAFD;">
-
     <div class="container h-100">
         <h4 align="center">Login</h4>
         <div class="d-flex justify-content-center h-100">
@@ -57,7 +64,5 @@
             </div>
         </div>
     </div>
-
 </body>
-
 </html>
