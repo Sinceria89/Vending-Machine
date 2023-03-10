@@ -18,7 +18,7 @@ app.config['MYSQL_DATABASE_PASSWORD'] = ''
 app.config['MYSQL_DATABASE_DB'] = 'vending'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql = MySQL(app)
-app.permanent_session_lifetime = timedelta(minutes=1)
+
 UPLOAD_FOLDER = 'static/upload'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -129,7 +129,9 @@ def product_add():
     if request.method == 'POST':
         flash("Data Inserted Successfully")
         product_name = request.form['product_name']
-        price = request.form['price']
+        price_value = request.form['price']
+        price_value = price_value.replace(',', '')
+        price = float(price_value)
         quantity = request.form['quantity']
         image = request.files['image']
         row = request.form['row']

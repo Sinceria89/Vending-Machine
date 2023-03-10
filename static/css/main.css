@@ -12,6 +12,7 @@
     height: 150px;
 }
 
+
 img {
     width: 100%;
     margin: auto;
@@ -19,3 +20,5 @@ img {
     display: flex;
     justify-content: center;
 }
+
+

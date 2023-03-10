@@ -70,7 +70,7 @@
 
                                 <div class="form-group">
                                     <label>Price</label>
-                                    <input type="text" name="price" class="form-control" id="price"
+                                    <input type="text" name="price" class="form-control price"
                                         placeholder="Enter Price">
                                 </div>
 
@@ -117,8 +117,8 @@
 
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <input type="text" name="description" class="form-control"
-                                        placeholder="Enter Description">
+                                    <textarea name="description" id="description" class="form-control" rows="6"
+                                        placeholder="Enter your message"></textarea>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary mb-2 Save">Save</button>
@@ -199,7 +199,7 @@
 
                                         <div class="form-group">
                                             <label>Price</label>
-                                            <input value="{{data.price}}" type="text" name="price" max="5000"
+                                            <input value="{{data.price}}" type="text" name="price"
                                                 class="form-control price" placeholder="Enter Price">
                                         </div>
 
@@ -250,8 +250,10 @@
 
                                         <div class="form-group">
                                             <label>Description</label>
-                                            <input value="{{data.description}}" type="text" name="description"
-                                                class="form-control" placeholder="Enter Description">
+
+                                            <textarea name="description" id="description" class="form-control" rows="6"
+                                                placeholder="Enter your message">{{ data.description }}</textarea>
+
                                         </div>
 
                                         <button type="submit" class="btn btn-success mb-2 Save">Update</button>
@@ -291,7 +293,11 @@
                 let value = input.value;
                 value = value.replace(',', '');
                 let number = parseFloat(value);
-                number = Math.round(number * 100) / 100;
+                if (number <= 0.01) {
+                    number = parseFloat(value);
+                } else {
+                    number = Math.round(number * 100) / 100;
+                }
                 if (isNaN(number)) {
                     number = 0;
                 }
@@ -323,15 +329,16 @@
             });
         });
 
-
         $(document).ready(function () {
             $('.Save').bind("click", function () {
-                if (!$('.fileInput').val()) {
-                    alert("Image is not selected!");
+                var imgVal = $('.fileInput').val();
+                if (imgVal == '') {
+                    alert("Please select an image.");
                     return false;
                 }
             });
         });
+
 
     </script>
 
