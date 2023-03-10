@@ -2,6 +2,16 @@
 <html>
 
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <title>Product Manage</title>
@@ -100,12 +110,18 @@
 
 
                                 <div class="form-group">
+                                    <label>Choose Images: </label>
+                                    <input type="file" name="image" class="form-control fileInput">
+                                </div>
+
+
+                                <div class="form-group">
                                     <label>Description</label>
                                     <input type="text" name="description" class="form-control"
                                         placeholder="Enter Description">
                                 </div>
 
-                                <button type="submit" class="btn btn-primary mb-2">Save</button>
+                                <button type="submit" class="btn btn-primary mb-2 Save">Save</button>
 
                             </form>
 
@@ -227,8 +243,8 @@
 
                                         <div class="form-group">
                                             <label>Choose Images: </label>
-                                            <input value="{{data.image}}" type="file" name="image"
-                                                class="form-control fileInput">
+                                            <input type="file" name="image" class="form-control fileInput">
+                                            <div class="example"><img src="/static/upload/{{ data.image }}"></div>
                                         </div>
 
 
@@ -238,7 +254,7 @@
                                                 class="form-control" placeholder="Enter Description">
                                         </div>
 
-                                        <button type="submit" class="btn btn-success mb-2">Update</button>
+                                        <button type="submit" class="btn btn-success mb-2 Save">Update</button>
 
                                     </form>
 
@@ -268,50 +284,57 @@
     </div>
     </div>
     <script>
-        // Get all input fields with the 'price' class
+        //thousand separator
         const inputs = document.querySelectorAll('.price');
-
-        // Loop through each input field and add an event listener to it
         inputs.forEach(function (input) {
             input.addEventListener('input', function () {
-                // Get the current value of the input field
                 let value = input.value;
-
-                // Remove any commas from the input value
                 value = value.replace(',', '');
-
-                // Convert the input value to a number and limit it to two decimal places
                 let number = parseFloat(value);
                 number = Math.round(number * 100) / 100;
-
-                // If the input value is not a number, set it to zero
                 if (isNaN(number)) {
                     number = 0;
                 }
-
-                // Format the number with thousands separators and two decimal places
                 value = number.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                 });
-
-                // If the formatted value is different from the input value, update the input field
                 if (value !== input.value) {
                     input.value = value;
                 }
             });
         });
+
+        $(document).ready(function () {
+            // File type validation
+            $(".fileInput").change(function () {
+                var fileLength = this.files.length;
+                var match = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
+                var i;
+                for (i = 0; i < fileLength; i++) {
+                    var file = this.files[i];
+                    var imagefile = file.type;
+                    if (!((imagefile == match[0]) || (imagefile == match[1]) || (imagefile == match[2]) || (imagefile == match[3]))) {
+                        alert('Please select a valid image file (JPEG/JPG/PNG/GIF).');
+                        $(this).val('');
+                        return false;
+                    }
+                }
+            });
+        });
+
+
+        $(document).ready(function () {
+            $('.Save').bind("click", function () {
+                if (!$('.fileInput').val()) {
+                    alert("Image is not selected!");
+                    return false;
+                }
+            });
+        });
+
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
+
 </body>
 
 </html>

@@ -5,6 +5,13 @@
     height: 300px;
 }
 
+.example {
+    display: flex;
+    justify-content: center;
+    width: 100px;
+    height: 150px;
+}
+
 img {
     width: 100%;
     margin: auto;

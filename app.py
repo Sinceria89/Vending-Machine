@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, abort, flash, session, request, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from datetime import timedelta
 import logging
 from flaskext.mysql import MySQL
 import pymysql
@@ -17,7 +18,7 @@ app.config['MYSQL_DATABASE_PASSWORD'] = ''
 app.config['MYSQL_DATABASE_DB'] = 'vending'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql = MySQL(app)
-
+app.permanent_session_lifetime = timedelta(minutes=1)
 UPLOAD_FOLDER = 'static/upload'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
