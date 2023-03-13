@@ -1,52 +1,305 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="css/styling">
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="css/styling">
 
-    <title>กล่องจ่ายยาอัตโนมัติ</title>
+  <title>กล่องจ่ายยาอัตโนมัติ</title>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-    <style>
-        .myDiv {
-            height: 30px;
-            background-color: #D67DC2;    
-            text-align: center;
-        }
-        /* Make the container wider */
-        .container {
-            max-width: 800px;
-        }
-    </style>
-    
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+  <style>
+    .myDiv {
+      height: 30px;
+      background-color: #D67DC2;
+      text-align: center;
+    }
+
+    /* Make the container wider */
+    .container {
+      max-width: 800px;
+    }
+  </style>
+
 </head>
+
 <body style="background-color: #CDDAFD;">
-    <div class="myDiv">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 col-sm-3">
-            <a href="/login">
+  <div class="myDiv">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-sm-3">
+          <a href="/login">
             <p1 style="text-align:center;color:#FFFFFF; font-size:18px">เครื่องจ่ายยาอัตโนมัติ</p1>
-        </a>
-          </div>
-          <div class="col-12 col-sm-9 text-container text-right">
-            <marquee scrolldelay="150" style="color:#FFFFFF; font-size:18px">เข้าสู่ระบบ(แอดมิน)</marquee>
-          </div>
-        </div>   
-      </div>
-      <div class="col-12 col-sm-12" style="margin-top: 20px;">
-        <div style="background-color:white;height: 340px; display: flex;">
-          <div style="flex: 1;">
-            <img src="../static/Sunset.jpg" alt="Sunset display" style="height: 340px;">
-          </div>
-          <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 20px;">
-            <p style="font-size: 30px;">โปรดแตะที่จอ<br>เพื่อเลือกซื้อสินค้า</p><br><img src="../static/pointingfingerhandpointing.jpg"alt="point finger" style="height: 200px;">
-          </div>
+          </a>
+        </div>
+        <div class="col-12 col-sm-9 text-container text-right">
+          <marquee scrolldelay="150" style="color:#FFFFFF; font-size:18px">เข้าสู่ระบบ(แอดมิน)</marquee>
         </div>
       </div>
     </div>
-  </body>
-  
+    <div id="Inactive" class="col-12 col-sm-12" style=" margin-top: 20px;">
+      <div style="background-color:white;height: 340px; display: flex;">
+        <div style="flex: 1;">
+          <img src="../static/Sunset.jpg" alt="Sunset display" style="height: 340px;">
+        </div>
+        <div
+          style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 20px;">
+          <p style="font-size: 30px;">โปรดแตะที่จอ<br>เพื่อเลือกซื้อสินค้า</p><br><img
+            src="../static/pointingfingerhandpointing.jpg" alt="point finger" style="height: 200px;">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="Active">
+    <div class="container">
+      <div class="row">
+        <p>
+        <h2>Shopping Cart using Python Flask MySQL</h2>
+        </p>
+        <div class="col-sm-12">
+          <div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class=flashes>
+              {% for message in messages %}
+              <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+          </div>
+          {% if 'cart_item' in session %}
+          <p><a id="btnEmpty" href="{{ url_for('.empty_cart') }}" class="btn btn-danger">Empty Cart</a></p>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th class="text-center">Unit Price</th>
+                <th class="text-center">Price</th>
+                <th> </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for key, val in session['cart_item'].items() %}
+              {% set quantity = session['cart_item'][key]['quantity'] %}
+              {% set price = session['cart_item'][key]['price'] %}
+              {% set item_price = session['cart_item'][key]['total_price'] %}
+              <tr>
+                <td class="col-sm-8 col-md-6">
+                  <div class="media">
+                    <a class="thumbnail pull-left" href="#"> <img class="media-object"
+                        src="/static/images/product-images/{{ session['cart_item'][key]['image'] }}"
+                        style="width: 72px; height: 72px;"> </a>
+                    <div class="media-body">
+                      <h4 class="media-heading"> <a href="#">{{ session['cart_item'][key]['name'] }}</a></h4>
+                      <h5 class="media-heading"> by <a href="#">Brand name</a></h5>
+                      <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
+                    </div>
+                  </div>
+                </td>
+                <td class="col-sm-1 col-md-1" style="text-align: center">
+                  <input type="email" class="form-control" value="{{ quantity }}">
+                </td>
+                <td class="col-sm-1 col-md-1 text-center"><strong>${{ price }} </strong></td>
+                <td class="col-sm-1 col-md-1 text-center"><strong>${{ item_price }} </strong></td>
+                <td class="col-sm-1 col-md-1">
+                  <a href="{{ url_for('.delete_product', code=session['cart_item'][key]['code']) }}"
+                    class="btn btn-danger">
+                    <span class="glyphicon glyphicon-remove"></span> Remove
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+              <tr>
+                <td colspan="4">
+                  <h5>Total Quantity</h5>
+                </td>
+                <td class="text-right">
+                  <h5><strong>{{ session['all_total_quantity'] }}</strong></h5>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="3">
+                  <h3>Total</h3>
+                </td>
+                <td colspan="2" class="text-right">
+                  <h3><strong>$ {{ session['all_total_price'] }}</strong></h3>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-shopping-cart"></span> Continue Shopping
+                  </button>
+                </td>
+                <td>
+                  <button type="button" class="btn btn-success">
+                    Checkout <span class="glyphicon glyphicon-play"></span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          {% else: %}
+          <div class="no-records">Your Cart is Empty</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <section class="our-publication pt-100 pb-70">
+      <div class="container">
+        <div class="section-header">
+          <i class="fa fa-book"></i>
+          <h2>Our Product</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod labore et dolore magna aliqua.</p>
+        </div>
+
+        <div class="row">
+          {% for product in products %}
+          <div class="col-sm-6 col-lg-3">
+            <form method="post" action="/add">
+              <div class="single-publication">
+                <figure style="width:263px;">
+                  <a href="#">
+                    <img src="/static/images/product-images/{{ product.image }}">
+                  </a>
+                  <ul>
+                    <li><a href="#" title="Add to Favorite"><i class="fa fa-heart"></i></a></li>
+                    <li><a href="#" title="Add to Compare"><i class="fa fa-refresh"></i></a></li>
+                    <li><a href="#" title="Quick View"><i class="fa fa-search"></i></a></li>
+                  </ul>
+                </figure>
+
+                <div class="publication-content">
+                  <span class="category">{{ product.category }}</span>
+                  <h3><a href="#">{{ product.name }}</a></h3>
+                  <ul>
+                    <li><i class="icofont-star"></i></li>
+                    <li><i class="icofont-star"></i></li>
+                    <li><i class="icofont-star"></i></li>
+                    <li><i class="icofont-star"></i></li>
+                    <li><i class="icofont-star"></i></li>
+                  </ul>
+                  <h4 class="price">$ {{ product.price }}</h4>
+                </div>
+
+                <div class="add-to-cart">
+                  <input type="hidden" name="code" value="{{ product.code }}" />
+                  <input type="text" class="product-quantity" name="quantity" value="1" size="2" />
+                  <input type="submit" value="Add to Cart" class="default-btn" />
+                </div>
+              </div>
+            </form>
+          </div>
+          {% endfor %}
+
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+
+
+<script>
+  // Get the div elements
+  const inactiveDiv = document.getElementById('Inactive');
+  const activeDiv = document.getElementById('Active');
+
+  // Set the initial state to hidden
+  let isInactiveDivVisible = false;
+  let isActiveDivVisible = true;
+  inactiveDiv.style.display = 'none';
+  activeDiv.style.display = 'block';
+
+  // Declare the timerId variables
+  let inactiveTimerId;
+  let activeTimerId;
+
+  // Set up event listeners to detect user activity
+  document.addEventListener('mousemove', resetTimers);
+  document.addEventListener('keypress', resetTimers);
+
+  // Set up a timer to check for user inactivity every 100ms
+  setInterval(checkActivity, 100);
+
+  // Functions to handle user activity
+  function resetTimers() {
+    // Reset the timers and hide/show the divs if necessary
+    if (isInactiveDivVisible) {
+      hideInactiveDiv();
+    }
+    clearTimeout(inactiveTimerId);
+    inactiveTimerId = setTimeout(showInactiveDiv, 5000);
+
+    if (!isActiveDivVisible && !isMouseOverActiveDiv()) {
+      showActiveDiv();
+    }
+    clearTimeout(activeTimerId);
+    activeTimerId = setTimeout(hideActiveDiv, 5000);
+  }
+
+  function checkActivity() {
+    // Check if the divs should be hidden
+
+    const now = new Date().getTime();
+    if (now - lastActivity >= 5000 && isInactiveDivVisible) {
+      hideInactiveDiv();
+    }
+
+    if (now - lastActivity < 5000 && isActiveDivVisible && !isMouseOverActiveDiv()) {
+      hideActiveDiv();
+    }
+  }
+
+  function showInactiveDiv() {
+    if (!isInactiveDivVisible) {
+      inactiveDiv.style.display = 'block';
+      isInactiveDivVisible = true;
+    }
+  }
+
+  function hideInactiveDiv() {
+    if (isInactiveDivVisible) {
+      inactiveDiv.style.display = 'none';
+      isInactiveDivVisible = false;
+    }
+  }
+
+  function showActiveDiv() {
+    if (!isActiveDivVisible) {
+      activeDiv.style.display = 'block';
+      isActiveDivVisible = true;
+    }
+  }
+
+  function hideActiveDiv() {
+    if (isActiveDivVisible) {
+      activeDiv.style.display = 'none';
+      isActiveDivVisible = false;
+    }
+  }
+
+  function isMouseOverActiveDiv() {
+    const rect = activeDiv.getBoundingClientRect();
+    return (
+      rect.top <= event.clientY &&
+      event.clientY <= rect.bottom &&
+      rect.left <= event.clientX &&
+      event.clientX <= rect.right
+    );
+  }
+
+  // Initialize the last activity time
+  let lastActivity = new Date().getTime();
+
+  // Set up a timer to update the last activity time every second
+  setInterval(() => {
+    lastActivity = new Date().getTime();
+  }, 1000);
+</script>

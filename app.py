@@ -1,16 +1,17 @@
-from flask import Flask, request, render_template, abort, flash, session, request, redirect, url_for
+from flask import Flask, request, render_template, abort, flash, session, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from datetime import timedelta
+from datetime import timedelta, datetime
 import logging
 from flaskext.mysql import MySQL
 import pymysql
 import urllib.request
 import os
 
+
 pymysql.install_as_MySQLdb()
 
-    # config
+# config
 app = Flask(__name__)
 app.secret_key = "MedVend-2023"
 app.config['MYSQL_DATABASE_USER'] = 'root'
@@ -26,7 +27,7 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
 def allowed_file(filename):
- return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route('/')
@@ -40,10 +41,10 @@ def index():
     except Exception as e:
         print(e)
     finally:
-        cursor.close() 
+        cursor.close()
         conn.close()
-        
-        
+
+
 @app.route('/login')
 def login():
     return render_template("login.html")
@@ -73,7 +74,7 @@ def login_submit():
             return redirect('/admin')
         else:
             return redirect('/login')
-    #Check if exist
+    # Check if exist
     elif _username and _password:
         conn = mysql.connect()
         cursor = conn.cursor()
@@ -108,23 +109,24 @@ def logout():
 @app.route('/products_manage')
 def products():
     if 'logged_in' not in session:
-        #abort(403)
+        # abort(403)
         return render_template("test.html")
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute("SELECT * FROM `products` LEFT JOIN `categories` ON products.category_id = categories.category_id")
+    cur.execute(
+        "SELECT * FROM `products` LEFT JOIN `categories` ON products.category_id = categories.category_id")
     cur1 = conn.cursor(pymysql.cursors.DictCursor)
     cur1.execute("SELECT * FROM `categories`")
     data = cur.fetchall()
     cate = cur1.fetchall()
     cur.close()
     cur1.close()
-    #app.logger.info(data)
+    # app.logger.info(data)
     app.logger.info(cate)
-    return render_template('products_manage.html', products = data, categories = cate)
-    
+    return render_template('products_manage.html', products=data, categories=cate)
 
-@app.route('/product_add', methods = ['POST'])
+
+@app.route('/product_add', methods=['POST'])
 def product_add():
     if request.method == 'POST':
         flash("Data Inserted Successfully")
@@ -142,13 +144,14 @@ def product_add():
         if image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        cur.execute("INSERT INTO products (product_name, price, quantity, row, category_id, image, description) VALUES (%s, %s, %s, %s, %s, %s, %s)", (product_name, price, quantity, row, category, filename, description))
+        cur.execute("INSERT INTO products (product_name, price, quantity, row, category_id, image, description) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                    (product_name, price, quantity, row, category, filename, description))
         conn.commit()
         print(image)
         return redirect(url_for('products'))
-        
 
-@app.route('/product_edit', methods= ['POST', 'GET'])
+
+@app.route('/product_edit', methods=['POST', 'GET'])
 def update():
     if request.method == 'POST':
         product_id = request.form['product_id']
@@ -175,20 +178,20 @@ def update():
         return redirect(url_for('products'))
 
 
-@app.route('/delete/<string:product_id>', methods = ['POST','GET'])
+@app.route('/delete/<string:product_id>', methods=['POST', 'GET'])
 def delete(product_id):
     flash("Record Has Been Deleted Successfully")
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute("DELETE FROM products WHERE product_id=%s", (product_id))
     conn.commit()
-    return redirect(url_for('products'))    
+    return redirect(url_for('products'))
 
 
 @app.route('/admin')
 def admin():
     if 'logged_in' not in session:
-        #abort(403)
+        # abort(403)
         return render_template("test.html")
     return render_template("admin.html")
 
