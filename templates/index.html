@@ -10,8 +10,12 @@
   <title>กล่องจ่ายยาอัตโนมัติ</title>
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
-    integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
   <style>
     .myDiv {
       height: 30px;
@@ -28,6 +32,7 @@
 </head>
 
 <body style="background-color: #CDDAFD;">
+  <!---
   <div class="myDiv">
     <div class="container">
       <div class="row">
@@ -54,13 +59,14 @@
       </div>
     </div>
   </div>
+  --> 
   <div id="Active">
     <div class="container">
       <div class="row">
         <p>
         <h2>Shopping Cart using Python Flask MySQL</h2>
         </p>
-        <div class="col-sm-12">
+        <div>
           <div>
             {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -90,7 +96,7 @@
               {% set price = session['cart_item'][key]['price'] %}
               {% set item_price = session['cart_item'][key]['total_price'] %}
               <tr>
-                <td class="col-sm-8 col-md-6">
+                <td>
                   <div class="media">
                     <a class="thumbnail pull-left" href="#"> <img class="media-object"
                         src="/static/images/product-images/{{ session['cart_item'][key]['image'] }}"
@@ -102,12 +108,12 @@
                     </div>
                   </div>
                 </td>
-                <td class="col-sm-1 col-md-1" style="text-align: center">
+                <td style="text-align: center">
                   <input type="email" class="form-control" value="{{ quantity }}">
                 </td>
-                <td class="col-sm-1 col-md-1 text-center"><strong>${{ price }} </strong></td>
-                <td class="col-sm-1 col-md-1 text-center"><strong>${{ item_price }} </strong></td>
-                <td class="col-sm-1 col-md-1">
+                <td class="text-center"><strong>${{ price }} </strong></td>
+                <td class="text-center"><strong>${{ item_price }} </strong></td>
+                <td>
                   <a href="{{ url_for('.delete_product', code=session['cart_item'][key]['code']) }}"
                     class="btn btn-danger">
                     <span class="glyphicon glyphicon-remove"></span> Remove
@@ -162,36 +168,25 @@
 
         <div class="row">
           {% for product in products %}
-          <div class="col-sm-6 col-lg-3">
+          <div class="col-xs-6 col-sm-3">
             <form method="post" action="/add">
               <div class="single-publication">
-                <figure style="width:263px;">
+                <figure style="width:250px;">
                   <a href="#">
-                    <img src="/static/images/product-images/{{ product.image }}">
+                    <img  src="/static/upload/{{ product.image }}">
                   </a>
-                  <ul>
-                    <li><a href="#" title="Add to Favorite"><i class="fa fa-heart"></i></a></li>
-                    <li><a href="#" title="Add to Compare"><i class="fa fa-refresh"></i></a></li>
-                    <li><a href="#" title="Quick View"><i class="fa fa-search"></i></a></li>
-                  </ul>
                 </figure>
 
                 <div class="publication-content">
-                  <span class="category">{{ product.category }}</span>
-                  <h3><a href="#">{{ product.name }}</a></h3>
-                  <ul>
-                    <li><i class="icofont-star"></i></li>
-                    <li><i class="icofont-star"></i></li>
-                    <li><i class="icofont-star"></i></li>
-                    <li><i class="icofont-star"></i></li>
-                    <li><i class="icofont-star"></i></li>
-                  </ul>
-                  <h4 class="price">$ {{ product.price }}</h4>
+                  <span class="category">{{ product.product_category }}</span>
+                  <h3><a href="#">{{ product.product_name }}</a></h3>
+                  <h4 class="price">฿ {{ product.price }}</h4>
                 </div>
 
                 <div class="add-to-cart">
                   <input type="hidden" name="code" value="{{ product.code }}" />
-                  <input type="text" class="product-quantity" name="quantity" value="1" size="2" />
+                  <input type="number" class="product-quantity" name="quantity" value="1" min="0"
+                    max="{{ product.quantity }}" />
                   <input type="submit" value="Add to Cart" class="default-btn" />
                 </div>
               </div>
@@ -207,6 +202,7 @@
 
 
 <script>
+  /*
   // Get the div elements
   const inactiveDiv = document.getElementById('Inactive');
   const activeDiv = document.getElementById('Active');
@@ -302,4 +298,5 @@
   setInterval(() => {
     lastActivity = new Date().getTime();
   }, 1000);
+  */
 </script>
