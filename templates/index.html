@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/styling">
+    <link href="https://fonts.googleapis.com/css2?family=Sriracha&display=swap&subset=thai" rel="stylesheet">
 
     <title>กล่องจ่ายยาอัตโนมัติ</title>
 
@@ -12,43 +13,73 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
     <style>
         .myDiv {
-            height: 30px;
-            background-color: #D67DC2;    
+            height: 55px;
+            background-color: #e7a7d9;    
             text-align: center;
         }
         /* Make the container wider */
         .container {
             max-width: 800px;
         }
+         .clock {
+          font-family: system-ui;
+          color: white;
+          font-size: 16px;
+          text-align: right;
+         }
+         p{
+          font-family: 'Sriracha', cursive;
+          font-size: 32px;
+          color: #e7a7d9;
+          text-align: right;
+         }
     </style>
     
 </head>
-<body style="background-color: #CDDAFD;">
+<body style="background-color: #0a3abd;">
     <div class="myDiv">
       <div class="container">
         <div class="row">
           <div class="col-12 col-sm-3">
             <a href="/login">
-            <p1 style="text-align:center;color:#FFFFFF; font-size:18px">เครื่องจ่ายยาอัตโนมัติ</p1>
+              <img src="../static/logo.png" alt="logo" style="height: 55px;">
         </a>
           </div>
           <div class="col-12 col-sm-9 text-container text-right">
-            <marquee scrolldelay="150" style="color:#FFFFFF; font-size:18px">เข้าสู่ระบบ(แอดมิน)</marquee>
+            <marquee scrolldelay="150" scrollamount="5" style="color:#FFFFFF; font-size:18px">เข้าสู่ระบบ(แอดมิน)</marquee>
+  
           </div>
+          <div class="clock"id = "clock" onload="clock">/</div>
         </div>   
       </div>
-      <div class="col-12 col-sm-12" style="margin-top: 20px;">
-        <div style="background-color:white;height: 340px; display: flex;">
+      <div class="col-12 col-sm-12" style="margin-top: 5px;">
+        <div style="background-color:white;height: 310px; display: flex;">
           <div style="flex: 1;">
-            <img src="../static/Sunset.jpg" alt="Sunset display" style="height: 340px;">
+            <img src="../static/Sunset.jpg" alt="Sunset display" style="height: 310px;">
           </div>
           <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 20px;">
-            <p style="font-size: 30px;">โปรดแตะที่จอ<br>เพื่อเลือกซื้อสินค้า</p>
+            <p>โปรดแตะที่จอ<br>เพื่อเลือกซื้อสินค้า</p>
             <br>
-            <img src="../static/pointingfingerhandpointing.jpg"alt="point finger" style="height: 200px;">
+            <img src="../static/finger.gif"alt="point finger" style="height: 200px;">
           </div>
         </div>
       </div>
     </div>
+    <script>
+      function updateClock() {
+        let now = new Date();
+        let day = now.toLocaleDateString('en-GB', {day:'2-digit'});
+        let month = now.toLocaleDateString('en-GB', {month:'2-digit'});
+        let year = now.toLocaleDateString('en-GB', {year:'numeric'});
+        let dayOfWeek = now.toLocaleDateString('th-TH', {weekday:'long'});
+        let time = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: false});
+        document.getElementById('clock').innerHTML = dayOfWeek.toUpperCase() + '|' + time + '<br>' + day + '-' + month + '-' + year;
+      }
+      
+      updateClock();
+      setInterval(updateClock, 1000);
+    </script>
+    
+      
   </body>
   
