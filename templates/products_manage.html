@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.5.4"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -46,7 +47,7 @@
             {%endwith%}
 
             <!-- Add Modal -->
-            <div id="myModal" class="modal fade" role="dialog" >
+            <div id="myModal" class="modal fade" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
 
@@ -190,8 +191,7 @@
 
                                 <div class="modal-body">
 
-                                    <form enctype="multipart/form-data" action="{{ url_for('update')}}"
-                                        method="POST">
+                                    <form enctype="multipart/form-data" action="{{ url_for('update')}}" method="POST">
                                         <input value="{{data.product_id}}" type="hidden" name="product_id">
                                         <div class="form-group">
                                             <label>Product Name <span class="required"> * </span></label>
@@ -288,32 +288,15 @@
     </div>
     <script>
         //thousand separator
-        const inputs = document.querySelectorAll('.price');
-        inputs.forEach(function (input) {
-            input.addEventListener('input', function () {
-                let value = input.value;
-                value = value.replace(',', '');
-                let number = parseFloat(value);
-                if (number <= 0.01) {
-                    number = parseFloat(value);
-                } else {
-                    number = Math.round(number * 100) / 100;
-                }
-                if (isNaN(number)) {
-                    number = 0;
-                }
-                value = number.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-                if (value !== input.value) {
-                    input.value = value;
-                }
-            });
+        new AutoNumeric('.price', {
+            styleRules:
+                AutoNumeric.options.styleRules.positiveNegative,
         });
 
+
+        // File type validation
         $(document).ready(function () {
-            // File type validation
+
             $(".fileInput").change(function () {
                 var fileLength = this.files.length;
                 var match = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
@@ -355,7 +338,7 @@
             c = document.forms['Add'].quantity.value
             d = document.forms['Add'].row.value
             d = document.forms['Add'].category.value
-            if (a == "" || b == ""|| c == ""|| d == ""|| e == "") {
+            if (a == "" || b == "" || c == "" || d == "" || e == "") {
                 alert("Please fill the all required Inputs!");
                 return false;
             }
