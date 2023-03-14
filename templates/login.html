@@ -48,10 +48,7 @@
                             <div class="mb-2">
                                 <input type="password" name="PasswordInput" placeholder="Password" autocomplete="off" required class="form-control input_pass" value="">
                             </div>
-                            <input type="password" name="PasswordInput"
-                                value="{% if 'password' in request.cookies %} {{ request.cookies.get('password') }} {% endif %}"
-                                placeholder="Password" autocomplete="off" required class="form-control input_pass"
-                                value="">
+
                         </div>
                         <div class="d-flex justify-content-center mt-3">
                             <input type="submit" value="Login" class="btn btn-info">
