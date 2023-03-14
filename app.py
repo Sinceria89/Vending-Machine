@@ -41,8 +41,10 @@ def index():
     except Exception as e:
         print(e)
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals() and cursor is not None:
+            cursor.close()
+        if 'conn' in locals() and conn is not None:
+            conn.close()
 
 
 @app.route('/login')
