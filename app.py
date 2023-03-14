@@ -32,7 +32,6 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
-    cursor = None
     try:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -41,9 +40,12 @@ def index():
         return render_template('index.html', products=rows)
     except Exception as e:
         print(e)
+        return "Error: {}".format(str(e))
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals() and cursor is not None:
+            cursor.close()
+        if 'conn' in locals() and conn is not None:
+            conn.close()
 
 
 @app.route('/login')
