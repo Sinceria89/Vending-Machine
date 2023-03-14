@@ -21,11 +21,10 @@
 }
 
 
-img {
+.image {
 
     width: 80%;
     margin: auto;
-
     justify-content: center;
 }
 

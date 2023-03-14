@@ -158,7 +158,7 @@
                     {% for data in products %}
                     <tr>
                         <td>{{data.product_id}}</td>
-                        <td class="box"><img src="/static/upload/{{ data.image }}"></td>
+                        <td class="box"><img src="/static/upload/{{ data.image }}" class="image"></td>
                         <td>{{data.product_name}}</td>
                         <td>{{ "{:,.2f}".format(data.price) }}</td>
                         <td>{{data.quantity}}</td>

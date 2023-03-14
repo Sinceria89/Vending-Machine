@@ -52,6 +52,7 @@
       animation: marquee 7s linear infinite;
     }
 
+    /*
     @keyframes marquee {
       0% {
         transform: translateX(0);
@@ -60,7 +61,7 @@
       100% {
         transform: translateX(-67%);
       }
-    }
+    }*/
   </style>
 
 </head>
@@ -211,7 +212,7 @@
             <form method="post" action="/add">
               <div class="single-publication">
                 <figure class="display">
-                  <img src="/static/upload/{{ product.image }}">
+                  <img src="/static/upload/{{ product.image }}" class="image">
                 </figure>
 
                 <div class="publication-content">
