@@ -40,6 +40,7 @@ def index():
         return render_template('index.html', products=rows)
     except Exception as e:
         print(e)
+        return "Error: {}".format(str(e))
     finally:
         if 'cursor' in locals() and cursor is not None:
             cursor.close()
