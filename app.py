@@ -48,6 +48,15 @@ def index():
             conn.close()
 
 
+@app.route('/details/<product_id>')
+def details(product_id):
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM products WHERE product_id=%s", (product_id))
+    result = cursor.fetchone()
+    return render_template('index.html', result=result)
+
+
 @app.route('/login')
 def login():
     return render_template("login.html")
