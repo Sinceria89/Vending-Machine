@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Generate QR Code</title>
+  </head>
+  <body>
+    <h1>Generate QR Code</h1>
+    <form method="POST" action="/generateQR">
+      <label for="amount">Amount:</label>
+      <input type="number" name="amount" id="amount" min="0" step="0.01" required>
+      <button type="submit">Generate QR Code</button>
+    </form>
+    {% if qr_image %}
+      <h2>QR Code</h2>
+      <img src="data:image/png;base64,{{ qr_image }}" alt="QR Code">
+    {% endif %}
+  </body>
+</html>
