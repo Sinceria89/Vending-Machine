@@ -1,4 +1,5 @@
-new InputTouchspin(document.querySelector('.touchspin'))
+const touchspins = document.querySelectorAll('.touchspin');
+touchspins.forEach(touchspin => new InputTouchspin(touchspin));
 
 // Get the div elements
 const inactiveDiv = document.getElementById('Inactive');
