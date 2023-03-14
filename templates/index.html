@@ -33,6 +33,23 @@
           color: #e7a7d9;
           text-align: right;
          }
+    .scroll-text {
+        color:white;
+        font-size: 18px;
+        white-space: nowrap;
+        overflow: hidden;
+        animation: marquee 7s linear infinite;
+    }
+    
+    @keyframes marquee {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-67%);
+        }
+    }
+
     </style>
     
 </head>
@@ -45,8 +62,8 @@
               <img src="../static/logo.png" alt="logo" style="height: 55px;">
         </a>
           </div>
-          <div class="col-12 col-sm-9 text-container text-right";>
-            <marquee scrolldelay="150" scrollamount="5" style="color:#FFFFFF; font-size:18px">เข้าสู่ระบบ(แอดมิน)</marquee>
+          <div class="col-12 col-sm-9 text-container text-right scroll-text"; >เข้าสู่ระบบ(แอดมิน)
+    
           </div>
           <div class="clock"id = "clock" onload="clock">/</div>
         </div>   
