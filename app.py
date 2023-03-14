@@ -32,6 +32,7 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
+    cursor = None
     try:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
