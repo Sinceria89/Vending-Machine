@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.0 
 -- https://www.phpmyadmin.net/
---
+-- hee hee
 -- Host: 127.0.0.1
--- Generation Time: Mar 08, 2023 at 07:56 AM
+-- Generation Time: Mar 10, 2023 at 09:35 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -57,6 +57,34 @@ INSERT INTO `admin` (`admin_id`, `username`, `password`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `categories`
+--
+
+CREATE TABLE `categories` (
+  `category_id` int(11) NOT NULL,
+  `category_name` varchar(50) NOT NULL,
+  `description` varchar(250) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`category_id`, `category_name`, `description`) VALUES
+(1, 'ยาแก้ไข้/แก้ปวด', NULL),
+(2, 'ยาแก้แพ้', NULL),
+(3, 'ยาแก้ปวดกล้ามเนื้อ', NULL),
+(4, 'ยาแก้ท้องอืดท้องเฟ้อ', NULL),
+(5, 'ยาแก้เมารถ', NULL),
+(6, 'ยาแก้ไอ', NULL),
+(7, 'ยาดม ', NULL),
+(8, 'ยารักษาแผล/สำลี ', NULL),
+(9, 'ยาทาผิวหนัง', NULL),
+(10, ' ถุงยางอนามัย', NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `products`
 --
 
@@ -66,19 +94,19 @@ CREATE TABLE `products` (
   `price` decimal(11,2) NOT NULL,
   `quantity` int(11) NOT NULL,
   `row` int(11) NOT NULL,
-  `description` varchar(200) NOT NULL
+  `image` varchar(255) NOT NULL,
+  `description` varchar(200) NOT NULL,
+  `category_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`product_id`, `product_name`, `price`, `quantity`, `row`, `description`) VALUES
-(1, 'TYLENOL Paracetamol(500mg)', '150.00', 10, 2, '-ใช้บรรเทาอาการปวดเล็กน้อยถึงปานกลางและลดไข้'),
-(2, 'Chlorpheniramine(2mg)', '20.00', 5, 1, '-ใช้บรรเทาอาการแพ้ต่างๆ เช่น น้ำมูกไหล, ผื่นคัน, ลมพิษ, น้ำตาไหล, ตาแดง, คันตา, คันจมูก, คันคอ, จาม หรือ ลดน้ำมูกในโรคหวัด'),
-(3, 'Calamine Lotion Siribuncha(120ml)', '20.00', 10, 3, '-ช่วยบรรเทาอาการคันหรือระคายเคืองผิวหนัง เช่น ผดผื่นคัน ผื่นแดง ผื่นแพ้ ลมพิษ อาการแพ้พืชบางชนิด -ผื่นแพ้ ยุงกัด แมลงกัดต่อย-ผิวไหม้เนื่องจากแสงแดด รอยขีดข่วน ผื่นคันจากผ้าอ้อม'),
-(12, 'test', '9000.00', 22, 2, 'testing1ss'),
-(13, 'test2', '11.00', 22, 1, 'testing221');
+INSERT INTO `products` (`product_id`, `product_name`, `price`, `quantity`, `row`, `image`, `description`, `category_id`) VALUES
+(1, 'TYLENOL Paracetamol(500mg)', '150.00', 10, 2, 'tylenol-paracetamol-500-100.png', '-ใช้บรรเทาอาการปวดเล็กน้อยถึงปานกลางและลดไข้', 1),
+(2, 'Chlorpheniramine(2mg)', '20.00', 5, 1, 'wegzkl.png', '-ใช้บรรเทาอาการแพ้ต่างๆ เช่น น้ำมูกไหล, ผื่นคัน, ลมพิษ, น้ำตาไหล, ตาแดง, คันตา, คันจมูก, คันคอ, จาม หรือ ลดน้ำมูกในโรคหวัด', 2),
+(3, 'Calamine Lotion Siribuncha(120ml)', '20.00', 10, 3, 'image_164492525384736107919d0501.png', '-ช่วยบรรเทาอาการคันหรือระคายเคืองผิวหนัง เช่น ผดผื่นคัน ผื่นแดง ผื่นแพ้ ลมพิษ อาการแพ้พืชบางชนิด \r\n-ผื่นแพ้ ยุงกัด แมลงกัดต่อย\r\n-ผิวไหม้เนื่องจากแสงแดด รอยขีดข่วน ผื่นคันจากผ้าอ้อม', 9);
 
 -- --------------------------------------------------------
 
@@ -111,10 +139,17 @@ ALTER TABLE `admin`
   ADD PRIMARY KEY (`admin_id`);
 
 --
+-- Indexes for table `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`category_id`);
+
+--
 -- Indexes for table `products`
 --
 ALTER TABLE `products`
-  ADD PRIMARY KEY (`product_id`);
+  ADD PRIMARY KEY (`product_id`),
+  ADD KEY `category_id` (`category_id`);
 
 --
 -- Indexes for table `transactions`
@@ -140,10 +175,16 @@ ALTER TABLE `admin`
   MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `categories`
+--
+ALTER TABLE `categories`
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `transactions`
@@ -160,6 +201,12 @@ ALTER TABLE `transactions`
 --
 ALTER TABLE `activity_log`
   ADD CONSTRAINT `activity_log_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`);
+
+--
+-- Constraints for table `products`
+--
+ALTER TABLE `products`
+  ADD CONSTRAINT `category_id` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`);
 
 --
 -- Constraints for table `transactions`

@@ -2,6 +2,17 @@
 <html>
 
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.5.4"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <title>Product Manage</title>
@@ -51,27 +62,28 @@
 
                         <div class="modal-body">
 
-                            <form action="{{ url_for('product_add')}}" method="POST">
+                            <form name="Add" enctype="multipart/form-data" action="{{ url_for('product_add')}}"
+                                onsubmit="return validateForm()" method="POST">
                                 <div class="form-group">
-                                    <label>Product Name</label>
+                                    <label>Product Name <span class="required"> * </span> </label>
                                     <input type="text" name="product_name" class="form-control"
                                         placeholder="Enter Product Name">
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Price</label>
-                                    <input type="text" name="price" class="form-control" id="price"
+                                    <label>Price<span class="required"> * </span> </label>
+                                    <input type="text" name="price" class="form-control price"
                                         placeholder="Enter Price">
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Quantity</label>
+                                    <label>Quantity <span class="required"> * </span> </label>
                                     <input type="number" name="quantity" class="form-control"
                                         placeholder="Enter Quantity">
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Row</label>
+                                    <label>Row <span class="required"> * </span></label>
                                     <div class="form-check">
                                         <input type="radio" name="row" id="num1" class="form-check-input" value="1">
                                         <label class="form-check-label" for="num1">1</label>
@@ -86,14 +98,32 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group">
+                                    <label>Category <span class="required"> * </span></label>
+                                    {% for cate in categories %}
+                                    <div class="form-check">
+                                        <input type="radio" name="category" class="form-check-input"
+                                            id="{{ cate.category_id }}" value="{{  cate.category_id }}">
+                                        <label class="form-check-label" for={{ cate.category_id }}>{{
+                                            cate.category_name }}</label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label>Choose Images: <span class="required"> * </span> </label>
+                                    <input type="file" name="image" class="form-control fileInput" id="fileInput1">
+                                </div>
+
 
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <input type="text" name="description" class="form-control"
-                                        placeholder="Enter Description">
+                                    <textarea name="description" id="description" class="form-control" rows="6"
+                                        placeholder="Enter your message"></textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary mb-2">Save</button>
+                                <button type="submit" class="btn btn-primary mb-2 Save">Save</button>
 
                             </form>
 
@@ -114,10 +144,12 @@
                 <thead>
                     <tr>
                         <th scope="col">ID</th>
+                        <th scope="col">Image</th>
                         <th scope="col" width="20%">Product</th>
                         <th scope="col">Price</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Row</th>
+                        <th scope="col">Category</th>
                         <th scope="col" width="30%">Description</th>
                         <th scope="col">Action</th>
                     </tr>
@@ -126,10 +158,12 @@
                     {% for data in products %}
                     <tr>
                         <td>{{data.product_id}}</td>
+                        <td class="box"><img src="/static/upload/{{ data.image }}"></td>
                         <td>{{data.product_name}}</td>
                         <td>{{ "{:,.2f}".format(data.price) }}</td>
                         <td>{{data.quantity}}</td>
                         <td>{{data.row}}</td>
+                        <td>{{data.category_name}}</td>
                         <td>{{data.description}}</td>
                         <td>
                             <a href="/update/{{data.product_id}}" class="btn btn-warning btn-sm" data-toggle="modal"
@@ -157,28 +191,28 @@
 
                                 <div class="modal-body">
 
-                                    <form action="{{ url_for('update')}}" method="POST">
+                                    <form enctype="multipart/form-data" action="{{ url_for('update')}}" method="POST">
                                         <input value="{{data.product_id}}" type="hidden" name="product_id">
                                         <div class="form-group">
-                                            <label>Product Name</label>
+                                            <label>Product Name <span class="required"> * </span></label>
                                             <input value="{{data.product_name}}" type="text" name="product_name"
                                                 class="form-control" placeholder="Enter Product Name">
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Price</label>
-                                            <input value="{{data.price}}" type="text" name="price" max="5000"
+                                            <label>Price <span class="required"> * </span></label>
+                                            <input value="{{data.price}}" type="text" name="price"
                                                 class="form-control price" placeholder="Enter Price">
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Quantity</label>
+                                            <label>Quantity <span class="required"> * </span></label>
                                             <input value="{{data.quantity}}" type="number" name="quantity"
                                                 class="form-control" placeholder="Enter Quantity">
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Row</label>
+                                            <label>Row <span class="required"> * </span></label>
                                             <div class="form-check">
                                                 <input type="radio" name="row" id="num1" class="form-check-input"
                                                     value="1" {{'checked' if data.row==1 else '' }}>
@@ -196,14 +230,34 @@
                                             </div>
                                         </div>
 
+                                        <div class="form-group">
+                                            <label>Category <span class="required"> * </span></label>
+                                            {% for cate in categories %}
+                                            <div class="form-check">
+                                                <input type="radio" name="category" class="form-check-input"
+                                                    id="{{ cate.category_id }}" value="{{  cate.category_id }}"
+                                                    {{'checked' if data.category_id==cate.category_id else '' }}>
+                                                <label class="form-check-label" for={{ cate.category_id }}>{{
+                                                    cate.category_name }}</label>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Choose Images: <span class="required"> * </span></label>
+                                            <input type="file" name="image" class="form-control fileInput">
+                                            <div class="example"><img src="/static/upload/{{ data.image }}"></div>
+                                        </div>
+
 
                                         <div class="form-group">
                                             <label>Description</label>
-                                            <input value="{{data.description}}" type="text" name="description"
-                                                class="form-control" placeholder="Enter Description">
+                                            <textarea name="description" id="description" class="form-control" rows="6"
+                                                placeholder="Enter your message">{{ data.description }}</textarea>
+
                                         </div>
 
-                                        <button type="submit" class="btn btn-success mb-2">Update</button>
+                                        <button type="submit" class="btn btn-success mb-2 Save">Update</button>
 
                                     </form>
 
@@ -233,50 +287,66 @@
     </div>
     </div>
     <script>
-        // Get all input fields with the 'price' class
-        const inputs = document.querySelectorAll('.price');
+        //thousand separator
+        new AutoNumeric('.price', {
+            styleRules:
+                AutoNumeric.options.styleRules.positiveNegative,
+        });
 
-        // Loop through each input field and add an event listener to it
-        inputs.forEach(function (input) {
-            input.addEventListener('input', function () {
-                // Get the current value of the input field
-                let value = input.value;
 
-                // Remove any commas from the input value
-                value = value.replace(',', '');
+        // File type validation
+        $(document).ready(function () {
 
-                // Convert the input value to a number and limit it to two decimal places
-                let number = parseFloat(value);
-                number = Math.round(number * 100) / 100;
-
-                // If the input value is not a number, set it to zero
-                if (isNaN(number)) {
-                    number = 0;
-                }
-
-                // Format the number with thousands separators and two decimal places
-                value = number.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-
-                // If the formatted value is different from the input value, update the input field
-                if (value !== input.value) {
-                    input.value = value;
+            $(".fileInput").change(function () {
+                var fileLength = this.files.length;
+                var match = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
+                var i;
+                for (i = 0; i < fileLength; i++) {
+                    var file = this.files[i];
+                    var imagefile = file.type;
+                    if (!((imagefile == match[0]) || (imagefile == match[1]) || (imagefile == match[2]) || (imagefile == match[3]))) {
+                        alert('Please select a valid image file (JPEG/JPG/PNG/GIF).');
+                        $(this).val('');
+                        console.log(file)
+                        return file;
+                    }
                 }
             });
         });
+
+        $(document).ready(function () {
+            $('.Save').bind("click", function () {
+                var inputs = $('.fileInput');
+                var hasSelected = false;
+                inputs.each(function () {
+                    if ($(this).val() !== '') {
+                        hasSelected = true;
+                        return false; // exit loop early
+                    }
+                });
+                if (!hasSelected) {
+                    alert("Please Select the Image.");
+                    return false;
+                }
+            });
+        });
+
+
+        function validateForm() {
+            a = document.forms['Add'].product_name.value
+            b = document.forms['Add'].price.value
+            c = document.forms['Add'].quantity.value
+            d = document.forms['Add'].row.value
+            d = document.forms['Add'].category.value
+            if (a == "" || b == "" || c == "" || d == "" || e == "") {
+                alert("Please fill the all required Inputs!");
+                return false;
+            }
+            return true;
+        }
+
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
+
 </body>
 
 </html>
