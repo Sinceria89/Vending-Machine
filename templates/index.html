@@ -5,6 +5,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css2?family=Sriracha&display=swap&subset=thai" rel="stylesheet">
 
   <title>กล่องจ่ายยาอัตโนมัติ</title>
 
@@ -76,16 +77,18 @@
             <img src="../static/logo.png" alt="logo" style="height: 55px;">
           </a>
         </div>
-        <div class="col-12 col-sm-8 text-container text-right scroll-text" ;>เข้าสู่ระบบ(แอดมิน)
+        <div class="col-12 col-sm-8 text-container text-right">
+          <div class="scroll-text">เข้าสู่ระบบ(แอดมิน)</div>
+          <div class="clock" id="clock" onload="clock"></div>
         </div>
-        <div class="clock" id="clock" onload="clock">/</div>
       </div>
     </div>
   </div>
+  
   <div class="col-12 col-sm-12" style="margin-top: 20px;" id="Inactive">
     <div style="background-color:white;height: 310px; display: flex;">
-      <div style="flex: 1;">
-        <img src="../static/Sunset.jpg" alt="Sunset display" style="height: 310px;">
+      <div style="flex: 2; width:85%;">
+        <img src="../static/Sunset.jpg" alt="Sunset display" style="height: 310px; width: 100%;">
       </div>
       <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 20px;">
         <br>
@@ -95,10 +98,6 @@
       </div>
     </div>
   </div>
-
-
-  </div>
-
   <div id="Active">
     <div class="container">
       <div class="row">
