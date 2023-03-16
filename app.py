@@ -57,17 +57,17 @@ def index():
 def add_product_to_cart():
     cursor = None
     try:
-        quantity = int(request.form['quantity'])
+        stock = int(request.form['stock'])
         product_id = request.form['product_id']
         # validate the received values
-        if quantity and product_id and request.method == 'POST':
+        if stock and product_id and request.method == 'POST':
             conn = mysql.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
-            cursor.execute("SELECT * FROM product WHERE product_id=%s", product_id)
+            cursor.execute("SELECT * FROM products WHERE product_id=%s", product_id)
             row = cursor.fetchone()
 
-            itemArray = {row['product_id']: {'product_name': row['product_name'], 'product_id': row['product_id'], 'quantity': quantity,
-                                       'price': row['price'], 'image': row['image'], 'total_price': quantity * row['price']}}
+            itemArray = {row['product_id']: {'product_name': row['product_name'], 'quantity': stock, 'price': row['price'],
+                                             'image': row['image'], 'total_price': stock * row['price'], 'total_quantity': stock + stock}}
 
             all_total_price = 0
             all_total_quantity = 0
@@ -78,7 +78,7 @@ def add_product_to_cart():
                     for key, value in session['cart_item'].items():
                         if row['product_id'] == key:
                             old_quantity = session['cart_item'][key]['quantity']
-                            total_quantity = old_quantity + quantity
+                            total_quantity = old_quantity + stock
                             session['cart_item'][key]['quantity'] = total_quantity
                             session['cart_item'][key]['total_price'] = total_quantity * row['price']
                 else:
@@ -94,8 +94,8 @@ def add_product_to_cart():
                     all_total_price = all_total_price + individual_price
             else:
                 session['cart_item'] = itemArray
-                all_total_quantity = all_total_quantity + quantity
-                all_total_price = all_total_price + quantity * row['price']
+                all_total_quantity = all_total_quantity + stock
+                all_total_price = all_total_price + stock * row['price']
 
             session['all_total_quantity'] = all_total_quantity
             session['all_total_price'] = all_total_price
@@ -110,6 +110,10 @@ def add_product_to_cart():
         conn.close()
 
 
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
 @app.route('/empty')
 def empty_cart():
  try:
@@ -118,19 +122,19 @@ def empty_cart():
  except Exception as e:
   print(e)
  
-@app.route('/delete/<string:code>')
-def delete_product(code):
+@app.route('/delete/<string:product_id>')
+def delete_product(product_id):
  try:
   all_total_price = 0
   all_total_quantity = 0
   session.modified = True
    
   for item in session['cart_item'].items():
-   if item[0] == code:    
+   if item[0] == product_id:    
     session['cart_item'].pop(item[0], None)
     if 'cart_item' in session:
      for key, value in session['cart_item'].items():
-      individual_quantity = int(session['cart_item'][key]['quantity'])
+      individual_quantity = int(session['cart_item'][key]['stock'])
       individual_price = float(session['cart_item'][key]['total_price'])
       all_total_quantity = all_total_quantity + individual_quantity
       all_total_price = all_total_price + individual_price
@@ -142,7 +146,7 @@ def delete_product(code):
    session['all_total_quantity'] = all_total_quantity
    session['all_total_price'] = all_total_price
    
-  return redirect(url_for('/'))
+  return redirect(url_for('.products'))
  except Exception as e:
   print(e)
    
@@ -154,6 +158,27 @@ def array_merge( first_array , second_array ):
  elif isinstance( first_array , set ) and isinstance( second_array , set ):
   return first_array.union( second_array )
  return False
+  
+
+
+
+
+@app.route('/test')
+def test():
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM products")
+        rows = cursor.fetchall()
+        return render_template('test1.html', products=rows)
+    except Exception as e:
+        print(e)
+        return "Error: {}".format(str(e))
+    finally:
+        if 'cursor' in locals() and cursor is not None:
+            cursor.close()
+        if 'conn' in locals() and conn is not None:
+            conn.close()
 
 
 @app.route('/login')
@@ -245,7 +270,7 @@ def product_add():
         price_value = request.form['price']
         price_value = price_value.replace(',', '')
         price = float(price_value)
-        quantity = request.form['quantity']
+        stock = request.form['stock']
         image = request.files['image']
         row = request.form['row']
         category = request.form['category']
@@ -255,8 +280,8 @@ def product_add():
         if image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        cur.execute("INSERT INTO products (product_name, price, quantity, row, category_id, image, description) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    (product_name, price, quantity, row, category, filename, description))
+        cur.execute("INSERT INTO products (product_name, price, stock, row, category_id, image, description) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                    (product_name, price, stock, row, category, filename, description))
         conn.commit()
         print(image)
         return redirect(url_for('products'))
@@ -270,7 +295,7 @@ def update():
         price_value = request.form['price']
         price_value = price_value.replace(',', '')
         price = float(price_value)
-        quantity = request.form['quantity']
+        stock = request.form['stock']
         image = request.files['image']
         row = request.form['row']
         category = request.form['category']
@@ -281,9 +306,9 @@ def update():
             filename = secure_filename(image.filename)
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         cur.execute("""
-        UPDATE products SET product_name=%s, price=%s, quantity=%s, row=%s, category_id=%s, image=%s, description=%s
+        UPDATE products SET product_name=%s, price=%s, stock=%s, row=%s, category_id=%s, image=%s, description=%s
         WHERE product_id=%s
-        """, (product_name, price, quantity, row, category, filename, description, product_id))
+        """, (product_name, price, stock, row, category, filename, description, product_id))
         flash("Data Updated Successfully")
         conn.commit()
         return redirect(url_for('products'))

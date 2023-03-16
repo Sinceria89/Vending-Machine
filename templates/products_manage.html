@@ -77,8 +77,8 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Quantity <span class="required"> * </span> </label>
-                                    <input type="number" name="quantity" class="form-control"
+                                    <label>In-Stock <span class="required"> * </span> </label>
+                                    <input type="number" name="stock" class="form-control"
                                         placeholder="Enter Quantity">
                                 </div>
 
@@ -147,7 +147,7 @@
                         <th scope="col">Image</th>
                         <th scope="col" width="20%">Product</th>
                         <th scope="col">Price</th>
-                        <th scope="col">Quantity</th>
+                        <th scope="col">In-Stock</th>
                         <th scope="col">Row</th>
                         <th scope="col">Category</th>
                         <th scope="col" width="30%">Description</th>
@@ -161,7 +161,7 @@
                         <td class="box"><img src="/static/upload/{{ data.image }}" class="image"></td>
                         <td>{{data.product_name}}</td>
                         <td>{{ "{:,.2f}".format(data.price) }}</td>
-                        <td>{{data.quantity}}</td>
+                        <td>{{data.stock}}</td>
                         <td>{{data.row}}</td>
                         <td>{{data.category_name}}</td>
                         <td>{{data.description}}</td>
@@ -207,7 +207,7 @@
 
                                         <div class="form-group">
                                             <label>Quantity <span class="required"> * </span></label>
-                                            <input value="{{data.quantity}}" type="number" name="quantity"
+                                            <input value="{{data.stock}}" type="number" name="stock"
                                                 class="form-control" placeholder="Enter Quantity">
                                         </div>
 
@@ -335,7 +335,7 @@
         function validateForm() {
             a = document.forms['Add'].product_name.value
             b = document.forms['Add'].price.value
-            c = document.forms['Add'].quantity.value
+            c = document.forms['Add'].stock.value
             d = document.forms['Add'].row.value
             d = document.forms['Add'].category.value
             if (a == "" || b == "" || c == "" || d == "" || e == "") {
