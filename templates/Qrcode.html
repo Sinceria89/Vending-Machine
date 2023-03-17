@@ -16,11 +16,10 @@
       <img src="data:image/png;base64,{{ qr_image }}" alt="QR Code">
     {% endif %}
     <script>
-      function redirectToOtherPage() {
-        setTimeout(function() {
-          window.location.href = 'thanks.html';
-        }, 10000); // 10000ms = 10s
-      }
+     // Wait for 10 seconds and redirect to the thanks.html page
+     setTimeout(function() {
+      window.location.href = "/thx";
+    }, 10000);
     </script>
   </body>
 </html>

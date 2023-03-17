@@ -56,9 +56,17 @@ def generateQR():
     # Encode the image data as a base64 string
     encoded_image = base64.b64encode(image_data).decode('utf-8')
     
-    time.sleep(5)
-    # Render the index.html template with the amount value and the base64 encoded image data
-    return render_template('Qrcode.html', amount=amount, qr_image=encoded_image)
+    return redirect(url_for('showQR', amount=amount, qr_image=encoded_image))
+
+@app.route('/showQR')
+def showQR():
+    # Get the amount and QR code image data from the URL parameters
+    amount = float(request.args.get('amount', 0))
+    qr_image = request.args.get('qr_image', '')
+
+    # Render the Qrcode.html template with the amount and QR code image data
+    return render_template('Qrcode.html', amount=amount, qr_image=qr_image)
+
 
 
 @app.route("/thx")
