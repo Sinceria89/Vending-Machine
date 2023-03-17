@@ -9,16 +9,18 @@
     <form method="POST" action="/generateQR">
       <label for="amount">Amount:</label>
       <input type="number" name="amount" id="amount" min="0" step="0.01" required>
-      <button type="submit">Generate QR Code</button>
+      <button type="submit"onclick="redirectToOtherPage()">Generate QR Code</button>
     </form>
     {% if qr_image %}
       <h2>QR Code</h2>
       <img src="data:image/png;base64,{{ qr_image }}" alt="QR Code">
     {% endif %}
     <script>
-      setTimeout(function() {
-        window.location.href = 'dispense.html';
-      }, 10000); // 10000ms = 10s
+      function redirectToOtherPage() {
+        setTimeout(function() {
+          window.location.href = 'thanks.html';
+        }, 10000); // 10000ms = 10s
+      }
     </script>
   </body>
 </html>

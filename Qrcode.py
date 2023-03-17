@@ -3,7 +3,7 @@ import base64
 import qrcode
 import time
 import requests
-from flask import Flask, jsonify, request, make_response,render_template
+from flask import Flask, jsonify, request, render_template, abort, flash, session, request, redirect, url_for
 from promptpay import qrcode as ppqrcode
 
 # Line Notify API token
@@ -56,12 +56,14 @@ def generateQR():
     # Encode the image data as a base64 string
     encoded_image = base64.b64encode(image_data).decode('utf-8')
     
-
-    
-    
+    time.sleep(5)
     # Render the index.html template with the amount value and the base64 encoded image data
     return render_template('Qrcode.html', amount=amount, qr_image=encoded_image)
 
+
+@app.route("/thx")
+def thx():
+    return render_template('thanks.html')
 
 # If this script is being run as the main program, start the Flask application
 if __name__ == '__main__':
