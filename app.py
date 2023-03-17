@@ -90,14 +90,13 @@ def AddCart():
                     for key, item in session['Shoppingcart'].items():
                         if int(key) == int(product_id):
                             session.modified = True
-                            item['quantity'] += 1
+                            item['quantity'] += quantity
                 else:
                     session['Shoppingcart'] = MagerDicts(
                         session['Shoppingcart'], DictItems)
                     return redirect(request.referrer)
             else:
                 session['Shoppingcart'] = DictItems
-
                 return redirect(request.referrer)
 
     except Exception as e:

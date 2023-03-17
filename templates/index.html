@@ -121,8 +121,56 @@
               <h1 class="modal-title">Shopping Cart</h1>
             </div>
             <div class="modal-body">
+              <table class="table table-sm">
+                <thead>
+                  <th>Sr</th>
+                  <th>Image</th>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Subtotal</th>
+                  <th>Update</th>
+                  <th>Delete</th>
+                </thead>
+                <tbody>
+                  {% if 'Shoppingcart' in session %}
+                  {% for key, product in session['Shoppingcart'].items() %}
 
+                  <tr>
+                    <td>{{loop.index}}</td>
+                    <td><img src="/static/upload/{{ product.image }}" alt="{{product.name}}"></td>
+                    <td>{{product.product_name}}</td>
+                    <form action="" method="post">
+                      <td>${{"%.2f"|format(product.price)}}</td>
+                      <td> <input type="number" name="quantity" min="1" max="10" value="{{product.quantity}}"> </td>
+                      {% set Subtotal = product.quantity * product.price %}
+                      <td>{{ Subtotal }}</td>
+                      <td><button type="submit" class="btn btn-sm btn-info">Update</button> </td>
+                    </form>
+                    <td> <a href="#" class="btn btn-sm btn-danger">Delete</a></td>
+                  </tr>
+                  {% endfor %}
+                  {% else: %}
+                  <div>Your Cart is Empty</div>
+                  {% endif %}
+                </tbody>
+              </table>
+              <table class="table table-sm">
+                <tr>
+                  <td> <a href="#" class="btn btn-success"> Order now </a> </td>
+                  <td width="35%"></td>
+                  <td>
+                    <h5>Tax: </h5>
+                  </td>
+                  <td>
+                    <h5>Grand total: </h3>
+                  </td>
+                  <td> <a href="#" class="btn btn-danger btn-sm float-right mr-4"> Clear cart</a>
+                  </td>
+                </tr>
+              </table>
             </div>
+
             <div class="modal-footer">
 
             </div>
