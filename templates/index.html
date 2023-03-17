@@ -204,47 +204,38 @@
           <p>และนี่คือสินค้าของพวกเรา</p>
         </div>
 
-        <div id="product-carousel" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner">
-            {% for product in products %}
-              <div class="carousel-item {% if loop.first %}active{% endif %}">
-                <form method="post" action="/add">
-                  <div class="single-publication">
-                    <figure class="display">
-                      <img src="/static/upload/{{ product.image }}" class="image">
-                    </figure>
-                    <div class="publication-content">
-                      <span class="category">{{ product.product_category }}</span>
-                      <h3>{{ product.product_name }}</h3>
-                      <h4 class="price">฿ {{ product.price }}</h4>
-                    </div>
-                    <div class="add-to-cart">
-                      <input type="hidden" name="code" value="{{ product.code }}" />
-                      <div class="touchspin d-flex align-items-center gap-2">
-                        <button type="button" class="btn btn-danger" data-touchspin-down>-</button>
-                        <input type="number" class="form-control text-center" name="quantity" value="1" min="0"
-                          max="{{ product.quantity }}" data-touchspin-input />
-                        <button type="button" class="btn btn-success" data-touchspin-up>+</button>
-                      </div>
-                      <div class="button-def">
-                        <button type="button" class="btn btn-info">Detail</button>
-                        <input type="submit" value="Add to Cart" class="btn btn-warning" />
-                      </div>
-                    </div>
+        <div class="row">
+          {% for product in products %}
+          <div class="col-xs-6 col-sm-4">
+            <form method="post" action="/add">
+              <div class="single-publication">
+                <figure class="display">
+                  <img src="/static/upload/{{ product.image }}" class="image">
+                </figure>
+
+                <div class="publication-content">
+                  <span class="category">{{ product.product_category }}</span>
+                  <h3>{{ product.product_name }}</h3>
+                  <h4 class="price">฿ {{ product.price }}</h4>
+                </div>
+
+                <div class="add-to-cart">
+                  <input type="hidden" name="code" value="{{ product.code }}" />
+                  <div class="touchspin d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-danger" data-touchspin-down>-</button>
+                    <input type="number" class="form-control text-center" name="quantity" value="1" min="0"
+                      max="{{ product.quantity }}" data-touchspin-input />
+                    <button type="button" class="btn btn-success" data-touchspin-up>+</button>
                   </div>
-                </form>
+                  <div class="button-def">
+                    <button type="button" class="btn btn-info">Detail</button>
+                    <input type="submit" value="Add to Cart" class="btn btn-warning" />
+                  </div>
+                </div>
               </div>
-            {% endfor %}
+            </form>
           </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#product-carousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#product-carousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-        
+          {% endfor %}
       </div>
     </section>
   </div>
