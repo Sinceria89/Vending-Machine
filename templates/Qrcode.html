@@ -15,5 +15,10 @@
       <h2>QR Code</h2>
       <img src="data:image/png;base64,{{ qr_image }}" alt="QR Code">
     {% endif %}
+    <script>
+      setTimeout(function() {
+        window.location.href = 'dispense.html';
+      }, 10000); // 10000ms = 10s
+    </script>
   </body>
 </html>
