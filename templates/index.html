@@ -20,7 +20,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/brands.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/solid.css') }}" rel="stylesheet">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
     .myDiv {
       height: 55px;
@@ -104,7 +108,7 @@
   <div id="Active">
 
     <div class="container">
-      <h2 style="margin-bottom: 10px">Shopping Cart using Python Flask MySQL</h2>
+      <h1 style="margin-bottom: 10px"> Shopping Cart: ({{ session['Shoppingcart']|length }})</h1>
 
       <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#Cart">
         Your items
@@ -116,92 +120,91 @@
             <div class="modal-header">
               <h1 class="modal-title">Shopping Cart</h1>
             </div>
-              <div class="modal-body">
+            <div class="modal-body">
 
-              </div>
-              <div class="modal-footer">
-
-              </div>
-          </div>
-        </div>
-      </div> 
-
-        <div class="container" style="margin-top: 10px">
-          <div class="section-header">
-            <i class="fa fa-book"></i>
-            <h2>Our Product</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod labore et dolore magna
-              aliqua.</p>
-          </div>
-
-
-
-          <div class="row">
-            {% for product in products %}
-            <div class="col-xs-6 col-sm-4">
-              <form method="post" action="/add">
-                <div class="single-publication">
-                  <figure class="display">
-                    <img src="/static/upload/{{ product.image }}" class="image">
-                  </figure>
-
-                  <div class="publication-content">
-                    <span class="category">{{ product.product_category }}</span>
-                    <h3>{{ product.product_name }}</h3>
-                    <h4 class="price">฿ {{ product.price }}</h4>
-                  </div>
-
-                  <div class="add-to-cart">
-                    <input type="hidden" name="product_id" value="{{ product.product_id }}" />
-                    <div class="touchspin d-flex align-items-center gap-2">
-                      <button type="button" class="btn btn-danger" data-touchspin-down>-</button>
-                      <input type="number" class="form-control text-center" name="stock" value="1" min="1"
-                        max="{{ product.stock }}" data-touchspin-input />
-                      <button type="button" class="btn btn-success" data-touchspin-up>+</button>
-                    </div>
-
-                    <div class="button-def">
-                      <button type="button" class="btn btn-primary" data-toggle="modal"
-                        data-target="#detailsModal{{ product.product_id }}">
-                        Detail
-                      </button>
-
-                      <input type="submit" value="Add to Cart" class="btn btn-warning" />
-                    </div>
-                  </div>
-                </div>
-              </form>
             </div>
+            <div class="modal-footer">
 
-
-
-            <div class="modal fade" id="detailsModal{{ product.product_id }}">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h2 class="modal-title text-primary" style="align-content: center;">{{ product.product_name }}'s
-                      Detail</h2>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body" style="align-content: center; text-align: center;">
-                    <img src="/static/upload/{{ product.image }}" class="image">
-                    <p>Description: {{ product.description }}</p>
-                    <p>Price: ฿ {{ product.price }}</p>
-                    <p>In-Stock: {{ product.stock }}</p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                      aria-label="Close">Close</button>
-                  </div>
-                </div>
-              </div>
             </div>
-            {% endfor %}
           </div>
         </div>
       </div>
+
+      <div class="container" style="margin-top: 10px">
+        <div class="section-header">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod labore et dolore magna
+            aliqua.</p>
+          <h2><i class="fa-solid fa-book fa-2xl"></i> Our Product </h2>
+
+        </div>
+
+
+
+        <div class="row" style="margin-top: 20px">
+          {% for product in products %}
+          <div class="col-xs-6 col-sm-4">
+            <form method="post" action="{{url_for('AddCart')}}">
+              <div class="single-publication">
+                <figure class="display">
+                  <img src="/static/upload/{{ product.image }}" class="image">
+                </figure>
+
+                <div class="publication-content">
+                  <span class="category">{{ product.product_category }}</span>
+                  <h3>{{ product.product_name }}</h3>
+                  <h4 class="price">฿ {{ product.price }}</h4>
+                </div>
+
+                <div class="add-to-cart">
+                  <input type="hidden" name="product_id" value="{{ product.product_id }}" />
+                  <div class="touchspin d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-danger" data-touchspin-down>-</button>
+                    <input type="number" class="form-control text-center" name="quantity" value="1" min="1"
+                      max="{{ product.stock }}" data-touchspin-input />
+                    <button type="button" class="btn btn-success" data-touchspin-up>+</button>
+                  </div>
+
+                  <div class="button-def">
+                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                      data-target="#detailsModal{{ product.product_id }}">
+                      Detail
+                    </button>
+
+                    <input type="submit" value="Add to Cart" class="btn btn-warning" />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+
+
+
+          <div class="modal fade" id="detailsModal{{ product.product_id }}">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h2 class="modal-title text-primary" style="align-content: center;">{{ product.product_name }}'s
+                    Detail</h2>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" style="align-content: center; text-align: center;">
+                  <img src="/static/upload/{{ product.image }}" class="image">
+                  <p>Description: {{ product.description }}</p>
+                  <p>Price: ฿ {{ product.price }}</p>
+                  <p>In-Stock: {{ product.stock }}</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
 
 
 </body>

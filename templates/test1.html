@@ -5,7 +5,6 @@
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
@@ -44,9 +43,9 @@
                     <tr>
                         <td class="col-sm-8 col-md-6">
                         <div class="media">
-                            <a class="thumbnail pull-left" href="#"> <img class="media-object" src="/static/upload/{{ session['cart_item'][key]['image'] }}" style="width: 72px; height: 72px;"> </a>
+                            <a class="thumbnail pull-left" href="#"> <img class="media-object" src="/static/images/product-images/{{ session['cart_item'][key]['image'] }}" style="width: 72px; height: 72px;"> </a>
                             <div class="media-body">
-                                <h4 class="media-heading"> <a href="#">{{ session['cart_item'][key]['product_name'] }}</a></h4>
+                                <h4 class="media-heading"> <a href="#">{{ session['cart_item'][key]['name'] }}</a></h4>
                                 <h5 class="media-heading"> by <a href="#">Brand name</a></h5>
                                 <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
                             </div>
@@ -57,7 +56,7 @@
                         <td class="col-sm-1 col-md-1 text-center"><strong>${{ price }} </strong></td>
                         <td class="col-sm-1 col-md-1 text-center"><strong>${{ item_price }} </strong></td>
                         <td class="col-sm-1 col-md-1">
-                        <a href="{{ url_for('.delete_product', code=session['cart_item'][key]['product_id']) }}" class="btn btn-danger">
+                        <a href="{{ url_for('.delete_product', code=session['cart_item'][key]['code']) }}" class="btn btn-danger">
                             <span class="glyphicon glyphicon-remove"></span> Remove
                         </a></td>
                     </tr>
@@ -104,7 +103,7 @@
                         <div class="single-publication">
                             <figure style="width:263px;">
                                 <a href="#">
-                                    <img src="/static/upload/{{ product.image }}">
+                                    <img src="/static/images/product-images/{{ product.image }}">
                                 </a>
                                 <ul>
                                     <li><a href="#" title="Add to Favorite"><i class="fa fa-heart"></i></a></li>
@@ -127,7 +126,7 @@
                             </div>
  
                             <div class="add-to-cart">
-        <input type="hidden" name="code" value="{{ product.product_id }}"/>
+        <input type="hidden" name="code" value="{{ product.code }}"/>
         <input type="text" class="product-quantity" name="quantity" value="1" size="2" />
         <input type="submit" value="Add to Cart" class="default-btn" />
                             </div>

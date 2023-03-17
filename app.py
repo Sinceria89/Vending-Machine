@@ -1,3 +1,5 @@
+from __future__ import print_function  # In python 2.7
+import sys
 from flask import Flask, request, render_template, abort, flash, session, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -53,56 +55,14 @@ def index():
             conn.close()
 
 
-@app.route('/add', methods=['POST'])
-def add_product_to_cart():
-    cursor = None
+@app.route('/test')
+def test():
     try:
-        stock = int(request.form['stock'])
-        product_id = request.form['product_id']
-        # validate the received values
-        if stock and product_id and request.method == 'POST':
-            conn = mysql.connect()
-            cursor = conn.cursor(pymysql.cursors.DictCursor)
-            cursor.execute("SELECT * FROM products WHERE product_id=%s", product_id)
-            row = cursor.fetchone()
-
-            itemArray = {row['product_id']: {'product_name': row['product_name'], 'quantity': stock, 'price': row['price'],
-                                             'image': row['image'], 'total_price': stock * row['price'], 'total_quantity': stock + stock}}
-
-            all_total_price = 0
-            all_total_quantity = 0
-
-            session.modified = True
-            if 'cart_item' in session:
-                if row['product_id'] in session['cart_item']:
-                    for key, value in session['cart_item'].items():
-                        if row['product_id'] == key:
-                            old_quantity = session['cart_item'][key]['quantity']
-                            total_quantity = old_quantity + stock
-                            session['cart_item'][key]['quantity'] = total_quantity
-                            session['cart_item'][key]['total_price'] = total_quantity * row['price']
-                else:
-                    session['cart_item'] = array_merge(
-                        session['cart_item'], itemArray)
-
-                for key, value in session['cart_item'].items():
-                    individual_quantity = int(
-                        session['cart_item'][key]['quantity'])
-                    individual_price = float(
-                        session['cart_item'][key]['total_price'])
-                    all_total_quantity = all_total_quantity + individual_quantity
-                    all_total_price = all_total_price + individual_price
-            else:
-                session['cart_item'] = itemArray
-                all_total_quantity = all_total_quantity + stock
-                all_total_price = all_total_price + stock * row['price']
-
-            session['all_total_quantity'] = all_total_quantity
-            session['all_total_price'] = all_total_price
-
-            return redirect(url_for('/'))
-        else:
-            return 'Error while adding item to cart'
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM product")
+        rows = cursor.fetchall()
+        return render_template('test1.html', products=rows)
     except Exception as e:
         print(e)
     finally:
@@ -110,75 +70,58 @@ def add_product_to_cart():
         conn.close()
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route('/add', methods=['POST'])
+def AddCart():
+    try:
+        product_id = int(request.form.get('product_id'))
+        quantity = int(request.form.get('quantity'))
+
+        if request.method == "POST":
+            conn = mysql.connect()
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute(
+                "SELECT * FROM products WHERE product_id=%s", product_id)
+            row = cursor.fetchone()
+            DictItems = {str(row['product_id']): {'product_name': row['product_name'], 'price': float(row['price']),
+                                       'quantity': quantity, 'image': row['image']}}
+            if 'Shoppingcart' in session:
+                print(session['Shoppingcart'])
+                if product_id in session['Shoppingcart']:
+                    for key, item in session['Shoppingcart'].items():
+                        if int(key) == int(product_id):
+                            session.modified = True
+                            item['quantity'] += 1
+                else:
+                    session['Shoppingcart'] = MagerDicts(
+                        session['Shoppingcart'], DictItems)
+                    return redirect(request.referrer)
+            else:
+                session['Shoppingcart'] = DictItems
+
+                return redirect(request.referrer)
+
+    except Exception as e:
+        print(e)
+        return redirect(request.referrer)
+    finally:
+        print(DictItems)
+        return redirect(request.referrer)
+
+
+def MagerDicts(dict1, dict2):
+    if isinstance(dict1, list) and isinstance(dict2, list):
+        return dict1 + dict2
+    if isinstance(dict1, dict) and isinstance(dict2, dict):
+        return dict(list(dict1.items()) + list(dict2.items()))
 
 
 @app.route('/empty')
 def empty_cart():
- try:
-  session.clear()
-  return redirect(url_for('/'))
- except Exception as e:
-  print(e)
- 
-@app.route('/delete/<string:product_id>')
-def delete_product(product_id):
- try:
-  all_total_price = 0
-  all_total_quantity = 0
-  session.modified = True
-   
-  for item in session['cart_item'].items():
-   if item[0] == product_id:    
-    session['cart_item'].pop(item[0], None)
-    if 'cart_item' in session:
-     for key, value in session['cart_item'].items():
-      individual_quantity = int(session['cart_item'][key]['stock'])
-      individual_price = float(session['cart_item'][key]['total_price'])
-      all_total_quantity = all_total_quantity + individual_quantity
-      all_total_price = all_total_price + individual_price
-    break
-   
-  if all_total_quantity == 0:
-   session.clear()
-  else:
-   session['all_total_quantity'] = all_total_quantity
-   session['all_total_price'] = all_total_price
-   
-  return redirect(url_for('.products'))
- except Exception as e:
-  print(e)
-   
-def array_merge( first_array , second_array ):
- if isinstance( first_array , list ) and isinstance( second_array , list ):
-  return first_array + second_array
- elif isinstance( first_array , dict ) and isinstance( second_array , dict ):
-  return dict( list( first_array.items() ) + list( second_array.items() ) )
- elif isinstance( first_array , set ) and isinstance( second_array , set ):
-  return first_array.union( second_array )
- return False
-  
-
-
-
-
-@app.route('/test')
-def test():
     try:
-        conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM products")
-        rows = cursor.fetchall()
-        return render_template('test1.html', products=rows)
+        session.clear()
+        return redirect(url_for('/test'))
     except Exception as e:
         print(e)
-        return "Error: {}".format(str(e))
-    finally:
-        if 'cursor' in locals() and cursor is not None:
-            cursor.close()
-        if 'conn' in locals() and conn is not None:
-            conn.close()
 
 
 @app.route('/login')
@@ -257,8 +200,8 @@ def products():
     cate = cur1.fetchall()
     cur.close()
     cur1.close()
-    # app.logger.info(data)
-    app.logger.info(cate)
+    #app.logger.info(data)
+    #app.logger.info(cate)
     return render_template('products_manage.html', products=data, categories=cate)
 
 
