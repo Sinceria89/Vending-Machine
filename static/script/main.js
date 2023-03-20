@@ -18,6 +18,7 @@ let activeTimerId;
 // Set up event listeners to detect user activity
 document.addEventListener('mousemove', resetTimers);
 document.addEventListener('keypress', resetTimers);
+document.addEventListener("click", resetTimers);
 
 resetTimers();
 // Set up a timer to check for user inactivity every 100ms
