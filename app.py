@@ -54,10 +54,11 @@ def index():
                 TotalQuantity += subquantity
                 subtotal += float(product['price']) * int(product['quantity'])
                 TotalPrice = float(TotalPrice + subtotal)
-        return render_template('index.html', products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
+
+        return render_template('index.html', products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity )
     except Exception as e:
         print(e)
-        return "Error: {}".format(str(e))
+        return render_template('index.html')
     finally:
         if 'cursor' in locals() and cursor is not None:
             cursor.close()
