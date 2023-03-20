@@ -44,7 +44,17 @@ def index():
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         cursor.execute("SELECT * FROM products")
         rows = cursor.fetchall()
-        return render_template('index.html', products=rows)
+        TotalQuantity = 0
+        TotalPrice = 0
+        if 'Shoppingcart' in session: 
+            for key,product in session['Shoppingcart'].items():
+                subtotal = 0
+                subquantity = 0
+                subquantity = int(product['quantity'])
+                TotalQuantity += subquantity
+                subtotal += float(product['price']) * int(product['quantity'])
+                TotalPrice = float(TotalPrice + subtotal)
+        return render_template('index.html', products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
     except Exception as e:
         print(e)
         return "Error: {}".format(str(e))
@@ -83,7 +93,7 @@ def AddCart():
                 "SELECT * FROM products WHERE product_id=%s", product_id)
             row = cursor.fetchone()
             DictItems = {str(row['product_id']): {'product_name': row['product_name'], 'price': float(row['price']),
-                                       'quantity': quantity, 'image': row['image']}}
+                                 'stock': row['stock'], 'quantity': quantity, 'image': row['image']}}
             if 'Shoppingcart' in session:
                 print(session['Shoppingcart'])
                 if product_id in session['Shoppingcart']:
@@ -114,11 +124,26 @@ def MagerDicts(dict1, dict2):
         return dict(list(dict1.items()) + list(dict2.items()))
 
 
+@app.route('/deleteitem/<int:product_id>')
+def deleteitem(product_id):
+    if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
+        return redirect(url_for('index'))
+    try:
+        session.modified = True
+        for key , item in session['Shoppingcart'].items():
+            if int(key) == product_id:
+                session['Shoppingcart'].pop(key, None)
+                return redirect(url_for('index'))
+    except Exception as e:
+        print(e)
+        return redirect(url_for('index'))
+
+
 @app.route('/empty')
 def empty_cart():
     try:
         session.clear()
-        return redirect(url_for('/test'))
+        return redirect(url_for('index'))
     except Exception as e:
         print(e)
 

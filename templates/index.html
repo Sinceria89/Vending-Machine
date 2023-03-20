@@ -119,60 +119,71 @@
           <div class="modal-content">
             <div class="modal-header">
               <h1 class="modal-title">Shopping Cart</h1>
+              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <table class="table table-sm">
+                
+                {% if 'Shoppingcart' in session %}
                 <thead>
-                  <th>Sr</th>
+                  <th></th>
                   <th>Image</th>
                   <th>Name</th>
                   <th>Price</th>
                   <th>Quantity</th>
-                  <th>Subtotal</th>
+                  <th>Total</th>
                   <th>Update</th>
                   <th>Delete</th>
                 </thead>
                 <tbody>
-                  {% if 'Shoppingcart' in session %}
+
                   {% for key, product in session['Shoppingcart'].items() %}
 
                   <tr>
                     <td>{{loop.index}}</td>
                     <td><img src="/static/upload/{{ product.image }}" alt="{{product.name}}"></td>
                     <td>{{product.product_name}}</td>
-                    <form action="" method="post">
+                    <form action="#" method="post">
                       <td>${{"%.2f"|format(product.price)}}</td>
-                      <td> <input type="number" name="quantity" min="1" max="10" value="{{product.quantity}}"> </td>
+                      <td> <input type="number" name="cart_quantity" min="1" max="{{ product.stock }}" value="{{product.quantity}}"> </td>
                       {% set Subtotal = product.quantity * product.price %}
                       <td>{{ Subtotal }}</td>
                       <td><button type="submit" class="btn btn-sm btn-info">Update</button> </td>
                     </form>
-                    <td> <a href="#" class="btn btn-sm btn-danger">Delete</a></td>
+                    <td> <a href="{{url_for('deleteitem', product_id=key)}}" class="btn btn-sm btn-danger">Delete</a></td>
                   </tr>
                   {% endfor %}
                   {% else: %}
-                  <div>Your Cart is Empty</div>
+                  <div>
+                    <h3>Your Cart is Empty</h3>
+                  </div>
                   {% endif %}
                 </tbody>
               </table>
               <table class="table table-sm">
+                {% if 'Shoppingcart' in session %}
                 <tr>
                   <td> <a href="#" class="btn btn-success"> Order now </a> </td>
                   <td width="35%"></td>
                   <td>
-                    <h5>Tax: </h5>
+                    <h5>Total Quantity: {{TotalQuantity}}</h5>
                   </td>
                   <td>
-                    <h5>Grand total: </h3>
+                    <h5>Total Price: ฿{{grandtotal}} </h3>
                   </td>
-                  <td> <a href="#" class="btn btn-danger btn-sm float-right mr-4"> Clear cart</a>
+                  <td> <a href="{{url_for('empty_cart')}}" class="btn btn-danger btn-sm float-right mr-4"> Clear
+                      cart</a>
                   </td>
+                  {% else: %}
+                  {% endif %}
                 </tr>
               </table>
             </div>
 
             <div class="modal-footer">
-
+              <button type="button" class="btn btn-default" data-dismiss="modal">
+                <span class="glyphicon glyphicon-shopping-cart"></span> Continue Shopping
+              </button></td>
             </div>
           </div>
         </div>
