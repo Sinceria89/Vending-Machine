@@ -66,21 +66,6 @@ def index():
             conn.close()
 
 
-@app.route('/test')
-def test():
-    try:
-        conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM product")
-        rows = cursor.fetchall()
-        return render_template('test1.html', products=rows)
-    except Exception as e:
-        print(e)
-    finally:
-        cursor.close()
-        conn.close()
-
-
 @app.route('/add', methods=['POST'])
 def AddCart():
     try:

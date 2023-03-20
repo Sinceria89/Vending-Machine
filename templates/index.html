@@ -206,7 +206,8 @@
           {% for product in products %} 
           {% if product.stock < max_value %}
           {% set max_value = product.stock%}
-          {% endif %}                     
+          {% endif %}   
+          {% if product.stock > 0 %}                  
           <div class="col-xs-6 col-sm-4">
             <form method="post" action="{{url_for('AddCart')}}">
               <div class="single-publication">
@@ -266,6 +267,7 @@
               </div>
             </div>
           </div>
+          {% endif %}   
           {% endfor %}
         </div>
       </div>

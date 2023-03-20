@@ -207,7 +207,7 @@
 
                                         <div class="form-group">
                                             <label>Quantity <span class="required"> * </span></label>
-                                            <input value="{{data.stock}}" type="number" name="stock"
+                                            <input value="{{data.stock}}" type="number" name="stock" min = 0
                                                 class="form-control" placeholder="Enter Quantity">
                                         </div>
 
@@ -313,7 +313,6 @@
                 }
             });
         });
-
         $(document).ready(function () {
             $('.Save').bind("click", function () {
                 var inputs = $('.fileInput');
@@ -330,6 +329,7 @@
                 }
             });
         });
+
 
 
         function validateForm() {
