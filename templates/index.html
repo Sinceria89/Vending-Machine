@@ -43,7 +43,7 @@
       font-family: system-ui;
       color: white;
       font-size: 16px;
-      text-align: right;
+      text-align: left;
     }
 
     p {
@@ -83,9 +83,9 @@
             <img src="../static/logo.png" alt="logo" style="height: 55px;">
           </a>
         </div>
-        <div class="col-12 col-sm-8 text-container text-right">
+        <div class="clock col-12 col-sm-3" id="clock" onload="clock"></div>
+        <div class="col-12 col-sm-5 text-container text-right">
           <div class="scroll-text">เข้าสู่ระบบ(แอดมิน)</div>
-          <div class="clock" id="clock" onload="clock"></div>
         </div>
       </div>
     </div>
@@ -109,7 +109,7 @@
     <div class="container">
       <h1 style="margin-bottom: 10px"> Shopping Cart: ({{ session['Shoppingcart']|length }})</h1>
 
-      <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#Cart">
+      <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#Cart" style="margin-bottom: 10px">
         Your items
       </button>
 
