@@ -124,6 +124,25 @@ def MagerDicts(dict1, dict2):
         return dict(list(dict1.items()) + list(dict2.items()))
 
 
+@app.route('/updatecart/<int:code>', methods=['POST'])
+def updatecart(code):
+    if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
+        return redirect(url_for('index'))
+    if request.method =="POST":
+        cart_quantity = request.form.get('cart_quantity')
+        try:
+            session.modified = True
+            for key , item in session['Shoppingcart'].items():
+                if int(key) == code:
+                    item['quantity'] = cart_quantity
+                    flash('Item is updated!')
+                    return redirect(url_for('index'))
+        except Exception as e:
+            print(e)
+            return redirect(url_for('index'))
+
+
+
 @app.route('/deleteitem/<int:product_id>')
 def deleteitem(product_id):
     if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:

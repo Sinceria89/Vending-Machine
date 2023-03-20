@@ -143,10 +143,10 @@
                     <td>{{loop.index}}</td>
                     <td><img src="/static/upload/{{ product.image }}" alt="{{product.name}}"></td>
                     <td>{{product.product_name}}</td>
-                    <form action="#" method="post">
+                    <form action="{{url_for('updatecart', code=key)}}" method="post">
                       <td>${{"%.2f"|format(product.price)}}</td>
                       <td> <input type="number" name="cart_quantity" min="1" max="{{ product.stock }}" value="{{product.quantity}}"> </td>
-                      {% set Subtotal = product.quantity * product.price %}
+                      {% set Subtotal = product.quantity | int * product.price| int%}
                       <td>{{ Subtotal }}</td>
                       <td><button type="submit" class="btn btn-sm btn-info">Update</button> </td>
                     </form>
