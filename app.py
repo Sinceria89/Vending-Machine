@@ -90,7 +90,7 @@ def index():
 def test():
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT product_id,product_name,stock FROM products WHERE stock < 5")
+    cursor.execute("SELECT product_id,product_name,stock,row FROM products WHERE stock < 5")
     rows = cursor.fetchall()
     depleted = str(rows)
     for row in rows:
@@ -101,7 +101,7 @@ def test():
                         sender='Medvend.2023@gmail.com',
                         recipients=['6231501089@lamduan.mfu.ac.th']
                     )
-                msg.body = "Products in medicine vending machine is about to be depleted "+depleted
+                msg.body = "Products in medicine vending machine is about to be depleted " + depleted
                 mail.send(msg)
                 return 'Sent'
     return render_template('test1.html',)
