@@ -1,6 +1,8 @@
 from __future__ import print_function  # In python 2.7
 import sys
 from flask import Flask, request, render_template, abort, flash, session, redirect, url_for
+from flask_apscheduler import APScheduler
+from flask_mail import Mail,  Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import timedelta, datetime
@@ -17,14 +19,27 @@ pymysql.install_as_MySQLdb()
 # config
 app = Flask(__name__)
 app.secret_key = "MedVend-2023"
-
+scheduler = APScheduler()
 mysql = MySQL()
+mail = Mail(app)
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USERNAME'] = 'Medvend.2023@gmail.com'
+app.config['MAIL_PASSWORD'] = 'hjusaohtsifugtff'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = ''
 app.config['MYSQL_DATABASE_DB'] = 'vending'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
+mail = Mail(app)
+
+class Config:
+    SCHEDULER_API_ENABLED = True
 
 
 UPLOAD_FOLDER = 'static/upload'
@@ -37,6 +52,10 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def stockChecking():
+    print("This test runs every 5 minutes")
+
+
 @app.route('/')
 def index():
     try:
@@ -46,8 +65,8 @@ def index():
         rows = cursor.fetchall()
         TotalQuantity = 0
         TotalPrice = 0
-        if 'Shoppingcart' in session: 
-            for key,product in session['Shoppingcart'].items():
+        if 'Shoppingcart' in session:
+            for key, product in session['Shoppingcart'].items():
                 subtotal = 0
                 subquantity = 0
                 subquantity = int(product['quantity'])
@@ -55,7 +74,7 @@ def index():
                 subtotal += float(product['price']) * int(product['quantity'])
                 TotalPrice = float(TotalPrice + subtotal)
 
-        return render_template('index.html', products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity )
+        return render_template('index.html', products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
     except Exception as e:
         print(e)
         return render_template('index.html')
@@ -64,6 +83,29 @@ def index():
             cursor.close()
         if 'conn' in locals() and conn is not None:
             conn.close()
+
+
+
+@app.route('/test', methods=['GET','POST'])
+def test():
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT product_id,product_name,stock FROM products WHERE stock < 5")
+    rows = cursor.fetchall()
+    depleted = str(rows)
+    for row in rows:
+        if row['stock'] < 5:
+            if request.method == "POST":
+                msg = Message(
+                        'Products Nearly depleted!',
+                        sender='Medvend.2023@gmail.com',
+                        recipients=['6231501089@lamduan.mfu.ac.th']
+                    )
+                msg.body = "Products in medicine vending machine is about to be depleted "+depleted
+                mail.send(msg)
+                return 'Sent'
+    return render_template('test1.html',)
+
 
 
 @app.route('/add', methods=['POST'])
@@ -286,6 +328,9 @@ def update():
         return redirect(url_for('products'))
 
 
+
+
+
 @app.route('/delete/<string:product_id>', methods=['POST', 'GET'])
 def delete(product_id):
     flash("Record Has Been Deleted Successfully")
@@ -305,4 +350,6 @@ def admin():
 
 
 if __name__ == "__main__":
+    #scheduler.add_job(id = 'Checking Stock', func=stockChecking, trigger="interval", minutes=5)
+    #scheduler.start()
     app.run(debug=True)
