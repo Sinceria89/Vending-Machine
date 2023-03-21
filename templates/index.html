@@ -46,16 +46,32 @@
       text-align: right;
     }
 
-    .scroll-text {
-      color: white;
-      font-size: 18px;
-      white-space: nowrap;
-      overflow: hidden;
-      animation: marquee 7s linear infinite;
-    }
+    .led-sign {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 300px;
+  overflow: hidden;
+}
+
+.led-sign ul {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  animation: led 10s linear infinite;
+}
+
+.led-sign ul li {
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  margin-right: 5px;
+}
 
 
-    @keyframes marquee {
+    @keyframes led {
       0% {
         transform: translateX(0);
       }
@@ -77,8 +93,11 @@
             <img src="../static/logo.png" alt="logo" style="height: 55px;">
           </a>
         </div>
-        <div class="col-12 col-sm-8 text-container text-right">
-          <div class="scroll-text">เข้าสู่ระบบ(แอดมิน)</div>
+        <div class="led-sign col-12 col-sm-8 text-container text-right">
+          <ul>
+            <li>เข้าสู่ระบบแอดมิน</li>
+           
+          </ul>
           <div class="clock" id="clock" onload="clock"></div>
         </div>
       </div>
