@@ -11,10 +11,13 @@ body,html {
   .left {
     float: left;
     margin-right: 20px;
+    margin-bottom: 100px;
  }
  
  .right {
     float: right;
     margin-left: 300px;
+    margin-bottom: 100px;
  }
+ 
  

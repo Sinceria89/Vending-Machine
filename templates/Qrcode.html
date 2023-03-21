@@ -19,13 +19,24 @@
       <button type="submit" onclick="redirectToOtherPage()">Generate QR Code</button>
     </form>
 
-      <h3>Pay Total: {{ amount }}</h3>
-    {% if qr_image %}
-      <center><img src="data:image/png;base64,{{ qr_image }}" alt="QR Code">
-    {% endif %}
-    
-  
-    <button type="button" class="btn btn-danger" data-bs-toggle="modal"data-bs-target="#staticBackdrop">Cancel</button>
+      <h3>Pay Total: {{ amount }} ฿</h3>
+      <div class="row">
+        <div class="col-4 text-end">
+          <img src="static/dogecoin-icegif-17.gif" alt="Image" class="img-fluid" width="150" hight="150">
+        </div>
+        <div class="col-4 text-center">
+          {% if qr_image %}
+            <img src="data:image/png;base64,{{ qr_image }}" alt="QR Code"width="300" hight="300">
+          {% endif %}
+        </div>
+        
+        <div class="col-4">
+          <img src="static/dogecoin-icegif-17.gif" alt="Image" class="img-fluid" width="150" hight="150">
+        </div>
+      </div>
+    <br>
+    <br>
+ <button type="button" class="btn btn-danger" data-bs-toggle="modal"data-bs-target="#staticBackdrop">Cancel</button>
  
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -46,8 +57,6 @@
   </div>
 </div>
 
-<div class="container">
-  <img src="image.jpg" alt="Image" class="image">
     <script>
       
      // Wait for 10 seconds and redirect to the thanks.html page
