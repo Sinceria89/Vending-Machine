@@ -8,7 +8,9 @@
 <link rel="stylesheet" href="css/styling">
 <link href="https://fonts.googleapis.com/css2?family=Sriracha&display=swap&subset=thai" rel="stylesheet">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
+<body>
 </head>
 <style>
   .myDiv {
@@ -72,7 +74,7 @@ margin-right: 5px;
   }
   .box {
         width: 800px;
-        height: 295px;
+        height: 100%px;
         background-color: #ccc;
         border: 1px solid #000;
         border-radius: 10px;
@@ -104,7 +106,32 @@ margin-right: 5px;
     <a href="/logout" class="btn btn-info ml-3">logout</a>
   </div>
   <div class="box">
-    
+    <canvas id="myChart" style="width:100%;max-width:100%"></canvas>
+
+<script>
+var xValues = [];
+var yValues = [];
+var barColors = ["red","green","blue","orange","brown","skyblue","pink","purple","yellow","cyan"];
+
+new Chart("myChart", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "ยอดขายสินค้า"
+    }
+  }
+});
+
+    </script>
   </div>
 </body>
 <script>

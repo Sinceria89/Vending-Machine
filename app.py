@@ -320,3 +320,28 @@ def admin():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+import mysql.connector
+
+# Establish a connection to the database
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="yourusername",
+  password="yourpassword",
+  database="products"
+)
+
+# Create a cursor object to execute queries
+mycursor = mydb.cursor()
+
+# Define the SQL query to get the sum of the "amount" column
+sql = "SELECT SUM(amount) FROM yourtable"
+
+# Execute the query
+mycursor.execute(sql)
+
+# Fetch the result
+result = mycursor.fetchone()
+
+# Print the sum
+print(result[0])
