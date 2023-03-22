@@ -4,83 +4,89 @@
 <head>
     <title>Administrator</title>
 </head>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
 <style>
-    .myDiv {
-      height: 55px;
-      background-color: #e7a7d9;
-      text-align: center;
-    }
-    .container {
-      max-width: 800px;
-
-    }
-
-    .clock {
-      font-family: system-ui;
-      color: white;
-      font-size: 16px;
-      text-align: left;
-    }
-
-    p {
-      font-family: 'Sriracha', cursive;
-      font-size: 32px;
-      color: #e7a7d9;
-    }
-
-    .led-sign {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 30px;
-    width: 300px;
-    overflow: hidden;
+  .myDiv {
+    height: 55px;
+    background-color: #e7a7d9;
+    text-align: center;
   }
-  
-  .led-sign ul {
-    display: flex;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    animation: led 10s linear infinite;
+
+  /* Make the container wider */
+  .container {
+    max-width: 800px;
+
   }
-  
-  .led-sign ul li {
-    color: #fff;
-    font-size: 20px;
-    font-weight: bold;
-    margin-right: 5px;
+
+  .clock {
+    font-family: system-ui;
+    color: white;
+    font-size: 16px;
+    text-align: left;
   }
-  
-  
-      @keyframes led {
-        0% {
-          transform: translateX(0);
-        }
-  
-        100% {
-          transform: translateX(-150%);
-        }
-      }
-    </style>
+
+  p {
+    font-family: 'Sriracha', cursive;
+    font-size: 32px;
+    color: #e7a7d9;
+  }
+
+  .led-sign {
+display: flex;
+justify-content: right;
+align-items: right;
+height: 30px;
+width: 300px;
+overflow: hidden;
+}
+
+.led-sign ul {
+display: flex;
+list-style-type: none;
+margin: 0;
+padding: 0;
+animation: led 10s linear infinite;
+}
+
+.led-sign ul li {
+color: #fff;
+font-size: 20px;
+font-weight: bold;
+margin-right: 5px;
+}
+
+
+  @keyframes led {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-150%);
+    }
+  }
+</style>
+
 <body style="background-color: #4b4b4b;">
-    <div class="myDiv">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 col-sm-4">
-            <a href="/login">
-              <img src="../static/logo.png" alt="logo" style="height: 55px;">
-            </a>
-          </div>
-          <div class="clock col-12 col-sm-3" id="clock" onload="clock"></div>
-          <div class="led-sign col-12 col-sm-5 text-container text-right">
-            <ul>
-              <li>เข้าสู่ระบบแอดมิน</li>
-            </ul>
-          </div>
+  <div class="myDiv">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-sm-4">
+          <a href="/login">
+            <img src="../static/logo.png" alt="logo" style="height: 55px;">
+          </a>
+        </div>
+        <div class="clock col-12 col-sm-1" id="clock" onload="clock"></div>
+        <div class="led-sign col-12 col-sm-5 text-container text-right">
+          <ul>
+            <li>เข้าสู่ระบบแอดมิน</li>
+          </ul>
         </div>
       </div>
     </div>
+  </div>
         
         <a href="/products_manage">Manage Product</a>
         <a href="/logout">logout</a>
