@@ -52,4 +52,80 @@ code for electric lock waiting for more information
 	</script>
 </body>
 </html>
+
+import RPi.GPIO as GPIO
+from flask import Flask, request
+import time
+
+# Set the GPIO mode and pin
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(11, GPIO.OUT)
+
+# Define the time the lock will stay unlocked (in seconds)
+UNLOCK_TIME = 5
+
+# Create a Flask application
+app = Flask(__name__)
+
+# Route for unlocking the lock
+@app.route('/unlock')
+def unlock_lock():
+    # Activate the lock by setting the GPIO pin to HIGH
+    GPIO.output(11, GPIO.HIGH)
+    # Wait for the specified time
+    time.sleep(UNLOCK_TIME)
+    # Deactivate the lock by setting the GPIO pin to LOW
+    GPIO.output(11, GPIO.LOW)
+    return 'Lock unlocked'
+
+# Route for the first HTML page
+@app.route('/')
+def index():
+    return '''
+        <html>
+        <head>
+            <title>First Page</title>
+        </head>
+        <body>
+            <h1>First Page</h1>
+            <p><a href="/second">Go to second page</a></p>
+        </body>
+        </html>
+    '''
+
+# Route for the second HTML page
+@app.route('/second')
+def second():
+    # Check if the unlock query parameter is present
+    if 'unlock' in request.args:
+        # Call the unlock_lock function to unlock the lock
+        unlock_lock()
+        # Return a response indicating that the lock was unlocked
+        return 'Lock unlocked'
+    else:
+        return '''
+            <html>
+            <head>
+                <title>Second Page</title>
+            </head>
+            <body>
+                <h1>Second Page</h1>
+                <p><a href="/">Go back to first page</a></p>
+                <p><a href="/second?unlock=true">Unlock the lock</a></p>
+            </body>
+            </html>
+        '''
+
+# Clean up the GPIO pins when finished
+@app.teardown_appcontext
+def cleanup_gpio(exception):
+    GPIO.cleanup()
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
+
+
+
+
 -->
