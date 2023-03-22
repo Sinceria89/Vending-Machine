@@ -48,18 +48,8 @@ img {
 }
 
 
-.pt-100 {
-    padding-top: 100px;
-}
-
-
-.pb-70 {
-    padding-bottom: 70px;
-}
-
-
 .single-publication {
-    background-color: #ffffff;
+    background-color: #3a3a3a;
     border: 1px solid #f2eee2;
     margin-bottom: 30px;
     position: relative;
