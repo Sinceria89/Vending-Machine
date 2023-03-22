@@ -4,19 +4,100 @@
 <head>
     <title>Administrator</title>
 </head>
+<style>
+    .myDiv {
+      height: 55px;
+      background-color: #e7a7d9;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
 
-<body>
+    }
 
-    <h1>8====D</h1>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore cumque, quidem laboriosam, similique modi
-        aspernatur
-        esse ad iure officia voluptas blanditiis necessitatibus voluptatem, vitae iste pariatur labore. Omnis, similique
-        explicabo.</p>
-        <h1>น้อมคำนับท่านเทพผู้สูงส่ง</h1>
-        <img src="../static/2Q.png" alt=""><br>
+    .clock {
+      font-family: system-ui;
+      color: white;
+      font-size: 16px;
+      text-align: left;
+    }
+
+    p {
+      font-family: 'Sriracha', cursive;
+      font-size: 32px;
+      color: #e7a7d9;
+    }
+
+    .led-sign {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 300px;
+    overflow: hidden;
+  }
+  
+  .led-sign ul {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    animation: led 10s linear infinite;
+  }
+  
+  .led-sign ul li {
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 5px;
+  }
+  
+  
+      @keyframes led {
+        0% {
+          transform: translateX(0);
+        }
+  
+        100% {
+          transform: translateX(-150%);
+        }
+      }
+    </style>
+<body style="background-color: #4b4b4b;">
+    <div class="myDiv">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-sm-4">
+            <a href="/login">
+              <img src="../static/logo.png" alt="logo" style="height: 55px;">
+            </a>
+          </div>
+          <div class="clock col-12 col-sm-3" id="clock" onload="clock"></div>
+          <div class="led-sign col-12 col-sm-5 text-container text-right">
+            <ul>
+              <li>เข้าสู่ระบบแอดมิน</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+        
         <a href="/products_manage">Manage Product</a>
         <a href="/logout">logout</a>
   
 </body>
+<script>
+  function updateClock() {
+    let now = new Date();
+    let day = now.toLocaleDateString('en-GB', { day: '2-digit' });
+    let month = now.toLocaleDateString('en-GB', { month: '2-digit' });
+    let year = now.toLocaleDateString('en-GB', { year: 'numeric' });
+    let dayOfWeek = now.toLocaleDateString('th-TH', { weekday: 'long' });
+    let time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    document.getElementById('clock').innerHTML = dayOfWeek.toUpperCase() + '|' + time + '<br>' + day + '-' + month + '-' + year;
+  }
 
+  updateClock();
+  setInterval(updateClock, 1000);
+</script>
 </html>
