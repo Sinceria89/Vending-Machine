@@ -317,31 +317,36 @@ def admin():
         return render_template("test.html")
     return render_template("admin.html")
 
+import matplotlib.pyplot as plt
+from flask import Flask, render_template, request, url_for
 
-if __name__ == "__main__":
-    app.run(debug=True)
+app = Flask(__name__)
 
-import mysql.connector
+@app.route('/Graph', methods=['GET', 'POST'])
+def Graph():
+    if request.method == 'POST':
+        product_name = request.form['product_name']
+        quantity = request.form['quantity']
+        
+        product_names.append(product_name)
+        quantities.append(int(quantity))
+    
+    # Generate the bar chart
+    fig, ax = plt.subplots()
+    ax.clear() # Clear the previous plot
+    ax.bar(product_names, quantities)
+    ax.set_ylabel('Quantity')
+    ax.set_title('Product Quantities')
 
-# Establish a connection to the database
-mydb = mysql.connector.connect(
-  host="localhost",
-  user="yourusername",
-  password="yourpassword",
-  database="products"
-)
+    # Save the chart as an image file
+    chart_file = './static/chart.png'
+    fig.savefig(chart_file)
 
-# Create a cursor object to execute queries
-mycursor = mydb.cursor()
+    # Set the URL for the chart image file
+    chart_url = url_for('static', filename='chart.png')
 
-# Define the SQL query to get the sum of the "amount" column
-sql = "SELECT SUM(amount) FROM yourtable"
+    # Pass the chart URL to the HTML template
+    return render_template('admin.html', chart_url=chart_url)
 
-# Execute the query
-mycursor.execute(sql)
-
-# Fetch the result
-result = mycursor.fetchone()
-
-# Print the sum
-print(result[0])
+if __name__ == '__main__':
+    app.run()

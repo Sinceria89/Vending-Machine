@@ -31,13 +31,6 @@
     font-size: 16px;
     text-align: left;
   }
-
-  p {
-    font-family: 'Sriracha', cursive;
-    font-size: 32px;
-    color: #e7a7d9;
-  }
-
   .led-sign {
 display: flex;
 justify-content: right;
@@ -81,6 +74,21 @@ margin-right: 5px;
         box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
         margin: 20px auto;
       }
+      .bar {
+			fill: blue;
+		}
+		.axis {
+			font-size: 12px;
+		}
+		.axis path,
+		.axis line {
+			fill: none;
+			stroke: #000;
+			shape-rendering: crispEdges;
+		}
+		.x.axis path {
+			display: none;
+		}
 </style>
 
 <body style="background-color: #4b4b4b;">
@@ -106,32 +114,10 @@ margin-right: 5px;
     <a href="/logout" class="btn btn-info ml-3">logout</a>
   </div>
   <div class="box">
-    <canvas id="myChart" style="width:100%;max-width:100%"></canvas>
-
-<script>
-var xValues = [];
-var yValues = [];
-var barColors = ["red","green","blue","orange","brown","skyblue","pink","purple","yellow","cyan"];
-
-new Chart("myChart", {
-  type: "bar",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "ยอดขายสินค้า"
-    }
-  }
-});
-
-    </script>
+    <form method="POST" action="{{ url_for('/Graph') }}">
+    </form>
+    
+    <img src="{{ chart_url }}" alt="Product Quantities">
   </div>
 </body>
 <script>
