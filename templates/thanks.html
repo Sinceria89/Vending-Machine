@@ -31,3 +31,25 @@
   </style>
 
 </html>
+
+<!---
+code for electric lock waiting for more information
+''' 
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Unlock the lock</title>
+</head>
+<body onload="setTimeout(unlockLock, 15000)">
+	<h1>Click the button to unlock the lock</h1>
+	<button onclick="unlockLock()">Unlock</button>
+	<script>
+		function unlockLock() {
+			var xhttp = new XMLHttpRequest();
+			xhttp.open("GET", "/unlock", true);
+			xhttp.send();
+		}
+	</script>
+</body>
+</html>
+-->
