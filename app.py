@@ -316,37 +316,3 @@ def admin():
         # abort(403)
         return render_template("test.html")
     return render_template("admin.html")
-
-import matplotlib.pyplot as plt
-from flask import Flask, render_template, request, url_for
-
-app = Flask(__name__)
-
-@app.route('/Graph', methods=['GET', 'POST'])
-def Graph():
-    if request.method == 'POST':
-        product_name = request.form['product_name']
-        quantity = request.form['quantity']
-        
-        product_names.append(product_name)
-        quantities.append(int(quantity))
-    
-    # Generate the bar chart
-    fig, ax = plt.subplots()
-    ax.clear() # Clear the previous plot
-    ax.bar(product_names, quantities)
-    ax.set_ylabel('Quantity')
-    ax.set_title('Product Quantities')
-
-    # Save the chart as an image file
-    chart_file = './static/chart.png'
-    fig.savefig(chart_file)
-
-    # Set the URL for the chart image file
-    chart_url = url_for('static', filename='chart.png')
-
-    # Pass the chart URL to the HTML template
-    return render_template('admin.html', chart_url=chart_url)
-
-if __name__ == '__main__':
-    app.run()
