@@ -11,7 +11,6 @@ import urllib.request
 import os
 import json
 
-
 pymysql.install_as_MySQLdb()
 
 # config
@@ -316,3 +315,15 @@ def admin():
         # abort(403)
         return render_template("test.html")
     return render_template("admin.html")
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+@app.route('/graph')
+def get_graph():
+    cursor.execute('SELECT product_name, quantity FROM products')
+    rows = cursor.fetchall()
+    return render_template('admin.html', data=rows)
+
+if __name__ == '__main__':
+    app.run()

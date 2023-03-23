@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Sriracha&display=swap&subset=thai" rel="stylesheet">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <body>
 </head>
@@ -71,24 +72,61 @@ margin-right: 5px;
         background-color: #ccc;
         border: 1px solid #000;
         border-radius: 10px;
-        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
         margin: 20px auto;
       }
-      .bar {
-			fill: blue;
-		}
-		.axis {
-			font-size: 12px;
-		}
-		.axis path,
-		.axis line {
-			fill: none;
-			stroke: #000;
-			shape-rendering: crispEdges;
-		}
-		.x.axis path {
-			display: none;
-		}
+      .chart-container {
+  display: flex;
+  height: 300px;
+}
+
+.chart-bar {
+  width: 50px;
+  margin-right: 10px;
+  background-color: blue;
+  transition: height 0.5s;
+}
+
+.chart-bar:last-child {
+  margin-right: 0;
+}
+
+.chart-bar::before {
+  content: attr(data-value);
+  display: block;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.chart-bar:hover {
+  background-color: lightblue;
+  cursor: pointer;
+}
+
+.chart-bar:hover::before {
+  color: black;
+}
+
+.chart-bar:hover::after {
+  content: attr(data-value);
+  display: block;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: black;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+
 </style>
 
 <body style="background-color: #4b4b4b;">
@@ -96,7 +134,7 @@ margin-right: 5px;
     <div class="container">
       <div class="row">
         <div class="col-12 col-sm-4">
-          <a href="/login">
+          <a href="/">
             <img src="../static/logo.png" alt="logo" style="height: 55px;">
           </a>
         </div>
@@ -114,11 +152,16 @@ margin-right: 5px;
     <a href="/logout" class="btn btn-info ml-3">logout</a>
   </div>
   <div class="box">
-    <form method="POST" action="{{ url_for('/Graph') }}">
-    </form>
-    
-    <img src="{{ chart_url }}" alt="Product Quantities">
-  </div>
+    <div class="chart-container">
+        <div class="chart-bar" style="--data-value: 50;"></div>
+        <div class="chart-bar" style="--data-value: 75;"></div>
+        <div class="chart-bar" style="--data-value: 30;"></div>
+      </div>
+      {% for row in data %}
+<div class="chart-bar" style="--data-value: {{ row[1] }}"></div>
+{% endfor %}
+
+    </div>
 </body>
 <script>
   function updateClock() {
