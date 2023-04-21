@@ -82,6 +82,7 @@ def test():
 
 @app.route('/add', methods=['POST'])
 def AddCart():
+    DictItems = {}
     try:
         product_id = int(request.form.get('product_id'))
         quantity = int(request.form.get('quantity'))
