@@ -13,13 +13,13 @@
   <body>
     
     <center><h1>Please scan QR Code below</h1>
-    <form method="POST" action="/generateQR">
+    <form method="POST" action="/generateQR?price={{grandtotal}}" required>
       <label for="amount">Amount:</label>
-      <input type="number" name="amount" id="amount" min="0" step="0.01" required>
-      <button type="submit" onclick="redirectToOtherPage()">Generate QR Code</button>
+      
+      
     </form>
 
-      <h3>Pay Total: {{ amount }} ฿</h3>
+      <h3>Pay Total: {{ grandtotal }} ฿</h3>
       <div class="row">
         <div class="col-4 text-end">
           <img src="static/dogecoin-icegif-17.gif" alt="Image" class="img-fluid" width="150" hight="150">

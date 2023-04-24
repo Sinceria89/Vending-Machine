@@ -2,7 +2,7 @@ import json
 import base64
 import qrcode
 import time
-import requests
+from flask import request
 from flask import Flask, jsonify, request, render_template, abort, flash, session, request, redirect, url_for
 from promptpay import qrcode as ppqrcode
 
@@ -24,11 +24,11 @@ def generateQR():
     # Check if the request method is POST
     if request.method == 'POST':
         # Get the amount from the form data
-        amount = float(request.form.get("amount", 0))
+        amount = float(request.form.get("grandtotal", 0))
     # Check if the request method is GET
     elif request.method == 'GET':
         # Get the amount from the query parameters
-        amount = float(request.args.get('amount', 0))
+        amount = float(request.args.get('grandtotal', 0))
     # If the request method is not supported, return a bad request error
     else:
         return jsonify({
@@ -61,7 +61,7 @@ def generateQR():
 @app.route('/showQR')
 def showQR():
     # Get the amount and QR code image data from the URL parameters
-    amount = float(request.args.get('amount', 0))
+    amount = float(request.args.get('grandtotal', 0))
     qr_image = request.args.get('qr_image', '')
 
     # Render the Qrcode.html template with the amount and QR code image data
@@ -74,13 +74,13 @@ def thx():
     return render_template('thanks.html')
 
 # If this script is being run as the main program, start the Flask application
-if __name__ == '__main__':
+if __name__ == '__main__':       
     app.run(port=3000, debug=True)
 
 #code for electric lock waiting for more information
 ''' 
 from flask import Flask, request, jsonify
-
+S
 app = Flask(__name__)
 
 @app.route('/collect_info', methods=['POST'])

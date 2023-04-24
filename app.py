@@ -79,13 +79,12 @@ def index():
         return render_template('index.html', products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
     except Exception as e:
         print(e)
-        return render_template('index.html')
+        return render_template('index.html', )
     finally:
         if 'cursor' in locals() and cursor is not None:
             cursor.close()
         if 'conn' in locals() and conn is not None:
             conn.close()
-
 
 @app.route('/test', methods=['GET', 'POST'])
 def test():
