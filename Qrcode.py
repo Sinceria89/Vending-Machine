@@ -75,7 +75,7 @@ def thx():
 
 # If this script is being run as the main program, start the Flask application
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(port=3000, debug=True)
 
 #code for electric lock waiting for more information
 ''' 
