@@ -146,7 +146,7 @@
             </div>
             <div class="modal-body">
               <table class="table table-sm">
-                
+                {% set max_value = 3%}
                 {% if 'Shoppingcart' in session %}
                 <thead>
                   <th></th>
@@ -159,16 +159,19 @@
                   <th>Delete</th>
                 </thead>
                 <tbody>
-
+                  
                   {% for key, product in session['Shoppingcart'].items() %}
-
                   <tr>
                     <td>{{loop.index}}</td>
                     <td><img src="/static/upload/{{ product.image }}" alt="{{product.name}}"></td>
                     <td>{{product.product_name}}</td>
                     <form action="{{url_for('updatecart', code=key)}}" method="post">
                       <td>${{"%.2f"|format(product.price)}}</td>
-                      <td> <input type="number" name="cart_quantity" min="1" max="{{ product.stock }}" value="{{product.quantity}}"> </td>
+                      {% if product.stock < max_value %}
+                      {% set max_value = product.stock%}
+                      {% endif %}
+                      <td> <input type="number" name="cart_quantity" min="1" max="{{ max_value }}" value="{{product.quantity}}"> </td>
+                      
                       {% set Subtotal = product.quantity | int * product.price| int%}
                       <td>{{ Subtotal }}</td>
                       <td><button type="submit" class="btn btn-sm btn-info">Update</button> </td>
@@ -221,7 +224,11 @@
 
 
         <div class="row" style="margin-top: 20px">
-          {% for product in products %}
+          {% for product in products %} 
+          {% if product.stock < max_value %}
+          {% set max_value = product.stock%}
+          {% endif %}   
+          {% if product.stock > 0 %}                  
           <div class="col-xs-6 col-sm-4">
             <form method="post" action="{{url_for('AddCart')}}">
               <div class="single-publication">
@@ -240,7 +247,7 @@
                   <div class="touchspin d-flex align-items-center gap-2">
                     <button type="button" class="btn btn-danger" data-touchspin-down>-</button>
                     <input type="number" class="form-control text-center" name="quantity" value="1" min="1"
-                      max="{{ product.stock }}" data-touchspin-input />
+                      max="{{ max_value }}" data-touchspin-input />
                     <button type="button" class="btn btn-success" data-touchspin-up>+</button>
                   </div>
 
@@ -281,6 +288,7 @@
               </div>
             </div>
           </div>
+          {% endif %}   
           {% endfor %}
         </div>
       </div>
