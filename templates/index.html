@@ -2,295 +2,199 @@
 <html lang="en">
 
 <head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <title>กล่องจ่ายยาอัตโนมัติ</title>
-  <script src="https://unpkg.com/@erwinstone/input-touchspin@1.0.3/dist/input-touchspin.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
-    integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/brands.css') }}" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/solid.css') }}" rel="stylesheet">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <style>
-    .myDiv {
-      height: 55px;
-      background-color: #e7a7d9;
-      text-align: center;
-    }
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/brands.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/solid.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        div {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
 
-    /* Make the container wider */
-    .container {
-      max-width: 800px;
-    }
-
-    .clock {
-      font-family: system-ui;
-      color: white;
-      font-size: 16px;
-      text-align: right;
-    }
-
-    p {
-      font-family: 'Sriracha', cursive;
-      font-size: 32px;
-      color: #e7a7d9;
-    }
-
-    .scroll-text {
-      color: white;
-      font-size: 18px;
-      white-space: nowrap;
-      overflow: hidden;
-      animation: marquee 7s linear infinite;
-    }
+        .Left {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            line-height: 1.5cm;
+            width: 20%;
+            background-color: #065488;
+            color: #ffffff;
 
 
-    @keyframes marquee {
-      0% {
-        transform: translateX(0);
-      }
+        }
 
-      100% {
-        transform: translateX(-67%);
-      }
-    }
-  </style>
+        .Right {
+            position: absolute;
+            left: 20%;
+            right: 0;
+            background-color: #ffffff;
+        }
 
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: "Lato", sans-serif
+        }
+
+        header {
+            background-color: #33CCFF;
+        }
+
+        .grid1 {
+            padding-top: 30px;
+            padding-bottom: 30px;
+            background-color: #FFFFFF;
+        }
+
+        .grid2 {
+            padding-top: 30px;
+            padding-bottom: 30px;
+            background-color: #e8e8e8;
+        }
+
+        .about {
+            background-color: #3b3b3b;
+            text-align: center;
+            color: #FFCC33;
+            padding: 0;
+            margin: 0;
+        }
+
+        .left-end {
+            position: absolute;
+            bottom: 1.5px;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #161616;
+            text-align: center;
+            color: #FFCC33;
+        }
+
+        .w3-bar,
+        h1,
+        button {
+            font-family: "Montserrat", sans-serif
+        }
+
+
+        .fa-anchor,
+        .fa-coffee {
+            font-size: 200px
+        }
+    </style>
 </head>
 
-<body style="background-color: #4b4b4b;">
-  <div class="myDiv">
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-sm-3">
-          <a href="/login">
-            <img src="../static/logo.png" alt="logo" style="height: 55px;">
-          </a>
-        </div>
-        <div class="col-12 col-sm-9 text-container text-right scroll-text" ;>เข้าสู่ระบบ(แอดมิน)
+<body>
+    <div class="Left">
+        <div class="container justify-content-center text-center p-md-5">
+            <img src="/static/logo.png">
+            <h2>Welcome to .....</h2>
+            <div class="container-logo p-md-4">
+                <img src="/static/logo.png">
+            </div>
+            <div class="container p-md-5">
+                <a href="/login" class="btn btn-light btn-block">เข้าสู่ระบบ</a>
 
+                <a href="/register" class="btn btn-light btn-block">สมัครสมาชิก</a>
+            </div>
         </div>
-        <div class="clock" id="clock" onload="clock">/</div>
-      </div>
+        <div class="left-end">
+            <img src="/static/logo.png">
+            <h4>test...</h4>
+        </div>
     </div>
-  </div>
-  <!--
-  <div class="col-12 col-sm-12" style="margin-top: 5px;" id="Inactive">
-    <div style="background-color:white;height: 310px; display: flex;">
-      <div style="flex: 1;">
-        <img src="../static/Sunset.jpg" alt="Sunset display" style="height: 310px;">
-      </div>
-      <div
-        style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 20px;">
-        <br>
-        <p>โปรดแตะที่จอ<br>เพื่อเลือกซื้อสินค้า</p>
-        <br>
-        <img src="../static/finger.gif" alt="point finger" style="height: 190px;">
-      </div>
-    </div>
-  </div>
-  </div>
-  -->
-  <div id="Active">
 
-    <div class="container">
-      <h1 style="margin-bottom: 10px"> Shopping Cart: ({{ session['Shoppingcart']|length }})</h1>
+    <div class="Right">
+        <!-- Header -->
+        <header class="container justify-content-center text-center p-md-5" style="padding:128px">
+            <h1>START PAGE</h1>
+            <p>.....</p>
+            <button>Get Started</button>
+        </header>
 
-      <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#Cart">
-        Your items
-      </button>
+        <!-- First Grid -->
+        <div class="grid1 text-center">
+            <div class="row">
+                <div class="col-md-6 mb-4 ">
+                    <h1>Lorem Ipsum</h1>
+                    <h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</h5>
 
-      <div class="modal fade" id="Cart">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title">Shopping Cart</h1>
-              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+                <div class="col-md-6 mb-4">
+                    <i class="fa fa-anchor"></i>
+                </div>
             </div>
-            <div class="modal-body">
-              <table class="table table-sm">
-                {% set max_value = 3%}
-                {% if 'Shoppingcart' in session %}
-                <thead>
-                  <th></th>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Price</th>
-                  <th>Quantity</th>
-                  <th>Total</th>
-                  <th>Update</th>
-                  <th>Delete</th>
-                </thead>
-                <tbody>
-                  
-                  {% for key, product in session['Shoppingcart'].items() %}
-                  <tr>
-                    <td>{{loop.index}}</td>
-                    <td><img src="/static/upload/{{ product.image }}" alt="{{product.name}}"></td>
-                    <td>{{product.product_name}}</td>
-                    <form action="{{url_for('updatecart', code=key)}}" method="post">
-                      <td>${{"%.2f"|format(product.price)}}</td>
-                      {% if product.stock < max_value %}
-                      {% set max_value = product.stock%}
-                      {% endif %}
-                      <td> <input type="number" name="cart_quantity" min="1" max="{{ max_value }}" value="{{product.quantity}}"> </td>
-                      
-                      {% set Subtotal = product.quantity | int * product.price| int%}
-                      <td>{{ Subtotal }}</td>
-                      <td><button type="submit" class="btn btn-sm btn-info">Update</button> </td>
-                    </form>
-                    <td> <a href="{{url_for('deleteitem', product_id=key)}}" class="btn btn-sm btn-danger">Delete</a></td>
-                  </tr>
-                  {% endfor %}
-                  {% else: %}
-                  <div>
-                    <h3>Your Cart is Empty</h3>
-                  </div>
-                  {% endif %}
-                </tbody>
-              </table>
-              <table class="table table-sm">
-                {% if 'Shoppingcart' in session %}
-                <tr>
-                  <td> <a href="#" class="btn btn-success"> Order now </a> </td>
-                  <td width="35%"></td>
-                  <td>
-                    <h5>Total Quantity: {{TotalQuantity}}</h5>
-                  </td>
-                  <td>
-                    <h5>Total Price: ฿{{grandtotal}} </h3>
-                  </td>
-                  <td> <a href="{{url_for('empty_cart')}}" class="btn btn-danger btn-sm float-right mr-4"> Clear
-                      cart</a>
-                  </td>
-                  {% else: %}
-                  {% endif %}
-                </tr>
-              </table>
-            </div>
-
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">
-                <span class="glyphicon glyphicon-shopping-cart"></span> Continue Shopping
-              </button></td>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="container" style="margin-top: 10px">
-        <div class="section-header">
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod labore et dolore magna
-            aliqua.</p>
-          <h2><i class="fa-solid fa-book fa-2xl"></i> Our Product </h2>
-
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint
+                occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+                consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                laboris nisi ut aliquip ex ea commodo consequat.</p>
         </div>
 
-
-
-        <div class="row" style="margin-top: 20px">
-          {% for product in products %} 
-          {% if product.stock < max_value %}
-          {% set max_value = product.stock%}
-          {% endif %}   
-          {% if product.stock > 0 %}                  
-          <div class="col-xs-6 col-sm-4">
-            <form method="post" action="{{url_for('AddCart')}}">
-              <div class="single-publication">
-                <figure class="display">
-                  <img src="/static/upload/{{ product.image }}" class="image">
-                </figure>
-
-                <div class="publication-content">
-                  <span class="category">{{ product.product_category }}</span>
-                  <h3>{{ product.product_name }}</h3>
-                  <h4 class="price">฿ {{ product.price }}</h4>
-                </div>
-
-                <div class="add-to-cart">
-                  <input type="hidden" name="product_id" value="{{ product.product_id }}" />
-                  <div class="touchspin d-flex align-items-center gap-2">
-                    <button type="button" class="btn btn-danger" data-touchspin-down>-</button>
-                    <input type="number" class="form-control text-center" name="quantity" value="1" min="1"
-                      max="{{ max_value }}" data-touchspin-input />
-                    <button type="button" class="btn btn-success" data-touchspin-up>+</button>
-                  </div>
-
-                  <div class="button-def">
-                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                      data-target="#detailsModal{{ product.product_id }}">
-                      Detail
-                    </button>
-
-                    <input type="submit" value="Add to Cart" class="btn btn-warning" />
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-
-
-
-          <div class="modal fade" id="detailsModal{{ product.product_id }}">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h2 class="modal-title text-primary" style="align-content: center;">{{ product.product_name }}'s
-                    Detail</h2>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body" style="align-content: center; text-align: center;">
-                  <img src="/static/upload/{{ product.image }}" class="image">
-                  <p>Description: {{ product.description }}</p>
-                  <p>Price: ฿ {{ product.price }}</p>
-                  <p>In-Stock: {{ product.stock }}</p>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Close</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endif %}   
-          {% endfor %}
+        <!-- Second Grid -->
+        <div class="grid2 text-center">
+            <h1>Lorem Ipsum</h1>
+            <h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</h5>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint
+                occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+                consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                laboris nisi ut aliquip ex ea commodo consequat.</p>
         </div>
-      </div>
+
+        <div class="about">
+            <h1>Quote of the day: live life</h1>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div>
+                <i class="fa fa-facebook-official"></i>
+                <i class="fa fa-instagram"></i>
+                <i class="fa fa-snapchaty"></i>
+                <i class="fa fa-pinterest-p "></i>
+                <i class="fa fa-twitter"></i>
+                <i class="fa fa-linkedin"></i>
+            </div>
+            <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+        </footer>
     </div>
 
 
 </body>
-
-
-<script>
-
-  function updateClock() {
-    let now = new Date();
-    let day = now.toLocaleDateString('en-GB', { day: '2-digit' });
-    let month = now.toLocaleDateString('en-GB', { month: '2-digit' });
-    let year = now.toLocaleDateString('en-GB', { year: 'numeric' });
-    let dayOfWeek = now.toLocaleDateString('th-TH', { weekday: 'long' });
-    let time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-    document.getElementById('clock').innerHTML = dayOfWeek.toUpperCase() + '|' + time + '<br>' + day + '-' + month + '-' + year;
-  }
-
-  updateClock();
-  setInterval(updateClock, 1000);
-</script>
-
-<script src="{{url_for('static', filename='script/main.js')}}"></script>
