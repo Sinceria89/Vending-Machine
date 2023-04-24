@@ -1,6 +1,6 @@
 from __future__ import print_function  # In python 2.7
 import sys
-from flask import Flask, request, render_template, abort, flash, session, redirect, url_for
+from flask import Flask, request, render_template, abort, flash, session, redirect, url_for, json, jsonify
 from flask_apscheduler import APScheduler
 from flask_mail import Mail,  Message
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,7 +11,7 @@ from flaskext.mysql import MySQL
 import pymysql
 import urllib.request
 import os
-import json
+import re
 
 
 pymysql.install_as_MySQLdb()
@@ -38,6 +38,7 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 mail = Mail(app)
 
+
 class Config:
     SCHEDULER_API_ENABLED = True
 
@@ -46,6 +47,7 @@ UPLOAD_FOLDER = 'static/upload'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+time = datetime.now()
 
 
 def allowed_file(filename):
@@ -85,27 +87,26 @@ def index():
             conn.close()
 
 
-
-@app.route('/test', methods=['GET','POST'])
+@app.route('/test', methods=['GET', 'POST'])
 def test():
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT product_id,product_name,stock,row FROM products WHERE stock < 5")
+    cursor.execute(
+        "SELECT product_id,product_name,stock,row FROM products WHERE stock < 5")
     rows = cursor.fetchall()
     depleted = str(rows)
     for row in rows:
         if row['stock'] < 5:
             if request.method == "POST":
                 msg = Message(
-                        'Products Nearly depleted!',
-                        sender='Medvend.2023@gmail.com',
-                        recipients=['6231501089@lamduan.mfu.ac.th']
-                    )
+                    'Products Nearly depleted!',
+                    sender='Medvend.2023@gmail.com',
+                    recipients=['6231501089@lamduan.mfu.ac.th']
+                )
                 msg.body = "Products in medicine vending machine is about to be depleted " + depleted
                 mail.send(msg)
                 return 'Sent'
     return render_template('test1.html',)
-
 
 
 @app.route('/add', methods=['POST'])
@@ -121,7 +122,7 @@ def AddCart():
                 "SELECT * FROM products WHERE product_id=%s", product_id)
             row = cursor.fetchone()
             DictItems = {str(row['product_id']): {'product_name': row['product_name'], 'price': float(row['price']),
-                                 'stock': row['stock'], 'quantity': quantity, 'image': row['image']}}
+                                                  'stock': row['stock'], 'quantity': quantity, 'image': row['image']}}
             if 'Shoppingcart' in session:
                 print(session['Shoppingcart'])
                 if product_id in session['Shoppingcart']:
@@ -156,11 +157,11 @@ def MagerDicts(dict1, dict2):
 def updatecart(code):
     if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
         return redirect(url_for('index'))
-    if request.method =="POST":
+    if request.method == "POST":
         cart_quantity = request.form.get('cart_quantity')
         try:
             session.modified = True
-            for key , item in session['Shoppingcart'].items():
+            for key, item in session['Shoppingcart'].items():
                 if int(key) == code:
                     item['quantity'] = cart_quantity
                     flash('Item is updated!')
@@ -170,14 +171,13 @@ def updatecart(code):
             return redirect(url_for('index'))
 
 
-
 @app.route('/deleteitem/<int:product_id>')
 def deleteitem(product_id):
     if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
         return redirect(url_for('index'))
     try:
         session.modified = True
-        for key , item in session['Shoppingcart'].items():
+        for key, item in session['Shoppingcart'].items():
             if int(key) == product_id:
                 session['Shoppingcart'].pop(key, None)
                 return redirect(url_for('index'))
@@ -202,6 +202,100 @@ def login():
     # login
 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    prov = conn.cursor(pymysql.cursors.DictCursor)
+    prov.execute(
+        "SELECT `id`,`code`,`name_th` FROM `provinces`")
+    msg = ''
+    # Check if "username", "password" and "email" POST requests exist (user submitted form)
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
+        # Create variables for easy access
+        first_name = request.form['first_name']
+        last_name = request.form['first_name']
+        username = request.form['username']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        gender = request.form['gender']
+        email = request.form['email']
+        blood_type = request.form['blood_type']
+        age = request.form['age']
+        ethnicity = request.form['ethnicity']
+        weight = request.form['weight']
+        height = request.form['height']
+        congenital_disease = request.form['congenital_disease']
+        drug_allergy = request.form['drug_allergy']
+        phone_no = request.form['phone_no']
+        provinces = request.form['province']
+        districts = request.form['amphure']
+        sub_districts = request.form['district']
+        post_code = request.form['post_code']
+        address = request.form['address']
+        
+
+  # Check if account exists using MySQL
+        cursor.execute(
+            'SELECT * FROM users WHERE username = %s', (username))
+        account = cursor.fetchone()
+        # If account exists show error and validation checks
+        if account:
+            msg = 'Account already exists!'
+        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            msg = 'Invalid email address!'
+        elif not re.match(r'[A-Za-z0-9]+', username):
+            msg = 'Username must contain only characters and numbers!'
+        elif password != confirm_password:
+            msg = 'Password is not matcing!'
+        else:
+            # Account doesnt exists and the form data is valid, now insert new account into accounts table
+            cursor.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, 'user')",
+                           (username, generate_password_hash(password)))
+            user_id = cursor.lastrowid
+            cursor.execute("INSERT INTO users_detail (first_name, last_name, gender, email, blood_type, age, ethnicity, weight, height, congenital_disease, drug_allergy, phone_no, provinces, districts, sub_districts, address, post_code, user_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                           (first_name, last_name, gender, email, blood_type, age, ethnicity, weight, height, congenital_disease, drug_allergy, phone_no, provinces, districts, sub_districts, address, post_code, user_id))
+            conn.commit()
+            msg = 'You have successfully registered!'
+    elif request.method == 'POST':
+        # Form is empty... (no POST data)
+        msg = 'Please fill out the form!'
+    # Show registration form with message (if any)
+    return render_template('register.html', msg=msg, prov=prov)
+
+
+@app.route('/amphure/<get_amphure>')
+def amphurebyprovince(get_amphure):
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute(
+        "SELECT * FROM amphures WHERE province_id = %s", [get_amphure])
+    amphure = cursor.fetchall()
+    amphureArray = []
+    for row in amphure:
+        amphureObj = {
+            'id': row['id'],
+            'name': row['name_th']}
+        amphureArray.append(amphureObj)
+    return jsonify({'amphureprovince': amphureArray})
+
+
+@app.route('/district/<get_district>')
+def districtbyamphure(get_district):
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute(
+        "SELECT * FROM districts WHERE amphure_id = %s", [get_district])
+    district = cursor.fetchall()
+    districtArray = []
+    for row in district:
+        districtObj = {
+            'id': row['id'],
+            'name': row['name_th']}
+        districtArray.append(districtObj)
+    return jsonify({'districtamphure': districtArray})
+
+
 @app.route('/submit', methods=['POST'])
 def login_submit():
     _username = request.form['UsernameInput']
@@ -212,7 +306,7 @@ def login_submit():
         password = request.cookies.get('password')
         conn = mysql.connect()
         cursor = conn.cursor()
-        sql = "SELECT * FROM admin WHERE username=%s"
+        sql = "SELECT * FROM users WHERE username=%s"
         sql_where = (username,)
         cursor.execute(sql, sql_where)
         row = cursor.fetchone()
@@ -220,15 +314,18 @@ def login_submit():
             print(username + ' ' + password)
             session['username'] = row[1]
             cursor.close()
-            session['logged_in'] = True
-            return redirect('/admin')
+            if row[3] == 'admin':
+                session['logged_in'] = True
+                return redirect('/admin')
+            else:
+                return redirect('/')
         else:
             return redirect('/login')
     # Check if exist
     elif _username and _password:
         conn = mysql.connect()
         cursor = conn.cursor()
-        sql = "SELECT * FROM admin WHERE username=%s"
+        sql = "SELECT * FROM users WHERE username=%s"
         sql_where = (_username,)
         cursor.execute(sql, sql_where)
         row = cursor.fetchone()
@@ -236,8 +333,11 @@ def login_submit():
             if check_password_hash(row[2], _password):
                 session['username'] = row[1]
                 cursor.close()
-                session['logged_in'] = True
-                return redirect('/admin')
+                if row[3] == 'admin':
+                    session['logged_in'] = True
+                    return redirect('/admin')
+                else:
+                    return redirect('/')
             else:
                 flash('Invalid Password!')
                 return redirect('/login')
@@ -271,9 +371,9 @@ def products():
     cate = cur1.fetchall()
     cur.close()
     cur1.close()
-    #app.logger.info(data)
-    #app.logger.info(cate)
-    return render_template('products_manage.html', products=data, categories=cate)
+    # app.logger.info(data)
+    # app.logger.info(cate)
+    return render_template('products_manage.html', products=data, categories=cate, time=time)
 
 
 @app.route('/product_add', methods=['POST'])
@@ -310,25 +410,40 @@ def update():
         price_value = price_value.replace(',', '')
         price = float(price_value)
         stock = request.form['stock']
-        image = request.files['image']
         row = request.form['row']
         category = request.form['category']
         description = request.form['description']
         conn = mysql.connect()
         cur = conn.cursor(pymysql.cursors.DictCursor)
-        if image and allowed_file(image.filename):
-            filename = secure_filename(image.filename)
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         cur.execute("""
-        UPDATE products SET product_name=%s, price=%s, stock=%s, row=%s, category_id=%s, image=%s, description=%s
+        UPDATE products SET product_name=%s, price=%s, stock=%s, row=%s, category_id=%s, description=%s
         WHERE product_id=%s
-        """, (product_name, price, stock, row, category, filename, description, product_id))
+        """, (product_name, price, stock, row, category, description, product_id))
         flash("Data Updated Successfully")
         conn.commit()
         return redirect(url_for('products'))
 
 
-
+@app.route("/upload", methods=["POST", "GET"])
+def upload():
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    if request.method == 'POST':
+        product_id = request.form['product_id_image']
+        image = request.files['image']
+        # print(files)
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            cur.execute("""
+            UPDATE products SET image=%s
+            WHERE product_id=%s
+            """, (filename, product_id))
+            conn.commit()
+        print(filename)
+        cur.close()
+        flash('File(s) successfully uploaded')
+    return '', 204
 
 
 @app.route('/delete/<string:product_id>', methods=['POST', 'GET'])
@@ -350,6 +465,6 @@ def admin():
 
 
 if __name__ == "__main__":
-    #scheduler.add_job(id = 'Checking Stock', func=stockChecking, trigger="interval", minutes=5)
-    #scheduler.start()
+    # scheduler.add_job(id = 'Checking Stock', func=stockChecking, trigger="interval", minutes=5)
+    # scheduler.start()
     app.run(debug=True)

@@ -1,10 +1,9 @@
 <html>
-<title>Administrator Login</title>
+<title>Login</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
 <style>
-    
     /* Center the white container */
     .container {
         max-width: 400px;
@@ -16,12 +15,14 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
-    body{
+
+    body {
         background-image: url("../static/japanesecastle.png");
         height: 400px;
         width: 800px;
     }
 </style>
+
 <body>
     <div class="myDiv">
         <div class="container">
@@ -32,9 +33,10 @@
                     </a>
                 </div>
                 <div class="clock" id="clock">/</div>
-            </div>   
+            </div>
         </div>
-        <div class="container h-120" style="background-image: linear-gradient(to bottom, #fce4ec, #f8bbd0, #f48fb1, #f06292, #ec407a, #e91e63, #d81b60, #c2185b);">
+        <div class="container h-120"
+            style="background-image: linear-gradient(to bottom, #fce4ec, #f8bbd0, #f48fb1, #f06292, #ec407a, #e91e63, #d81b60, #c2185b);">
             <h4 align="center">เข้าสู่ระบบ</h4>
             <br>
             <div class="d-flex justify-content-center h-100">
@@ -42,41 +44,39 @@
                     <div class="d-flex justify-content-center">
                         <form method="post" action="/submit">
                             <div class=" mb-3">
-                                <input type="text" name="UsernameInput" placeholder="username" required class="form-control input_user">
+                                <input type="text" name="UsernameInput" placeholder="username" required
+                                    class="form-control input_user">
                             </div>
-                            <br>
                             <div class="mb-2">
-                                <input type="password" name="PasswordInput" placeholder="Password" autocomplete="off" required class="form-control input_pass" value="">
+                                <input type="password" name="PasswordInput" placeholder="Password" autocomplete="off"
+                                    required class="form-control input_pass" value="">
                             </div>
-                            <input type="password" name="PasswordInput"
-                                value="{% if 'password' in request.cookies %} {{ request.cookies.get('password') }} {% endif %}"
-                                placeholder="Password" autocomplete="off" required class="form-control input_pass"
-                                value="">
-                        </div>
-                        <div class="d-flex justify-content-center mt-3">
-                            <input type="submit" value="Login" class="btn btn-info">
-                            <a href="/" class="btn btn-danger">Back</a>
-                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center links">
+                        Don't have an account? <a href="/register" class="ml-2">Sign Up</a>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <input type="submit" value="Login" class="btn btn-info">
+                        <a href="/" class="btn btn-danger">Back</a>
+                    </div>
                     </form>
                 </div>
 
-                    <div class="mt-4">
-                        <div>
-                            {% with messages = get_flashed_messages() %}
-                            {% if messages %}
-                            {% for message in messages %}
-                            <div class="alert alert-danger" role="alert">{{ message }}</div>
-                            {% endfor %}
-                            {% endif %}
-                            {% endwith %}
-                        </div>
+                <div class="mt-4">
+                    <div>
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-danger" role="alert">{{ message }}</div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
                     </div>
                 </div>
             </div>
-            <div class="d-flex justify-content-center mt-3">
-                <a href="/"><button>กลับไปหน้าแรก</button></a>
-            </div>
         </div>
     </div>
+    </div>
 </body>
+
 </html>
