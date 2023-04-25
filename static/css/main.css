@@ -20,14 +20,10 @@
     justify-content: center;
 }
 
-.btn {
-    white-space: nowrap;
-    text-align: center;
-}
 
 img {
-    max-height: 80%;
-    max-width: 80%;
+
+    width: 80%;
     margin: auto;
 
     justify-content: center;
@@ -40,7 +36,7 @@ img {
 
 
 .ShoppingTable {
-
+    
     width: 500px;
     border-spacing: 2px;
 }
@@ -53,8 +49,8 @@ img {
 
 
 .single-publication {
-    background-color: #FFFFFF;
-    border: 1px solid #212121;
+    background-color: #3a3a3a;
+    border: 1px solid #f2eee2;
     margin-bottom: 30px;
     position: relative;
 
@@ -104,22 +100,6 @@ img {
 }
 
 
-.single-publication .button-def {
-    margin-top: 10px
-}
-
-
-footer {
-    height: 50px;
-    background-color: #161616;
-    text-align: center;
-    color: #FFCC33;
-}
-
-
-.about {
-    background-color: #3b3b3b;
-    text-align: center;
-    color: #FFCC33;
-    padding: 20px;
+.single-publication .button-def{
+    margin-top:10px
 }
