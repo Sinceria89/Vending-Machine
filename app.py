@@ -47,10 +47,14 @@ def homepage():
         return render_template("test.html")
     else: 
         try:
+            user_id = session.get('user_id')
             conn = mysql.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
+            curr = conn.cursor(pymysql.cursors.DictCursor)
             cursor.execute("SELECT * FROM products")
+            curr.execute("SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
             rows = cursor.fetchall()
+            user = curr.fetchone()
             TotalQuantity = 0
             TotalPrice = 0
             if 'Shoppingcart' in session:
@@ -62,7 +66,7 @@ def homepage():
                     subtotal += float(product['price']) * int(product['quantity'])
                     TotalPrice = float(TotalPrice + subtotal)
 
-            return render_template('homepage.html', products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
+            return render_template('homepage.html', user=user ,products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
         except Exception as e:
             print(e)
             return render_template('homepage.html')
@@ -156,8 +160,9 @@ def deleteitem(product_id):
 @app.route('/empty')
 def empty_cart():
     try:
-        session.clear()
-        return redirect(url_for('homepage'))
+        for key, item in session['Shoppingcart'].items():
+            session.pop('Shoppingcart', default=None)
+            return redirect(url_for('homepage'))
     except Exception as e:
         print(e)
 
@@ -275,6 +280,7 @@ def login_submit():
         cursor = conn.cursor()
         sql = "SELECT * FROM users WHERE username=%s"
         sql_where = (username,)
+        
         cursor.execute(sql, sql_where)
         row = cursor.fetchone()
         if row and check_password_hash(row[2], password):
@@ -282,9 +288,11 @@ def login_submit():
             session['username'] = row[1]
             cursor.close()
             if row[3] == 'admin':
+                session['user_id'] = row[0]
                 session['logged_in'] = True
                 return redirect('/admin')
             elif row[3] == 'user':
+                session['user_id'] = row[0]
                 session['logged_in'] = True
                 return redirect('/homepage')
             else:
@@ -304,9 +312,11 @@ def login_submit():
                 session['username'] = row[1]
                 cursor.close()
                 if row[3] == 'admin':
+                    session['user_id'] = row[0]
                     session['logged_in'] = True
                     return redirect('/admin')
                 elif row[3] == 'user':
+                    session['user_id'] = row[0]
                     session['logged_in'] = True
                     return redirect('/homepage')
                 else:
@@ -325,6 +335,7 @@ def login_submit():
 @app.route('/logout')
 def logout():
     if 'logged_in' in session:
+        session.pop('user_id')
         session.pop('logged_in')
     return redirect('/')
 

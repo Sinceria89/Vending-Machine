@@ -40,14 +40,13 @@
             width: 20%;
             background-color: #065488;
             color: #ffffff;
-
+            overflow-y: auto;
 
         }
 
         .Right {
             position: absolute;
             left: 20%;
-            right: 0;
             background-color: #ffffff;
         }
 
@@ -65,6 +64,18 @@
             background-color: #33CCFF;
         }
 
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+            overflow-x: hidden;
+        }
+
+        .signin {
+            width: 200px;
+        }
+
         .grid1 {
             padding-top: 30px;
             padding-bottom: 30px;
@@ -74,6 +85,7 @@
         .grid2 {
             padding-top: 30px;
             padding-bottom: 30px;
+            width: 100%;
             background-color: #e8e8e8;
         }
 
@@ -81,17 +93,16 @@
             background-color: #3b3b3b;
             text-align: center;
             color: #FFCC33;
-            padding: 0;
-            margin: 0;
+            padding: 20px;
         }
 
         .left-end {
-            position: absolute;
-            bottom: 1.5px;
+            padding-top: 70%;
             text-align: center;
         }
 
         footer {
+            height: 50px;
             background-color: #161616;
             text-align: center;
             color: #FFCC33;
@@ -112,6 +123,7 @@
 </head>
 
 <body>
+    
     <div class="Left">
         <div class="container justify-content-center text-center p-md-5">
             <img src="/static/logo.png">
@@ -119,10 +131,9 @@
             <div class="container-logo p-md-4">
                 <img src="/static/logo.png">
             </div>
-            <div class="container p-md-5">
-                <a href="/login" class="btn btn-light btn-block">เข้าสู่ระบบ</a>
-
-                <a href="/register" class="btn btn-light btn-block">สมัครสมาชิก</a>
+            <div class="col-12 col-md-6r">
+                <a href="/login" class="signin btn btn-light btn-lg btn-block">เข้าสู่ระบบ</a>
+                <a href="/register" class="signin  btn btn-light btn-lg btn-block">สมัครสมาชิก</a>
             </div>
         </div>
         <div class="left-end">
@@ -133,7 +144,7 @@
 
     <div class="Right">
         <!-- Header -->
-        <header class="container justify-content-center text-center p-md-5" style="padding:128px">
+        <header class="container justify-content-center text-center p-md-5">
             <h1>START PAGE</h1>
             <p>.....</p>
             <button>Get Started</button>
