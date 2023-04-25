@@ -1,42 +1,19 @@
 from __future__ import print_function  # In python 2.7
+from router import *
+from test import *
 import sys
-from flask import Flask, request, render_template, abort, flash, session, redirect, url_for, json, jsonify
-from flask_apscheduler import APScheduler
-from flask_mail import Mail,  Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import timedelta, datetime
 import logging
-from flaskext.mysql import MySQL
-import pymysql
 import urllib.request
 import os
 import re
 
 
-pymysql.install_as_MySQLdb()
-
-# config
-app = Flask(__name__)
-app.secret_key = "MedVend-2023"
-scheduler = APScheduler()
-mysql = MySQL()
-mail = Mail(app)
-
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] = 'Medvend.2023@gmail.com'
-app.config['MAIL_PASSWORD'] = 'hjusaohtsifugtff'
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
 
 
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = ''
-app.config['MYSQL_DATABASE_DB'] = 'vending'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-mysql.init_app(app)
-mail = Mail(app)
+
 
 
 class Config:
@@ -60,52 +37,47 @@ def stockChecking():
 
 @app.route('/')
 def index():
-    try:
-        conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM products")
-        rows = cursor.fetchall()
-        TotalQuantity = 0
-        TotalPrice = 0
-        if 'Shoppingcart' in session:
-            for key, product in session['Shoppingcart'].items():
-                subtotal = 0
-                subquantity = 0
-                subquantity = int(product['quantity'])
-                TotalQuantity += subquantity
-                subtotal += float(product['price']) * int(product['quantity'])
-                TotalPrice = float(TotalPrice + subtotal)
+    return render_template('index.html')
 
-        return render_template('index.html', products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
-    except Exception as e:
-        print(e)
-        return render_template('index.html', )
-    finally:
-        if 'cursor' in locals() and cursor is not None:
-            cursor.close()
-        if 'conn' in locals() and conn is not None:
-            conn.close()
 
-@app.route('/test', methods=['GET', 'POST'])
-def test():
-    conn = mysql.connect()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute(
-        "SELECT product_id,product_name,stock,row FROM products WHERE stock < 5")
-    rows = cursor.fetchall()
-    depleted = str(rows)
-    for row in rows:
-        if row['stock'] < 5:
-            if request.method == "POST":
-                msg = Message(
-                    'Products Nearly depleted!',
-                    sender='Medvend.2023@gmail.com',
-                    recipients=['6231501089@lamduan.mfu.ac.th']
-                )
-                msg.body = "Products in medicine vending machine is about to be depleted " + depleted
-                mail.send(msg)
-                return 'Sent'
-    return render_template('test1.html',)
+@app.route('/homepage')
+def homepage():
+    if 'logged_in' not in session:
+        # abort(403)
+        return render_template("test.html")
+    else: 
+        try:
+            user_id = session.get('user_id')
+            conn = mysql.connect()
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            curr = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute("SELECT * FROM products")
+            curr.execute("SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
+            rows = cursor.fetchall()
+            user = curr.fetchone()
+            TotalQuantity = 0
+            TotalPrice = 0
+            if 'Shoppingcart' in session:
+                for key, product in session['Shoppingcart'].items():
+                    subtotal = 0
+                    subquantity = 0
+                    subquantity = int(product['quantity'])
+                    TotalQuantity += subquantity
+                    subtotal += float(product['price']) * int(product['quantity'])
+                    TotalPrice = float(TotalPrice + subtotal)
+
+            return render_template('homepage.html', user=user ,products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
+        except Exception as e:
+            print(e)
+            return render_template('homepage.html')
+        finally:
+            if 'cursor' in locals() and cursor is not None:
+                cursor.close()
+            if 'conn' in locals() and conn is not None:
+                conn.close()
+
+
+
 
 
 @app.route('/add', methods=['POST'])
@@ -156,7 +128,7 @@ def MagerDicts(dict1, dict2):
 @app.route('/updatecart/<int:code>', methods=['POST'])
 def updatecart(code):
     if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
-        return redirect(url_for('index'))
+        return redirect(url_for('homepage'))
     if request.method == "POST":
         cart_quantity = request.form.get('cart_quantity')
         try:
@@ -165,32 +137,33 @@ def updatecart(code):
                 if int(key) == code:
                     item['quantity'] = cart_quantity
                     flash('Item is updated!')
-                    return redirect(url_for('index'))
+                    return redirect(url_for('homepage'))
         except Exception as e:
             print(e)
-            return redirect(url_for('index'))
+            return redirect(url_for('homepage'))
 
 
 @app.route('/deleteitem/<int:product_id>')
 def deleteitem(product_id):
     if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
-        return redirect(url_for('index'))
+        return redirect(url_for('homepage'))
     try:
         session.modified = True
         for key, item in session['Shoppingcart'].items():
             if int(key) == product_id:
                 session['Shoppingcart'].pop(key, None)
-                return redirect(url_for('index'))
+                return redirect(url_for('homepage'))
     except Exception as e:
         print(e)
-        return redirect(url_for('index'))
+        return redirect(url_for('homepage'))
 
 
 @app.route('/empty')
 def empty_cart():
     try:
-        session.clear()
-        return redirect(url_for('index'))
+        for key, item in session['Shoppingcart'].items():
+            session.pop('Shoppingcart', default=None)
+            return redirect(url_for('homepage'))
     except Exception as e:
         print(e)
 
@@ -308,6 +281,7 @@ def login_submit():
         cursor = conn.cursor()
         sql = "SELECT * FROM users WHERE username=%s"
         sql_where = (username,)
+        
         cursor.execute(sql, sql_where)
         row = cursor.fetchone()
         if row and check_password_hash(row[2], password):
@@ -315,8 +289,13 @@ def login_submit():
             session['username'] = row[1]
             cursor.close()
             if row[3] == 'admin':
+                session['user_id'] = row[0]
                 session['logged_in'] = True
                 return redirect('/admin')
+            elif row[3] == 'user':
+                session['user_id'] = row[0]
+                session['logged_in'] = True
+                return redirect('/homepage')
             else:
                 return redirect('/')
         else:
@@ -334,8 +313,13 @@ def login_submit():
                 session['username'] = row[1]
                 cursor.close()
                 if row[3] == 'admin':
+                    session['user_id'] = row[0]
                     session['logged_in'] = True
                     return redirect('/admin')
+                elif row[3] == 'user':
+                    session['user_id'] = row[0]
+                    session['logged_in'] = True
+                    return redirect('/homepage')
                 else:
                     return redirect('/')
             else:
@@ -352,6 +336,7 @@ def login_submit():
 @app.route('/logout')
 def logout():
     if 'logged_in' in session:
+        session.pop('user_id')
         session.pop('logged_in')
     return redirect('/')
 
@@ -467,4 +452,5 @@ def admin():
 if __name__ == "__main__":
     # scheduler.add_job(id = 'Checking Stock', func=stockChecking, trigger="interval", minutes=5)
     # scheduler.start()
+    
     app.run(debug=True)

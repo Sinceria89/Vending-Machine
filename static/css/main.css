@@ -20,10 +20,14 @@
     justify-content: center;
 }
 
+.btn {
+    white-space: nowrap;
+    text-align: center;
+}
 
 img {
-
-    width: 80%;
+    max-height: 80%;
+    max-width: 80%;
     margin: auto;
 
     justify-content: center;
@@ -36,7 +40,7 @@ img {
 
 
 .ShoppingTable {
-    
+
     width: 500px;
     border-spacing: 2px;
 }
@@ -100,6 +104,6 @@ img {
 }
 
 
-.single-publication .button-def{
-    margin-top:10px
+.single-publication .button-def {
+    margin-top: 10px
 }
