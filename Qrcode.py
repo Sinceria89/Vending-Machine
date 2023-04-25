@@ -18,17 +18,25 @@ with open('package.json', 'r') as f:
 
 # Define a route for the endpoint that generates the QR code
 @app.route("/")
-# Define a route for the endpoint that generates the QR code
+# Define a route for the endpoint that generates the QR codesss
 @app.route('/generateQR', methods=['POST', 'GET'])
 def generateQR():
     # Check if the request method is POST
     if request.method == 'POST':
         # Get the amount from the form data
-        amount = float(request.form.get("grandtotal", 0))
+        TotalPrice = request.form.get("TotalPrice")
+        if TotalPrice:
+            amount = float(TotalPrice)
+        else:
+            amount = 0
     # Check if the request method is GET
     elif request.method == 'GET':
         # Get the amount from the query parameters
-        amount = float(request.args.get('grandtotal', 0))
+        TotalPrice = request.args.get('TotalPrice')
+        if TotalPrice:
+            amount = float(TotalPrice)
+        else:
+            amount = 0
     # If the request method is not supported, return a bad request error
     else:
         return jsonify({
@@ -36,7 +44,12 @@ def generateQR():
             "RespMessage": "Bad Request",
             "Result": "HTTP method not supported"
         }), 400
-
+    
+    # Check if TotalPrice is None and set it to 0 if it is
+    TotalPrice = request.form.get('TotalPrice')
+    if TotalPrice is None:
+        TotalPrice = 0
+    
     # Set the mobile number for the payment
     mobileNumber = '0982959552'
     # Generate the QR code payload with the mobile number and amount
@@ -56,17 +69,18 @@ def generateQR():
     # Encode the image data as a base64 string
     encoded_image = base64.b64encode(image_data).decode('utf-8')
     
-    return redirect(url_for('showQR', amount=amount, qr_image=encoded_image))
+    return redirect(url_for('showQR', TotalPrice=TotalPrice, qr_image=encoded_image))
+
+
 
 @app.route('/showQR')
 def showQR():
     # Get the amount and QR code image data from the URL parameters
-    amount = float(request.args.get('grandtotal', 0))
+    TotalPrice = float(request.args.get('TotalPrice', 0))
     qr_image = request.args.get('qr_image', '')
 
     # Render the Qrcode.html template with the amount and QR code image data
-    return render_template('Qrcode.html', amount=amount, qr_image=qr_image)
-
+    return render_template('Qrcode.html', amount=TotalPrice, qr_image=qr_image)
 
 
 @app.route("/thx")
