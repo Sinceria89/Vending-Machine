@@ -50,7 +50,7 @@
 <body style="background-color: #4b4b4b;">
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Icon</a>
+      <img src="/static/logo.png" width="10%" height="20%"></img>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02"
         aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -60,8 +60,9 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/homepage">Home</a>
           </li>
+          <img src="/static/shopping.jpg" width="70px" height="50px" data-bs-toggle="modal" data-bs-target="#Cart"></img>
           <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart"> Shopping Cart: ({{
+            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart">: ({{
               session['Shoppingcart']|length }})</a>
           </li>
         </ul>
