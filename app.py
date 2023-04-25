@@ -11,11 +11,6 @@ import os
 import re
 
 
-
-
-
-
-
 class Config:
     SCHEDULER_API_ENABLED = True
 
@@ -45,39 +40,38 @@ def homepage():
     if 'logged_in' not in session:
         # abort(403)
         return render_template("test.html")
-    else: 
+    else:
         try:
             user_id = session.get('user_id')
             conn = mysql.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
             curr = conn.cursor(pymysql.cursors.DictCursor)
             cursor.execute("SELECT * FROM products")
-            curr.execute("SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
+            curr.execute(
+                "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
             rows = cursor.fetchall()
             user = curr.fetchone()
             TotalQuantity = 0
             TotalPrice = 0
+            app.logger.info(user)
             if 'Shoppingcart' in session:
                 for key, product in session['Shoppingcart'].items():
                     subtotal = 0
                     subquantity = 0
                     subquantity = int(product['quantity'])
                     TotalQuantity += subquantity
-                    subtotal += float(product['price']) * int(product['quantity'])
+                    subtotal += float(product['price']) * \
+                        int(product['quantity'])
                     TotalPrice = float(TotalPrice + subtotal)
-
-            return render_template('homepage.html', user=user ,products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
+            return render_template('homepage.html', user=user, user_id=user_id, products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
         except Exception as e:
             print(e)
-            return render_template('homepage.html')
+            return render_template('index.html')
         finally:
             if 'cursor' in locals() and cursor is not None:
                 cursor.close()
             if 'conn' in locals() and conn is not None:
                 conn.close()
-
-
-
 
 
 @app.route('/add', methods=['POST'])
@@ -205,7 +199,6 @@ def register():
         sub_districts = request.form['district']
         post_code = request.form['post_code']
         address = request.form['address']
-        
 
   # Check if account exists using MySQL
         cursor.execute(
@@ -280,7 +273,7 @@ def login_submit():
         cursor = conn.cursor()
         sql = "SELECT * FROM users WHERE username=%s"
         sql_where = (username,)
-        
+
         cursor.execute(sql, sql_where)
         row = cursor.fetchone()
         if row and check_password_hash(row[2], password):
@@ -289,6 +282,7 @@ def login_submit():
             cursor.close()
             if row[3] == 'admin':
                 session['user_id'] = row[0]
+                session['admin'] = True
                 session['logged_in'] = True
                 return redirect('/admin')
             elif row[3] == 'user':
@@ -313,6 +307,7 @@ def login_submit():
                 cursor.close()
                 if row[3] == 'admin':
                     session['user_id'] = row[0]
+                    session['admin'] = True
                     session['logged_in'] = True
                     return redirect('/admin')
                 elif row[3] == 'user':
@@ -337,12 +332,14 @@ def logout():
     if 'logged_in' in session:
         session.pop('user_id')
         session.pop('logged_in')
+        if 'admin' in session:
+            session.pop('admin')
     return redirect('/')
 
 
 @app.route('/products_manage')
 def products():
-    if 'logged_in' not in session:
+    if 'admin' not in session:
         # abort(403)
         return render_template("test.html")
     conn = mysql.connect()
@@ -442,7 +439,7 @@ def delete(product_id):
 
 @app.route('/admin')
 def admin():
-    if 'logged_in' not in session:
+    if 'admin' not in session:
         # abort(403)
         return render_template("test.html")
     return render_template("admin.html")
@@ -451,5 +448,5 @@ def admin():
 if __name__ == "__main__":
     # scheduler.add_job(id = 'Checking Stock', func=stockChecking, trigger="interval", minutes=5)
     # scheduler.start()
-    
+
     app.run(debug=True)
