@@ -1,66 +1,124 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
-            <head></head>
-                
-            <script>
-                window.onload = function () {
-                
-                var chart = new CanvasJS.Chart("chartContainer", {
-                    exportEnabled: true,
-                    animationEnabled: true,
-                    title:{
-                        text: "proportion"
-                    },
-                    legend:{
-                        cursor: "pointer",
-                        itemclick: explodePie
-                    },
-                    data: [{
-                        type: "pie",
-                        showInLegend: true,
-                        toolTipContent: "{name}: <strong>{y}%</strong>",
-                        indexLabel: "{name} - {y}%",
-                        dataPoints: [
-                            { y: 25, name: "TYLENOL", exploded: true },
-                            { y: 35, name: "TEST2" },
-                            { y: 65, name: "CALAMINE" }
+<head>  
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<style>
+.chart-container {
+    display: inline-block;
+    width: 49%;
+    height: 370px;
+    margin: 10px;
+}
+.container {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-template-rows: repeat(2, 1fr);
+			height: 100vh;
+			width: 100%;
+		}
+		.screen {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 3rem;
+		}
+		.screen:nth-child(1) {
+			background-color: #ff8080;
+		}
+		.screen:nth-child(2) {
+			background-color: #80bfff;
+		}
+		.screen:nth-child(3) {
+			background-color: #80ff80;
+		}
+		.screen:nth-child(4) {
+			background-color: #ffb380;
+		}
+</style>
+<script>
+    window.onload = function () {
+        var chart2 = new CanvasJS.Chart("chartContainer2", {
+        animationEnabled: true,
+        theme: "light2",
+    title:{
+        text: "Income"
+            },
+    data: [{
+        type: "line",
+            indexLabelFontSize: 16,
+            dataPoints: [
+            { y: 100 },
+            { y: 200},
+            { y: 520, indexLabel: "\u2191 highest",markerColor: "red", markerType: "triangle" },
+            { y: 460 },
+            { y: 250},
+            { y: 500 },
+            { y: 300 },
+            { y: 480 },
+            { y: 50 , indexLabel: "\u2193 lowest",markerColor: "DarkSlateGrey", markerType: "cross" },
+            { y: 100 },
+            { y: 200 },
+            { y: 100 }
+                        ]
+            }]
+                            });
+    chart2.render();
+
+var chart1 = new CanvasJS.Chart("chartContainer1", {
+    exportEnabled: true,
+        animationEnabled: true,
+        title:{
+        text: "State Operating Funds"
+                },
+        legend:{
+        cursor: "pointer",
+        itemclick: explodePie
+                },
+            data: [{
+            type: "pie",
+            showInLegend: true,
+            toolTipContent: "{name}: <strong>{y}%</strong>",
+            indexLabel: "{name} - {y}%",
+            dataPoints: [
+            { y: 65, name: "TYLENOL", exploded: true },
+            { y: 20, name: "TEST2" },
+            { y: 15, name: "CALAMINE" }
                         ]
                     }]
-                });
-                chart.render();
-                }
-                
-                function explodePie (e) {
-                    if(typeof (e.dataSeries.dataPoints[e.dataPointIndex].exploded) === "undefined" || !e.dataSeries.dataPoints[e.dataPointIndex].exploded) {
-                        e.dataSeries.dataPoints[e.dataPointIndex].exploded = true;
-                    } else {
-                        e.dataSeries.dataPoints[e.dataPointIndex].exploded = false;
-                    }
-                    e.chart.render();
-                
-                }
-                </script>
+            });
+chart1.render();
 
+function explodePie (e) {
+if(typeof (e.dataSeries.dataPoints[e.dataPointIndex].exploded) === "undefined" || !e.dataSeries.dataPoints[e.dataPointIndex].exploded) {
+e.dataSeries.dataPoints[e.dataPointIndex].exploded = true;
+} else {
+e.dataSeries.dataPoints[e.dataPointIndex].exploded = false;
+}
+e.chart.render();
+}
+
+}
+</script>
+
+</head>
+
+                
 <body>
     <h1>WELCOME ADMIN</h1>
 
     <a href="/products_manage">Manage Product</a>
     <a href="/logout">logout</a>
-    <div id="row">
-        <div id="left">
-            <div id="content-left">
+    <div class ="container">
+        <div class="screen">
                 <h2>Product Stock Levels</h2>
 	                <canvas id="myCanvas" width="400" height="300"></canvas>
-            </div>
-        </div>
-	</div>
-            <div id="content-left">
-                <h2>Number of products purchased by customers</h2>
-                <div id="chartContainer" style="height: 370px; width: 400;"></div>
-            </div>
-    <div>
-
-        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+                </div>
+    <div class="screen">
+    <div class="chart-container" id="chartContainer1"></div>
+    </div>
+    <div class="screen"></div>
+    <div class="chart-container" id="chartContainer2"></div>
+    </div>    
 	<script>
 		// Get the canvas element
 		var canvas = document.getElementById("myCanvas");
