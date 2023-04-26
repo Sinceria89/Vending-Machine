@@ -1,6 +1,5 @@
 from __future__ import print_function  # In python 2.7
 from router import *
-from test import *
 import sys
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
