@@ -87,8 +87,11 @@
             <a class="nav-link active" aria-current="page" href="/homepage">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart"> Shopping Cart: ({{
-              session['Shoppingcart']|length }})</a>
+            {% if 'Shoppingcart' in session %}
+            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart"> Shopping Cart: ({{ session['Shoppingcart'].len }})</a>
+            {% else %}
+            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart"> Shopping Cart: (0)</a>
+            {% endif %}
           </li>
         </ul>
         <div class="clock" id="clock" onload="clock"></div>
@@ -100,6 +103,9 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="navbarDarkDropdownMenuLink">
               <li><a class="dropdown-item" href="#">ข้อมูลผู้ใช้</a></li>
+              {% if 'Admin' in session %}
+              <li><a class="dropdown-item" href="/admin">จัดการระบบ (Admin)</a></li>
+              {%endif%}
               <li><a class="dropdown-item" href="/logout">ออกจากระบบ</a></li>
             </ul>
           </li>
@@ -107,39 +113,39 @@
       </div>
     </div>
   </nav>
-  
+
   <div class="main-panel shadow" style="padding-top: 5%;">
     <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-  <div class="carousel-indicators">
-    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
-      aria-current="true" aria-label="Slide 1"></button>
-    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-      aria-label="Slide 2"></button>
-    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-      aria-label="Slide 3"></button>
-  </div>
-  <div class="carousel-inner justify-content-center text-center shadow" style="width: 100%; height:300px;">  
-    <div class="carousel-item active" data-bs-interval="5000">
-      <img src="\static\mike.png" class="d-block w-100" alt="name1" >
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+          aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+          aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+          aria-label="Slide 3"></button>
+      </div>
+      <div class="carousel-inner justify-content-center text-center shadow" style="width: 100%; height:300px;">
+        <div class="carousel-item active" data-bs-interval="5000">
+          <img src="\static\mike.png" class="d-block w-100" alt="name1">
+        </div>
+        <div class="carousel-item" data-bs-interval="5000">
+          <img src="\static\upload\yee.png" class="d-block w-100" alt="name2">
+        </div>
+        <div class="carousel-item" data-bs-interval="5000">
+          <img src="\static\M.jpg" class="d-block w-100" alt="name3">
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+          data-bs-slide="prev">
+          <span aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+          data-bs-slide="next">
+          <span aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
     </div>
-    <div class="carousel-item" data-bs-interval="5000">
-      <img src="\static\upload\yee.png" class="d-block w-100" alt="name2">
-    </div>
-    <div class="carousel-item" data-bs-interval="5000">
-      <img src="\static\M.jpg" class="d-block w-100" alt="name3">
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-      data-bs-slide="prev">
-      <span aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-      data-bs-slide="next">
-      <span aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
-  </div>
-</div>
 
 
     <div class="container">
@@ -169,22 +175,24 @@
                   {% for Cart_list in Cart_list %}
                   <tr>
                     <td>{{loop.index}}</td>
-                    <td><img src="/static/upload/{{ Cart_list.image }}" class="display" alt="{{Cart_list.product_name}}"></td>
+                    <td><img src="/static/upload/{{ Cart_list.image }}" class="display"
+                        alt="{{Cart_list.product_name}}"></td>
                     <td>{{Cart_list.product_name}}</td>
-                    
-                      <form action="#" method="post"></form>
-                      <td>${{"%.2f"|format(Cart_list.price)}}</td>
-                      {% for product in products %}
-                      {% if product.stock < max_value %} {% set max_value=product.stock%} {% endif %}{% endfor %} <td> <input
-                          type="number" name="cart_quantity" min="1" max="{{ max_value }}" value="{{Cart_list.quantity}}">
-                        </td>
 
-                        {% set Subtotal = Cart_list.quantity | int * Cart_list.price| int%}
-                        <td>{{ Subtotal }}</td>
-                        <td><button type="submit" class="btn btn-sm btn-info">Update</button> </td>
-                    </form>
-                    <!--delete-->
-                    </td>
+                    <form action="#" method="post"></form>
+                    <td>${{"%.2f"|format(Cart_list.price)}}</td>
+                    {% for product in products %}
+                    {% if product.stock < max_value %} {% set max_value=product.stock%} {% endif %}{% endfor %} <td>
+                      <input type="number" name="cart_quantity" min="1" max="{{ max_value }}"
+                        value="{{Cart_list.quantity}}">
+                      </td>
+
+                      {% set Subtotal = Cart_list.quantity | int * Cart_list.price| int%}
+                      <td>{{ Subtotal }}</td>
+                      <td><button type="submit" class="btn btn-sm btn-info">Update</button> </td>
+                      </form>
+                      <!--delete-->
+                      </td>
                   </tr>
                   {% endfor %}
                   {% else: %}
@@ -200,10 +208,10 @@
                   <td> <a href="#" class="btn btn-success"> Order now </a> </td>
                   <td width="35%"></td>
                   <td>
-                    <h5>Total Quantity: {{TotalQuantity}}</h5>
+                    <h5>Total Quantity: {{ session['Shoppingcart'][0]['total_quantity'] }}</h5>
                   </td>
                   <td>
-                    <h5>Total Price: ฿{{grandtotal}} </h3>
+                    <h5>Total Price: ฿{{ session['Shoppingcart'][0]['total_price'] }}</h5>
                   </td>
                   <!--clear-->
                   </td>
@@ -254,8 +262,8 @@
                     <input type="hidden" name="product_id" value="{{ product.product_id }}" />
                     <div class="touchspin d-flex align-items-center justify-content-center gap-2">
                       <button type="button" class="btn btn-danger" data-touchspin-down>-</button>
-                      <input type="number" class="form-control form-control-lg text-center " style="width: 50%;" name="quantity" value="1" min="1"
-                        max="{{ max_value }}" data-touchspin-input />
+                      <input type="number" class="form-control form-control-lg text-center " style="width: 50%;"
+                        name="quantity" value="1" min="1" max="{{ max_value }}" data-touchspin-input />
                       <button type="button" class="btn btn-success" data-touchspin-up>+</button>
                     </div>
 

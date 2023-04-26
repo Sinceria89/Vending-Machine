@@ -51,23 +51,15 @@ def homepage():
             curr.execute(
                 "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
             cur.execute(
-                "SELECT cart_items.cart_item_id,cart_items.cart_id,carts.user_id,products.product_id,products.image,products.product_name,cart_items.quantity,products.price FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN users ON users.user_id = carts.user_id WHERE cart_items.quantity > 0 AND carts.user_id=%s", (user_id,))
+                "SELECT cart_items.cart_item_id,cart_items.cart_id,carts.user_id,products.product_id,products.image,products.product_name,cart_items.quantity,products.price,carts.total_price,carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN users ON users.user_id = carts.user_id WHERE cart_items.quantity > 0 AND carts.user_id=%s", (user_id,))
             rows = cursor.fetchall()
             user = curr.fetchone()
             Cart_list = cur.fetchall()
-            app.logger.info(Cart_list)
-            TotalQuantity = 0
-            TotalPrice = 0
-            for item in Cart_list:
-                subtotal = 0
-                subquantity = 0
-                subquantity = int(item['quantity'])
-                TotalQuantity += subquantity
-                subtotal += float(item['price']) * int(item['quantity'])
-                TotalPrice = float(TotalPrice + subtotal)
+            #app.logger.info(Cart_list)
+
             if len(Cart_list) > 0:
                 session['Shoppingcart'] = Cart_list
-            return render_template('homepage.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
+            return render_template('homepage.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
         
         finally:
             if 'cursor' in locals() and cursor is not None:
@@ -199,7 +191,7 @@ def login_submit():
                 session['user_id'] = row[0]
                 session['admin'] = True
                 session['logged_in'] = True
-                return redirect('/admin')
+                return redirect('/homepage')
             elif row[3] == 'user':
                 session['user_id'] = row[0]
                 session['logged_in'] = True
@@ -224,7 +216,7 @@ def login_submit():
                     session['user_id'] = row[0]
                     session['admin'] = True
                     session['logged_in'] = True
-                    return redirect('/admin')
+                    return redirect('/homepage')
                 elif row[3] == 'user':
                     session['user_id'] = row[0]
                     session['logged_in'] = True
@@ -245,6 +237,7 @@ def login_submit():
 @app.route('/logout')
 def logout():
     if 'logged_in' in session:
+        session.pop('Shoppingcart')
         session.pop('user_id')
         session.pop('logged_in')
         if 'admin' in session:
