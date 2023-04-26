@@ -1,22 +1,192 @@
 <!DOCTYPE html>
 <html>
+            <head>
+            <style>
 
-<head>
-    <title>Administrator</title>
-</head>
+            #row{
+            background:  #33CCFF;
+            width: 100%;
+            margin: 0;
+            float: left;
+            }
+            #left {
+            background: #ccc;
+            width: 60%;
+            float: left;
+            }
+            #right{
+            background: #999;
+            width: 40%;
+            float: right;
+
+            }
+
+            #content-left{
+                width: 70%;
+                float: right;
+            }
+            #right-top-wrapper{
+            width: 100%;
+            background: #666;
+                color: #f3f3f3;
+                float: left;
+            }
+            #right-top{
+                width: 40%;
+
+                clear: both;
+
+            }
+            #right-bottom{
+                width: 40%;
+                float: left;
+                clear: both;
+            }
+            </style>
 
 <body>
+    <h1>WELCOME ADMIN</h1>
 
-    <h1>8====D</h1>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore cumque, quidem laboriosam, similique modi
-        aspernatur
-        esse ad iure officia voluptas blanditiis necessitatibus voluptatem, vitae iste pariatur labore. Omnis, similique
-        explicabo.</p>
-        <h1>น้อมคำนับท่านเทพผู้สูงส่ง</h1>
-        <img src="../static/2Q.png" alt=""><br>
-        <a href="/products_manage">Manage Product</a>
-        <a href="/logout">logout</a>
-  
+    <a href="/products_manage">Manage Product</a>
+    <a href="/logout">logout</a>
+    <div id="row">
+        <div id="left">
+            <div id="content-left">
+    <h2>Product Stock Levels</h2>
+	<canvas id="myCanvas" width="400" height="300"></canvas>
+
+	
+	<script>
+		// Get the canvas element
+		var canvas = document.getElementById("myCanvas");
+
+		// Set the context to 2D
+		var ctx = canvas.getContext("2d");
+
+		// Set the bar width and spacing
+		var barWidth = 50;
+		var barSpacing = 10;
+
+		// Set the data for the graph
+        var data = [
+        { item: "TYLENOL ", quantity: 10 },			
+        { item: "Chlorpheniramine", quantity: 20 },			
+        { item: "Calamine", quantity: 10 },			
+        { item: "test", quantity: 6 },			
+        { item: "test2", quantity: 10 }		];
+
+		// Set the starting point for the bars
+		var x = 70;
+		var y = canvas.height - 50;
+
+		// Set the starting point for the y-axis
+		var yAxisX = 60;
+		var yAxisY = 20;
+
+		// Set the starting point for the x-axis
+		var xAxisX = 70;
+		var xAxisY = y + 20;
+
+		// Set the maximum quantity for the y-axis
+		var maxQuantity = Math.max.apply(Math, data.map(function(o) { return o.quantity; }));
+
+		// Set the y-axis scale
+		var yScale = (y - yAxisY) / maxQuantity;
+
+		// Draw the y-axis
+		ctx.beginPath();
+		ctx.moveTo(yAxisX, yAxisY);
+		ctx.lineTo(yAxisX, y);
+		ctx.stroke();
+
+		// Draw the y-axis numbers
+		ctx.textAlign = "right";
+		ctx.textBaseline = "middle";
+		for (var i = 0; i <= maxQuantity; i += 5) {
+			var yPos = y - i * yScale;
+			ctx.fillText(i, yAxisX - 10, yPos);
+			ctx.beginPath();
+			ctx.moveTo(yAxisX - 5, yPos);
+			ctx.lineTo(yAxisX, yPos);
+			ctx.stroke();
+		}
+
+		// Draw the x-axis
+		ctx.beginPath();
+		ctx.moveTo(xAxisX, xAxisY);
+		ctx.lineTo(canvas.width - 20, xAxisY);
+		ctx.stroke();
+
+		// Draw the x-axis labels and bars
+		ctx.textAlign = "center";
+		ctx.textBaseline = "top";
+		for (var i = 0; i < data.length; i++) {
+			// Set the bar height based on the quantity
+			var barHeight = data[i].quantity * yScale;
+
+			// Save the current context
+			ctx.save();
+
+			// Rotate the context
+			ctx.translate(x + barWidth / 2, xAxisY + 10);
+			ctx.rotate(-Math.PI / 4);
+
+			// Draw the label
+			ctx.fillStyle = "black";
+			ctx.fillText(data[i].item, 0, 0);
+
+			// Restore the context
+			ctx.restore();
+
+			// Define an array of 10 random colors
+var colors = [
+  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
+  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
+  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
+  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
+  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
+  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
+  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
+  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
+  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
+  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")"
+];
+
+// Draw the x-axis labels and bars
+ctx.textAlign = "center";
+ctx.textBaseline = "top";
+for (var i = 0; i < data.length; i++) {
+    // Set the bar height based on the quantity
+    var barHeight = data[i].quantity * yScale;
+
+    // Save the current context
+    ctx.save();
+
+    // Rotate the context
+    ctx.translate(x + barWidth / 2, xAxisY + 10);
+    ctx.rotate(-Math.PI / 4);
+
+    // Draw the label
+    ctx.fillStyle = "black";
+    ctx.fillText(data[i].item, 0, 0);
+
+    // Restore the context
+    ctx.restore();
+
+    // Set a random color for the bar
+    ctx.fillStyle = colors[i];
+
+    // Draw the bar
+    ctx.fillRect(x, y - barHeight, barWidth, barHeight);
+
+    // Move to the next bar
+    x += barWidth + barSpacing;
+}
+
+		}
+	</script>
+    </div>
+
 </body>
 
 </html>
