@@ -1,48 +1,45 @@
 <!DOCTYPE html>
 <html>
-            <head>
-            <style>
-
-            #row{
-            background:  #33CCFF;
-            width: 100%;
-            margin: 0;
-            float: left;
-            }
-            #left {
-            background: #ccc;
-            width: 60%;
-            float: left;
-            }
-            #right{
-            background: #999;
-            width: 40%;
-            float: right;
-
-            }
-
-            #content-left{
-                width: 70%;
-                float: right;
-            }
-            #right-top-wrapper{
-            width: 100%;
-            background: #666;
-                color: #f3f3f3;
-                float: left;
-            }
-            #right-top{
-                width: 40%;
-
-                clear: both;
-
-            }
-            #right-bottom{
-                width: 40%;
-                float: left;
-                clear: both;
-            }
-            </style>
+            <head></head>
+                
+            <script>
+                window.onload = function () {
+                
+                var chart = new CanvasJS.Chart("chartContainer", {
+                    exportEnabled: true,
+                    animationEnabled: true,
+                    title:{
+                        text: "proportion"
+                    },
+                    legend:{
+                        cursor: "pointer",
+                        itemclick: explodePie
+                    },
+                    data: [{
+                        type: "pie",
+                        showInLegend: true,
+                        toolTipContent: "{name}: <strong>{y}%</strong>",
+                        indexLabel: "{name} - {y}%",
+                        dataPoints: [
+                            { y: 25, name: "TYLENOL", exploded: true },
+                            { y: 35, name: "TEST2" },
+                            { y: 65, name: "CALAMINE" }
+                        ]
+                    }]
+                });
+                chart.render();
+                }
+                
+                function explodePie (e) {
+                    if(typeof (e.dataSeries.dataPoints[e.dataPointIndex].exploded) === "undefined" || !e.dataSeries.dataPoints[e.dataPointIndex].exploded) {
+                        e.dataSeries.dataPoints[e.dataPointIndex].exploded = true;
+                    } else {
+                        e.dataSeries.dataPoints[e.dataPointIndex].exploded = false;
+                    }
+                    e.chart.render();
+                
+                }
+                </script>
 
 <body>
     <h1>WELCOME ADMIN</h1>
@@ -52,10 +49,18 @@
     <div id="row">
         <div id="left">
             <div id="content-left">
-    <h2>Product Stock Levels</h2>
-	<canvas id="myCanvas" width="400" height="300"></canvas>
+                <h2>Product Stock Levels</h2>
+	                <canvas id="myCanvas" width="400" height="300"></canvas>
+            </div>
+        </div>
+	</div>
+            <div id="content-left">
+                <h2>Number of products purchased by customers</h2>
+                <div id="chartContainer" style="height: 370px; width: 400;"></div>
+            </div>
+    <div>
 
-	
+        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 	<script>
 		// Get the canvas element
 		var canvas = document.getElementById("myCanvas");
@@ -184,8 +189,41 @@ for (var i = 0; i < data.length; i++) {
 }
 
 		}
+        // Get the data for the chart
+var chartData = {
+    labels: ["TYLENOL", "Chlorpheniramine", "Calamine", "test", "test2"],
+    datasets: [{
+        data: [10, 20, 10, 6, 10],
+        backgroundColor: [
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 205, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(153, 102, 255)'
+        ],
+        hoverOffset: 4
+    }]
+};
+
+// Create the chart
+var donutChart = new Chart(document.getElementById('donutGraph'), {
+    type: 'doughnut',
+    data: chartData,
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            },
+            title: {
+                display: true,
+                text: 'Number of products recently purchased by users'
+            }
+        }
+    }
+});
+
 	</script>
-    </div>
 
 </body>
 
