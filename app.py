@@ -73,8 +73,24 @@ def homepage():
 def AddCart():
     try:
         if request.method == 'POST':
+            user_id = session.get('user_id')
+            cart = session.get('cart')
             conn = mysql.connect()
-            cur = conn.cursor(pymysql.cursors.DictCursor)
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            product_id =  request.form.get('product_id')
+            price =  request.form.get('price')
+            quantity = request.form.get('quantity')
+            TotalQuantity = 0
+            TotalPrice = 0
+            for i in cart:
+                subtotal = 0
+                subquantity = 0
+                subquantity = int(item['quantity'])
+                TotalQuantity += subquantity
+                subtotal += float(item['price']) * int(item['quantity'])
+                TotalPrice = float(TotalPrice + subtotal)
+            cursor.execute("SELECT * FROM products")
+
     except Exception as e:
         print(e)
         return redirect(request.referrer)
