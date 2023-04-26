@@ -49,8 +49,8 @@ img {
 
 
 .single-publication {
-    background-color: #FFFFFF;
-    border: 1px solid #BDBDBD;
+    background-color: #3a3a3a;
+    border: 1px solid #f2eee2;
     margin-bottom: 30px;
     position: relative;
     
@@ -100,6 +100,6 @@ img {
 }
 
 
-.single-publication .button-def{
-    margin-top:10px
+.single-publication .button-def {
+    margin-top: 10px
 }
