@@ -39,7 +39,7 @@ def homepage():
     if 'logged_in' not in session:
         # abort(403)
         return render_template("test.html")
-    else: 
+    else:
         try:
             user_id = session.get('user_id')
             conn = mysql.connect()
@@ -47,122 +47,32 @@ def homepage():
             curr = conn.cursor(pymysql.cursors.DictCursor)
             cur = conn.cursor(pymysql.cursors.DictCursor)
             cursor.execute("SELECT * FROM products")
-            curr.execute("SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
+            curr.execute(
+                "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
+            cur.execute(
+                "SELECT cart_items.cart_item_id,cart_items.cart_id,carts.user_id,products.product_id,products.image,products.product_name,cart_items.quantity,products.price FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN users ON users.user_id = carts.user_id WHERE cart_items.quantity > 0 AND carts.user_id=%s", (user_id,))
             rows = cursor.fetchall()
             user = curr.fetchone()
             Cart_list = cur.fetchall()
             app.logger.info(Cart_list)
             TotalQuantity = 0
             TotalPrice = 0
-            if 'Shoppingcart' in session:
-                for key, product in session['Shoppingcart'].items():
-                    subtotal = 0
-                    subquantity = 0
-                    subquantity = int(product['quantity'])
-                    TotalQuantity += subquantity
-                    subtotal += float(product['price']) * int(product['quantity'])
-                    TotalPrice = float(TotalPrice + subtotal)
-
-            return render_template('homepage.html', user=user ,products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
-        except Exception as e:
-            print(e)
-            return render_template('homepage.html')
+            for item in Cart_list:
+                subtotal = 0
+                subquantity = 0
+                subquantity = int(item['quantity'])
+                TotalQuantity += subquantity
+                subtotal += float(item['price']) * int(item['quantity'])
+                TotalPrice = float(TotalPrice + subtotal)
+            if len(Cart_list) > 0:
+                session['Shoppingcart'] = Cart_list
+            return render_template('homepage.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
+        
         finally:
             if 'cursor' in locals() and cursor is not None:
                 cursor.close()
             if 'conn' in locals() and conn is not None:
                 conn.close()
-
-
-
-
-
-@app.route('/add', methods=['POST'])
-def AddCart():
-    DictItems = {}
-    try:
-        product_id = int(request.form.get('product_id'))
-        quantity = int(request.form.get('quantity'))
-
-        if request.method == "POST":
-            conn = mysql.connect()
-            cursor = conn.cursor(pymysql.cursors.DictCursor)
-            cursor.execute(
-                "SELECT * FROM products WHERE product_id=%s", product_id)
-            row = cursor.fetchone()
-            DictItems = {str(row['product_id']): {'product_name': row['product_name'], 'price': float(row['price']),
-                                                  'stock': row['stock'], 'quantity': quantity, 'image': row['image']}}
-            if 'Shoppingcart' in session:
-                print(session['Shoppingcart'])
-                if product_id in session['Shoppingcart']:
-                    for key, item in session['Shoppingcart'].items():
-                        if int(key) == int(product_id):
-                            session.modified = True
-                            item['quantity'] += quantity
-                else:
-                    session['Shoppingcart'] = MagerDicts(
-                        session['Shoppingcart'], DictItems)
-                    return redirect(request.referrer)
-            else:
-                session['Shoppingcart'] = DictItems
-                return redirect(request.referrer)
-
-    except Exception as e:
-        print(e)
-        return redirect(request.referrer)
-    finally:
-        print(DictItems)
-        return redirect(request.referrer)
-
-
-def MagerDicts(dict1, dict2):
-    if isinstance(dict1, list) and isinstance(dict2, list):
-        return dict1 + dict2
-    if isinstance(dict1, dict) and isinstance(dict2, dict):
-        return dict(list(dict1.items()) + list(dict2.items()))
-
-
-@app.route('/updatecart/<int:code>', methods=['POST'])
-def updatecart(code):
-    if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
-        return redirect(url_for('homepage'))
-    if request.method == "POST":
-        cart_quantity = request.form.get('cart_quantity')
-        try:
-            session.modified = True
-            for key, item in session['Shoppingcart'].items():
-                if int(key) == code:
-                    item['quantity'] = cart_quantity
-                    flash('Item is updated!')
-                    return redirect(url_for('homepage'))
-        except Exception as e:
-            print(e)
-            return redirect(url_for('homepage'))
-
-
-@app.route('/deleteitem/<int:product_id>')
-def deleteitem(product_id):
-    if 'Shoppingcart' not in session or len(session['Shoppingcart']) <= 0:
-        return redirect(url_for('homepage'))
-    try:
-        session.modified = True
-        for key, item in session['Shoppingcart'].items():
-            if int(key) == product_id:
-                session['Shoppingcart'].pop(key, None)
-                return redirect(url_for('homepage'))
-    except Exception as e:
-        print(e)
-        return redirect(url_for('homepage'))
-
-
-@app.route('/empty')
-def empty_cart():
-    try:
-        for key, item in session['Shoppingcart'].items():
-            session.pop('Shoppingcart', default=None)
-            return redirect(url_for('homepage'))
-    except Exception as e:
-        print(e)
 
 
 @app.route('/login')
