@@ -49,11 +49,11 @@ img {
 
 
 .single-publication {
-    background-color: #3a3a3a;
-    border: 1px solid #f2eee2;
+    background-color: #FFFFFF;
+    border: 1px solid #BDBDBD;
     margin-bottom: 30px;
     position: relative;
-
+    
 }
 
 
@@ -75,7 +75,7 @@ img {
 
 .single-publication .publication-content .price {
     font-size: 18px;
-    color: #ff007d;
+    color: #757575;
 }
 
 .single-publication .publication-content .price span {
