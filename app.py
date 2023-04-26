@@ -80,21 +80,19 @@ def AddCart():
         transc = conn.cursor(pymysql.cursors.DictCursor)
 
         if request.method == "POST":
-            if not check :
-                DateTime = datetime.now()
-                total_price = 0.0
-                total_quantity = 0
-                total_price += float(request.form.get('price'))
-                total_quantity += quantity
-                carts.execute("INSERT INTO carts (total_price, total_quantity, date, user_id) VALUES (%s, %s, %s, %s)",
-                    (total_price, total_quantity, DateTime, user_id))
-                cart_id =carts.lastrowid
-                cart_items.execute("INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (%s, %s, %s)",
-                    (cart_id, product_id,quantity ))
-                transc.execute("INSERT INTO transactions (transaction_id, cart_id, status, date) VALUES (%s, %s, %s, %s)",
-                    (cart_id, cart_id, 'pending', DateTime))
-            else:
-                print("heehee")
+            DateTime = datetime.now()
+            total_price = 0.0
+            total_quantity = 0
+            total_price += float(request.form.get('price'))
+            total_quantity += quantity
+            carts.execute("INSERT INTO carts (total_price, total_quantity, date, user_id) VALUES (%s, %s, %s, %s)",
+                (total_price, total_quantity, DateTime, user_id))
+            cart_id =carts.lastrowid
+            cart_items.execute("INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (%s, %s, %s)",
+                (cart_id, product_id,quantity ))
+            transc.execute("INSERT INTO transactions (transaction_id, cart_id, status, date) VALUES (%s, %s, %s, %s)",
+                (cart_id, cart_id, 'pending', DateTime))
+           
                 
             
            
@@ -109,36 +107,6 @@ def AddCart():
         return redirect(request.referrer)
 
 
-
-
-
-@app.route('/add', methods=['POST'])
-def AddCart():
-    try:
-        if request.method == 'POST':
-            user_id = session.get('user_id')
-            cart = session.get('cart')
-            conn = mysql.connect()
-            cursor = conn.cursor(pymysql.cursors.DictCursor)
-            product_id =  request.form.get('product_id')
-            price =  request.form.get('price')
-            quantity = request.form.get('quantity')
-            TotalQuantity = 0
-            TotalPrice = 0
-            for item in cart:
-                subtotal = 0
-                subquantity = 0
-                subquantity = int(item['quantity'])
-                TotalQuantity += subquantity
-                subtotal += float(item['price']) * int(item['quantity'])
-                TotalPrice = float(TotalPrice + subtotal)
-            cursor.execute("SELECT * FROM products")
-
-    except Exception as e:
-        print(e)
-        return redirect(request.referrer)
-    finally:
-        return redirect(request.referrer)
 
 @app.route('/login')
 def login():
