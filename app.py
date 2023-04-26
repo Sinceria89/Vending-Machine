@@ -1,22 +1,14 @@
 from __future__ import print_function  # In python 2.7
+from router import *
+from test import *
 import sys
-from flask import Flask, request, render_template, abort, flash, session, redirect, url_for, json, jsonify
-from flask_apscheduler import APScheduler
-from flask_mail import Mail,  Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import timedelta, datetime
 import logging
-from flaskext.mysql import MySQL
-import pymysql
 import urllib.request
 import os
 import re
-
-
-
-
-
 
 
 class Config:
@@ -40,31 +32,6 @@ def stockChecking():
 
 @app.route('/')
 def index():
-    try:
-        conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM products")
-        rows = cursor.fetchall()
-        TotalQuantity = 0
-        TotalPrice = 0
-        if 'Shoppingcart' in session:
-            for key, product in session['Shoppingcart'].items():
-                subtotal = 0
-                subquantity = 0
-                subquantity = int(product['quantity'])
-                TotalQuantity += subquantity
-                subtotal += float(product['price']) * int(product['quantity'])
-                TotalPrice = float(TotalPrice + subtotal)
-
-        return render_template('index.html', products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
-    except Exception as e:
-        print(e)
-        return render_template('index.html', )
-    finally:
-        if 'cursor' in locals() and cursor is not None:
-            cursor.close()
-        if 'conn' in locals() and conn is not None:
-            conn.close()
     return render_template('index.html')
 
 
@@ -237,7 +204,6 @@ def register():
         sub_districts = request.form['district']
         post_code = request.form['post_code']
         address = request.form['address']
-        
 
   # Check if account exists using MySQL
         cursor.execute(
@@ -312,7 +278,7 @@ def login_submit():
         cursor = conn.cursor()
         sql = "SELECT * FROM users WHERE username=%s"
         sql_where = (username,)
-        
+
         cursor.execute(sql, sql_where)
         row = cursor.fetchone()
         if row and check_password_hash(row[2], password):
@@ -321,8 +287,13 @@ def login_submit():
             cursor.close()
             if row[3] == 'admin':
                 session['user_id'] = row[0]
+                session['admin'] = True
                 session['logged_in'] = True
                 return redirect('/admin')
+            elif row[3] == 'user':
+                session['user_id'] = row[0]
+                session['logged_in'] = True
+                return redirect('/homepage')
             else:
                 return redirect('/')
         else:
@@ -341,8 +312,13 @@ def login_submit():
                 cursor.close()
                 if row[3] == 'admin':
                     session['user_id'] = row[0]
+                    session['admin'] = True
                     session['logged_in'] = True
                     return redirect('/admin')
+                elif row[3] == 'user':
+                    session['user_id'] = row[0]
+                    session['logged_in'] = True
+                    return redirect('/homepage')
                 else:
                     return redirect('/')
             else:
@@ -359,13 +335,16 @@ def login_submit():
 @app.route('/logout')
 def logout():
     if 'logged_in' in session:
+        session.pop('user_id')
         session.pop('logged_in')
+        if 'admin' in session:
+            session.pop('admin')
     return redirect('/')
 
 
 @app.route('/products_manage')
 def products():
-    if 'logged_in' not in session:
+    if 'admin' not in session:
         # abort(403)
         return render_template("test.html")
     conn = mysql.connect()
@@ -465,7 +444,7 @@ def delete(product_id):
 
 @app.route('/admin')
 def admin():
-    if 'logged_in' not in session:
+    if 'admin' not in session:
         # abort(403)
         return render_template("test.html")
     return render_template("admin.html")
@@ -474,5 +453,5 @@ def admin():
 if __name__ == "__main__":
     # scheduler.add_job(id = 'Checking Stock', func=stockChecking, trigger="interval", minutes=5)
     # scheduler.start()
-    
+
     app.run(debug=True)
