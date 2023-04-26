@@ -46,27 +46,29 @@ def homepage():
             conn = mysql.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
             curr = conn.cursor(pymysql.cursors.DictCursor)
+            cur = conn.cursor(pymysql.cursors.DictCursor)
             cursor.execute("SELECT * FROM products")
             curr.execute(
                 "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
+            cur.execute(
+                "SELECT cart_items.cart_item_id,cart_items.cart_id,carts.user_id,products.product_id,products.image,products.product_name,cart_items.quantity,products.price FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN users ON users.user_id = carts.user_id WHERE cart_items.quantity > 0 AND carts.user_id=%s", (user_id,))
             rows = cursor.fetchall()
             user = curr.fetchone()
+            Cart_list = cur.fetchall()
+            app.logger.info(Cart_list)
             TotalQuantity = 0
             TotalPrice = 0
-            app.logger.info(user)
-            if 'Shoppingcart' in session:
-                for key, product in session['Shoppingcart'].items():
-                    subtotal = 0
-                    subquantity = 0
-                    subquantity = int(product['quantity'])
-                    TotalQuantity += subquantity
-                    subtotal += float(product['price']) * \
-                        int(product['quantity'])
-                    TotalPrice = float(TotalPrice + subtotal)
-            return render_template('homepage.html', user=user, user_id=user_id, products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
-        except Exception as e:
-            print(e)
-            return render_template('index.html')
+            for item in Cart_list:
+                subtotal = 0
+                subquantity = 0
+                subquantity = int(item['quantity'])
+                TotalQuantity += subquantity
+                subtotal += float(item['price']) * int(item['quantity'])
+                TotalPrice = float(TotalPrice + subtotal)
+            if len(Cart_list) > 0:
+                session['Shoppingcart'] = Cart_list
+            return render_template('homepage.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows, grandtotal=TotalPrice, TotalQuantity=TotalQuantity)
+        
         finally:
             if 'cursor' in locals() and cursor is not None:
                 cursor.close()
@@ -74,6 +76,7 @@ def homepage():
                 conn.close()
 
 
+<<<<<<< Updated upstream
 @app.route('/add', methods=['POST'])
 def AddCart():
     try:
@@ -159,6 +162,8 @@ def empty_cart():
             return redirect(url_for('homepage'))
     except Exception as e:
         print(e)
+=======
+>>>>>>> Stashed changes
 
 
 @app.route('/login')
