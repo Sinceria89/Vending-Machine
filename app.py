@@ -56,7 +56,6 @@ def homepage():
             user = curr.fetchone()
             Cart_list = cur.fetchall()
             #app.logger.info(Cart_list)
-
             if len(Cart_list) > 0:
                 session['Shoppingcart'] = Cart_list
             return render_template('homepage.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
@@ -66,6 +65,50 @@ def homepage():
                 cursor.close()
             if 'conn' in locals() and conn is not None:
                 conn.close()
+
+@app.route('/add', methods=['POST'])
+def AddCart():
+    DictItems = {}
+    try:
+        conn = mysql.connect()
+        user_id = session.get('user_id')
+        product_id = int(request.form.get('product_id'))
+        quantity = int(request.form.get('quantity'))
+        select = conn.cursor(pymysql.cursors.DictCursor)
+        carts = conn.cursor(pymysql.cursors.DictCursor)
+        cart_items = conn.cursor(pymysql.cursors.DictCursor)
+        transc = conn.cursor(pymysql.cursors.DictCursor)
+
+        if request.method == "POST":
+            if not check :
+                DateTime = datetime.now()
+                total_price = 0.0
+                total_quantity = 0
+                total_price += float(request.form.get('price'))
+                total_quantity += quantity
+                carts.execute("INSERT INTO carts (total_price, total_quantity, date, user_id) VALUES (%s, %s, %s, %s)",
+                    (total_price, total_quantity, DateTime, user_id))
+                cart_id =carts.lastrowid
+                cart_items.execute("INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (%s, %s, %s)",
+                    (cart_id, product_id,quantity ))
+                transc.execute("INSERT INTO transactions (transaction_id, cart_id, status, date) VALUES (%s, %s, %s, %s)",
+                    (cart_id, cart_id, 'pending', DateTime))
+            else:
+                print("heehee")
+                
+            
+           
+            Cart_list = select.fetchall()
+            session['Shoppingcart'] = Cart_list
+            conn.commit()
+    except Exception as e:
+        print(e)
+        return redirect(request.referrer)
+    finally:
+        print(DictItems)
+        return redirect(request.referrer)
+
+
 
 
 
