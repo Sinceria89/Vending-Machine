@@ -30,6 +30,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
     body {
+      padding-top: 100px;
       font-family: "Lato", sans-serif;
       background-color: #03A9F4;
     }
@@ -62,13 +63,64 @@
     }
 
     .main-panel {
-
+      padding-top: 3%;
       border: 1px solid #BDBDBD;
       background-color: #FFFFFF;
       margin-left: auto;
       margin-right: auto;
       width: 80%;
 
+    }
+
+
+    .alert {
+      position: relative;
+      top: 10;
+      left: 0;
+      width: auto;
+      height: auto;
+      padding: 10px;
+      margin: 10px;
+      line-height: 1.8;
+      border-radius: 5px;
+      cursor: hand;
+      cursor: pointer;
+      font-family: sans-serif;
+      font-weight: 400;
+    }
+
+    .alertCheckbox {
+      display: none;
+    }
+
+    :checked+.alert {
+      display: none;
+    }
+
+    .alertText {
+      display: table;
+      margin: 0 auto;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .alertClose {
+      float: right;
+      font-size: 10px;
+    }
+
+    .clear {
+      clear: both;
+    }
+
+    .info {
+      background-color: #EEE;
+      border: 1px solid #DDD;
+      color: #999;
+    }
+
+    .about{
+      margin-top: 5%;
     }
   </style>
 
@@ -115,8 +167,24 @@
       </div>
     </div>
   </nav>
+  <div class="justify-content-center text-center">
+    <label>
+      <input type="checkbox" class="alertCheckbox" autocomplete="off" />
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      {% for message in messages %}
 
-  <div class="main-panel shadow" style="padding-top: 5%;">
+      <div class="alert info">
+        <span class="alertClose">X</span>
+        <span class="alertText">{{ message }}</span>
+      </div>
+
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+    </label>
+  </div>
+  <div class="main-panel shadow">
     <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-indicators">
         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
@@ -184,14 +252,14 @@
                     {% for product in products %}
                     {% if product.stock < max_value %} {% set max_value=product.stock%} {% endif %}{% endfor %} <td>
                       <input type="number" name="cart_quantity" min="1" max="{{ max_value }}"
-                        value="{{Cart_list.quantity}}">
+                        value="{{ Cart_list.quantity|default('1') }}">
                       </td>
 
                       {% set Subtotal = Cart_list.quantity | int * Cart_list.price| int%}
                       <td>{{ Subtotal }}</td>
                       <td><button type="submit" class="btn btn-sm btn-info">Update</button> </td>
                   </form>
-                  <!--delete-->
+                  <!--delete-->>
                   <td></td>
                 </tr>
                 {% endfor %}
@@ -213,7 +281,7 @@
                 <td>
                   <h5>Total Price: ฿{{ session['Shoppingcart'][0]['total_price'] }}</h5>
                 </td>
-                <!--clear-->
+                <td> <a href="{{url_for('empty_cart')}}" class="btn btn-danger  float-right "> Clear cart</a>
                 <td></td>
               </tr>
               {% else: %}
@@ -267,7 +335,7 @@
 
                   <div class="button-def">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                      data-target="#detailsModal{{ product.product_id }}">
+                      data-bs-target="#detailsModal{{ product.product_id }}">
                       Detail
                     </button>
 
@@ -297,7 +365,8 @@
                   <p>In-Stock: {{ product.stock }}</p>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Close</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                    aria-label="Close">Close</button>
                 </div>
               </div>
             </div>
