@@ -211,6 +211,13 @@ def register():
         post_code = request.form['post_code']
         address = request.form['address']
         
+        # Retrieve province, amphure, and district names
+        cursor.execute("SELECT `name_th` FROM `provinces` WHERE `id`=%s", provinces)
+        provinces = cursor.fetchone()['name_th']
+        cursor.execute("SELECT `name_th` FROM `amphures` WHERE `id`=%s", districts)
+        districts = cursor.fetchone()['name_th']
+        cursor.execute("SELECT `name_th` FROM `districts` WHERE `id`=%s", sub_districts)
+        sub_districts = cursor.fetchone()['name_th']
 
   # Check if account exists using MySQL
         cursor.execute(
@@ -246,13 +253,18 @@ def amphurebyprovince(get_amphure):
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute(
-        "SELECT * FROM amphures WHERE province_id = %s", [get_amphure])
+       "SELECT amphures.id, amphures.name_th, provinces.name_th AS province_name "
+        "FROM amphures "
+        "INNER JOIN provinces ON provinces.id = amphures.province_id "
+        "WHERE amphures.province_id = %s", [get_amphure])
     amphure = cursor.fetchall()
     amphureArray = []
     for row in amphure:
         amphureObj = {
             'id': row['id'],
-            'name': row['name_th']}
+            'name': row['name_th'],
+            'province': row['province_name']
+            }
         amphureArray.append(amphureObj)
     return jsonify({'amphureprovince': amphureArray})
 
@@ -262,13 +274,20 @@ def districtbyamphure(get_district):
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute(
-        "SELECT * FROM districts WHERE amphure_id = %s", [get_district])
+        "SELECT districts.id, districts.name_th, amphures.name_th AS amphure_name, provinces.name_th AS province_name "
+        "FROM districts "
+        "INNER JOIN amphures ON amphures.id = districts.amphure_id "
+        "INNER JOIN provinces ON provinces.id = amphures.province_id "
+        "WHERE districts.amphure_id = %s", [get_district])
     district = cursor.fetchall()
     districtArray = []
     for row in district:
         districtObj = {
             'id': row['id'],
-            'name': row['name_th']}
+            'name': row['name_th'],
+            'amphure': row['amphure_name'],
+            'province': row['province_name']
+            }
         districtArray.append(districtObj)
     return jsonify({'districtamphure': districtArray})
 
