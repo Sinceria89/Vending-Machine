@@ -1,4 +1,5 @@
 from __future__ import print_function  # In python 2.7
+from test import *
 from router import *
 from decimal import Decimal
 import sys
@@ -55,16 +56,17 @@ def homepage():
             rows = cursor.fetchall()
             user = curr.fetchone()
             Cart_list = cur.fetchall()
-            #app.logger.info(Cart_list)
+            # app.logger.info(Cart_list)
             if len(Cart_list) > 0:
                 session['Shoppingcart'] = Cart_list
             return render_template('homepage.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
-        
+
         finally:
             if 'cursor' in locals() and cursor is not None:
                 cursor.close()
             if 'conn' in locals() and conn is not None:
                 conn.close()
+
 
 @app.route('/cart_add', methods=['POST'])
 def AddCart():
@@ -86,17 +88,19 @@ def AddCart():
             total_quantity += quantity
             new_total_price = 0
             # Check if there is an active cart for the user
-            carts.execute("SELECT * FROM carts LEFT JOIN transactions ON carts.cart_id = transactions.cart_id WHERE user_id=%s AND transactions.status='pending'", (user_id,))
+            carts.execute(
+                "SELECT * FROM carts LEFT JOIN transactions ON carts.cart_id = transactions.cart_id WHERE user_id=%s AND transactions.status='pending'", (user_id,))
             cart = carts.fetchone()
 
             if cart:
                 cart_id = cart['cart_id']
                 # Check if the product is already in the cart
-                cart_items.execute("SELECT * FROM cart_items WHERE cart_id=%s AND product_id=%s", (cart_id, product_id))
+                cart_items.execute(
+                    "SELECT * FROM cart_items WHERE cart_id=%s AND product_id=%s", (cart_id, product_id))
                 cart_item = cart_items.fetchone()
                 if cart_item:
                     cart_item_id = cart_item['cart_item_id']
-                    price_check.execute("SELECT cart_items.cart_item_id, cart_items.cart_id, cart_items.product_id, cart_items.quantity, products.price FROM cart_items LEFT JOIN products ON cart_items.product_id = products.product_id LEFT JOIN carts ON cart_items.cart_id = carts.cart_id WHERE carts.user_id = %s AND cart_items.cart_id = %s ", (user_id, cart_id))    
+                    price_check.execute("SELECT cart_items.cart_item_id, cart_items.cart_id, cart_items.product_id, cart_items.quantity, products.price FROM cart_items LEFT JOIN products ON cart_items.product_id = products.product_id LEFT JOIN carts ON cart_items.cart_id = carts.cart_id WHERE carts.user_id = %s AND cart_items.cart_id = %s ", (user_id, cart_id))
                     product_prices = price_check.fetchall()
                     new_total_price = 0
                     total_quantity = 0
@@ -111,28 +115,42 @@ def AddCart():
                         print(new_total_price)
                         total_quantity += current_quantity
 
-                    cart_items.execute("UPDATE cart_items SET quantity=%s WHERE cart_item_id=%s", (quantity, cart_item_id))
-                    carts.execute("UPDATE carts SET total_price=%s, total_quantity=%s WHERE cart_id=%s", (new_total_price, total_quantity, cart_id))
-                    cart_items.execute("UPDATE cart_items SET quantity=%s WHERE cart_item_id=%s", (quantity, cart_item_id))
-                    carts.execute("UPDATE carts SET total_price=%s, total_quantity=%s WHERE cart_id=%s", (new_total_price, total_quantity, cart_id))
+                    cart_items.execute(
+                        "UPDATE cart_items SET quantity=%s WHERE cart_item_id=%s", (quantity, cart_item_id))
+                    carts.execute("UPDATE carts SET total_price=%s, total_quantity=%s WHERE cart_id=%s", (
+                        new_total_price, total_quantity, cart_id))
+                    cart_items.execute(
+                        "UPDATE cart_items SET quantity=%s WHERE cart_item_id=%s", (quantity, cart_item_id))
+                    carts.execute("UPDATE carts SET total_price=%s, total_quantity=%s WHERE cart_id=%s", (
+                        new_total_price, total_quantity, cart_id))
                 else:
-                    cart_items.execute("INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (%s, %s, %s)", (cart_id, product_id, quantity))
-                    new_total_price = Decimal(request.form.get('price')) * quantity
-                    carts.execute("UPDATE carts SET total_price=total_price+%s, total_quantity=total_quantity+%s WHERE cart_id=%s", (new_total_price, quantity, cart_id))
+                    cart_items.execute(
+                        "INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (%s, %s, %s)", (cart_id, product_id, quantity))
+                    new_total_price = Decimal(
+                        request.form.get('price')) * quantity
+                    carts.execute("UPDATE carts SET total_price=total_price+%s, total_quantity=total_quantity+%s WHERE cart_id=%s",
+                                  (new_total_price, quantity, cart_id))
 
                 # Update total_quantity in case new item is added to the cart
-                carts.execute("SELECT SUM(quantity) as total_quantity FROM cart_items WHERE cart_id=%s", (cart_id,))
+                carts.execute(
+                    "SELECT SUM(quantity) as total_quantity FROM cart_items WHERE cart_id=%s", (cart_id,))
                 cart_items_total = carts.fetchone()['total_quantity']
-                carts.execute("UPDATE carts SET total_quantity=%s WHERE cart_id=%s", (cart_items_total, cart_id))
+                carts.execute(
+                    "UPDATE carts SET total_quantity=%s WHERE cart_id=%s", (cart_items_total, cart_id))
             else:
                 # Create a new cart for the user
-                carts.execute("INSERT INTO carts (total_price, total_quantity, date, user_id) VALUES (%s, %s, %s, %s)", (total_price, total_quantity, DateTime, user_id))
+                carts.execute("INSERT INTO carts (total_price, total_quantity, date, user_id) VALUES (%s, %s, %s, %s)",
+                              (total_price, total_quantity, DateTime, user_id))
                 cart_id = carts.lastrowid
-                cart_items.execute("INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (%s, %s, %s)", (cart_id, product_id, quantity))
-                transc.execute("INSERT INTO transactions (cart_id, status, date) VALUES (%s, %s, %s)", (cart_id, 'pending', DateTime))
+                cart_items.execute(
+                    "INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (%s, %s, %s)", (cart_id, product_id, quantity))
+                transc.execute(
+                    "INSERT INTO transactions (cart_id, status, date) VALUES (%s, %s, %s)", (cart_id, 'pending', DateTime))
             flash("Item successfully added to cart.", "success")
+            print(cart_id)
             conn.commit()
-            select.execute("SELECT * FROM cart_items WHERE cart_id=%s", cart_id)
+            select.execute(
+                "SELECT * FROM cart_items WHERE cart_id=%s", cart_id)
             Cart_list = select.fetchall()
             session['Shoppingcart'] = Cart_list
 
@@ -157,20 +175,23 @@ def empty_cart():
         clear_transactions = conn.cursor(pymysql.cursors.DictCursor)
         clear_cart_items = conn.cursor(pymysql.cursors.DictCursor)
         clear_carts = conn.cursor(pymysql.cursors.DictCursor)
-        cart_id_query.execute("SELECT * FROM carts LEFT JOIN transactions ON carts.cart_id = transactions.cart_id WHERE user_id=%s AND transactions.status='pending'", (user_id,))
+        cart_id_query.execute(
+            "SELECT * FROM carts LEFT JOIN transactions ON carts.cart_id = transactions.cart_id WHERE user_id=%s AND transactions.status='pending'", (user_id,))
         cart_id = cart_id_query.fetchone()['cart_id']
-        clear_transactions.execute("DELETE FROM transactions WHERE cart_id=%s", (cart_id,))
-        clear_cart_items.execute("DELETE FROM cart_items WHERE cart_id=%s", (cart_id,))
+        clear_transactions.execute(
+            "DELETE FROM transactions WHERE cart_id=%s", (cart_id,))
+        clear_cart_items.execute(
+            "DELETE FROM cart_items WHERE cart_id=%s", (cart_id,))
         clear_carts.execute("DELETE FROM carts WHERE cart_id=%s", (cart_id,))
         flash("Cart has been empty.", "success")
         conn.commit()
         session.pop('Shoppingcart', None)
         session.pop('cart_id', None)
         session.pop('cart_item_id', None)
-        return redirect(url_for('homepage'))
+        return redirect(request.referrer)
     except Exception as e:
         print(e)
-        return redirect(url_for('homepage'))
+        return redirect(request.referrer)
     finally:
         clear_transactions.close()
         clear_cart_items.close()
@@ -179,18 +200,49 @@ def empty_cart():
         conn.close()
 
 
-@app.route('/cart_item_delete')
-def delete_item():
+@app.route('/cart_item_delete/<int:cart_item_id>')
+def delete_cart_item(cart_item_id):
     try:
         conn = mysql.connect()
+        cart_items = conn.cursor()
+        transactions = conn.cursor()
+        carts = conn.cursor()
+        # Delete the cart item with the given cart_item_id from the database
+
+        # Remove the cart item with the given cart_item_id from the session variable
+        Cart_list = session.get('Shoppingcart')
+        cart_id = session.get('Shoppingcart')[0].get('cart_id')
+        print(cart_id)
+        print(Cart_list)
+        if Cart_list:
+            for item in Cart_list:
+                if item['cart_item_id'] == cart_item_id:
+                    Cart_list.remove(item)
+                    cart_items.execute(
+                        "DELETE cart_items FROM cart_items WHERE cart_item_id = %s", (cart_item_id,))
+                    flash("Item successfully removed from cart.", "success")
+                    session['Shoppingcart'] = Cart_list
+                    print(cart_id)
+        if len(Cart_list) == 0:
+            print(cart_id)
+            transactions.execute(
+                "DELETE FROM transactions WHERE cart_id = %s", (cart_id,))
+            carts.execute(
+                "DELETE FROM carts WHERE cart_id = %s", (cart_id,))
+            session.pop('Shoppingcart')
+            session.pop('cart_id', None)
+            session.pop('cart_item_id', None)
 
         conn.commit()
-        return redirect(url_for('homepage'))
+        return redirect(request.referrer)
     except Exception as e:
         print(e)
-        return redirect(url_for('homepage'))
+        flash("An error occurred while removing item from cart. Please try again later.", "danger")
+        return redirect(request.referrer)
     finally:
-
+        transactions.close()
+        cart_items.close()
+        carts.close()
         conn.close()
 
 
@@ -363,13 +415,7 @@ def login_submit():
 @app.route('/logout')
 def logout():
     if 'logged_in' in session:
-        session.pop('user_id')
-        session.pop('logged_in')
-        if 'Shoppingcart' in session:
-            session.pop('Shoppingcart')
-        if 'admin' in session:
-            session.pop('admin')
-        #session.clear()
+        session.clear()
     return redirect('/')
 
 
