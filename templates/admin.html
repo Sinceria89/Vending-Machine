@@ -1,288 +1,75 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>  
-    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-<style>
-.chart-container {
-    display: inline-block;
-    width: 49%;
-    height: 370px;
-    margin: 10px;
-}
-.container {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			grid-template-rows: repeat(2, 1fr);
-			height: 100vh;
-			width: 100%;
-		}
-		.screen {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 3rem;
-		}
-		.screen:nth-child(1) {
-			background-color: #ff8080;
-		}
-		.screen:nth-child(2) {
-			background-color: #80bfff;
-		}
-		.screen:nth-child(3) {
-			background-color: #80ff80;
-		}
-		.screen:nth-child(4) {
-			background-color: #ffb380;
-		}
-</style>
-<script>
-    window.onload = function () {
-        var chart2 = new CanvasJS.Chart("chartContainer2", {
-        animationEnabled: true,
-        theme: "light2",
-    title:{
-        text: "Income"
-            },
-    data: [{
-        type: "line",
-            indexLabelFontSize: 16,
-            dataPoints: [
-            { y: 100 },
-            { y: 200},
-            { y: 520, indexLabel: "\u2191 highest",markerColor: "red", markerType: "triangle" },
-            { y: 460 },
-            { y: 250},
-            { y: 500 },
-            { y: 300 },
-            { y: 480 },
-            { y: 50 , indexLabel: "\u2193 lowest",markerColor: "DarkSlateGrey", markerType: "cross" },
-            { y: 100 },
-            { y: 200 },
-            { y: 100 }
-                        ]
-            }]
-                            });
-    chart2.render();
+<head>
 
-var chart1 = new CanvasJS.Chart("chartContainer1", {
-    exportEnabled: true,
-        animationEnabled: true,
-        title:{
-        text: "State Operating Funds"
-                },
-        legend:{
-        cursor: "pointer",
-        itemclick: explodePie
-                },
-            data: [{
-            type: "pie",
-            showInLegend: true,
-            toolTipContent: "{name}: <strong>{y}%</strong>",
-            indexLabel: "{name} - {y}%",
-            dataPoints: [
-            { y: 65, name: "TYLENOL", exploded: true },
-            { y: 20, name: "TEST2" },
-            { y: 15, name: "CALAMINE" }
-                        ]
-                    }]
-            });
-chart1.render();
-
-function explodePie (e) {
-if(typeof (e.dataSeries.dataPoints[e.dataPointIndex].exploded) === "undefined" || !e.dataSeries.dataPoints[e.dataPointIndex].exploded) {
-e.dataSeries.dataPoints[e.dataPointIndex].exploded = true;
-} else {
-e.dataSeries.dataPoints[e.dataPointIndex].exploded = false;
-}
-e.chart.render();
-}
-
-}
-</script>
-
+  <title>Product List</title>
 </head>
-
-                
 <body>
-    <h1>WELCOME ADMIN</h1>
+    <title>Product Stock Levels</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@observablehq/runtime@4.4.1/dist/runtime.js"></script>
 
-    <a href="/products_manage">Manage Product</a>
-    <a href="/logout">logout</a>
-    <div class ="container">
-        <div class="screen">
-                <h2>Product Stock Levels</h2>
-	                <canvas id="myCanvas" width="400" height="300"></canvas>
-                </div>
-    <div class="screen">
-    <div class="chart-container" id="chartContainer1"></div>
+    <div class="float-right">
+        <a href="/products_manage" class="btn btn-primary">Product management</a>
+        <a href="/logout" class="btn btn-danger">logout</a>
     </div>
-    <div class="screen">
-    <div class="chart-container" id="chartContainer2"></div>
-    </div>    
-	<script>
-		// Get the canvas element
-		var canvas = document.getElementById("myCanvas");
+</h2>
+</div>
+  <h1>Product List</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>Stock Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+        <tr>
+          <td>{{ product.product_name }}</td>
+          <td>{{ product.stock }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-		// Set the context to 2D
-		var ctx = canvas.getContext("2d");
+  <div id="chart"></div>
 
-		// Set the bar width and spacing
-		var barWidth = 50;
-		var barSpacing = 10;
+  <script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+      // Extract product names and stock quantities from the rendered HTML
+      var productNames = Array.from(document.querySelectorAll("tbody td:nth-child(1)")).map(function(el) {
+        return el.textContent;
+      });
 
-		// Set the data for the graph
-        var data = [
-        { item: "TYLENOL ", quantity: 10 },			
-        { item: "Chlorpheniramine", quantity: 20 },			
-        { item: "Calamine", quantity: 10 },			
-        { item: "test", quantity: 6 },			
-        { item: "test2", quantity: 10 }		];
+      var stockQuantities = Array.from(document.querySelectorAll("tbody td:nth-child(2)")).map(function(el) {
+        return parseInt(el.textContent);
+      });
 
-		// Set the starting point for the bars
-		var x = 70;
-		var y = canvas.height - 50;
+      // Create a bar chart using Plotly
+      var trace = {
+        x: productNames,
+        y: stockQuantities,
+        type: 'bar'
+      };
 
-		// Set the starting point for the y-axis
-		var yAxisX = 60;
-		var yAxisY = 20;
-
-		// Set the starting point for the x-axis
-		var xAxisX = 70;
-		var xAxisY = y + 20;
-
-		// Set the maximum quantity for the y-axis
-		var maxQuantity = Math.max.apply(Math, data.map(function(o) { return o.quantity; }));
-
-		// Set the y-axis scale
-		var yScale = (y - yAxisY) / maxQuantity;
-
-		// Draw the y-axis
-		ctx.beginPath();
-		ctx.moveTo(yAxisX, yAxisY);
-		ctx.lineTo(yAxisX, y);
-		ctx.stroke();
-
-		// Draw the y-axis numbers
-		ctx.textAlign = "right";
-		ctx.textBaseline = "middle";
-		for (var i = 0; i <= maxQuantity; i += 5) {
-			var yPos = y - i * yScale;
-			ctx.fillText(i, yAxisX - 10, yPos);
-			ctx.beginPath();
-			ctx.moveTo(yAxisX - 5, yPos);
-			ctx.lineTo(yAxisX, yPos);
-			ctx.stroke();
-		}
-
-		// Draw the x-axis
-		ctx.beginPath();
-		ctx.moveTo(xAxisX, xAxisY);
-		ctx.lineTo(canvas.width - 20, xAxisY);
-		ctx.stroke();
-
-		// Draw the x-axis labels and bars
-		ctx.textAlign = "center";
-		ctx.textBaseline = "top";
-		for (var i = 0; i < data.length; i++) {
-			// Set the bar height based on the quantity
-			var barHeight = data[i].quantity * yScale;
-
-			// Save the current context
-			ctx.save();
-
-			// Rotate the context
-			ctx.translate(x + barWidth / 2, xAxisY + 10);
-			ctx.rotate(-Math.PI / 4);
-
-			// Draw the label
-			ctx.fillStyle = "black";
-			ctx.fillText(data[i].item, 0, 0);
-
-			// Restore the context
-			ctx.restore();
-
-			// Define an array of 10 random colors
-var colors = [
-  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
-  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
-  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
-  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
-  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
-  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
-  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
-  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
-  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")",
-  "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")"
-];
-
-// Draw the x-axis labels and bars
-ctx.textAlign = "center";
-ctx.textBaseline = "top";
-for (var i = 0; i < data.length; i++) {
-    // Set the bar height based on the quantity
-    var barHeight = data[i].quantity * yScale;
-
-    // Save the current context
-    ctx.save();
-
-    // Rotate the context
-    ctx.translate(x + barWidth / 2, xAxisY + 10);
-    ctx.rotate(-Math.PI / 4);
-
-    // Draw the label
-    ctx.fillStyle = "black";
-    ctx.fillText(data[i].item, 0, 0);
-
-    // Restore the context
-    ctx.restore();
-
-    // Set a random color for the bar
-    ctx.fillStyle = colors[i];
-
-    // Draw the bar
-    ctx.fillRect(x, y - barHeight, barWidth, barHeight);
-
-    // Move to the next bar
-    x += barWidth + barSpacing;
-}
-
-		}
-        // Get the data for the chart
-var chartData = {
-    labels: ["TYLENOL", "Chlorpheniramine", "Calamine", "test", "test2"],
-    datasets: [{
-        data: [10, 20, 10, 6, 10],
-        backgroundColor: [
-            'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
-            'rgb(255, 205, 86)',
-            'rgb(75, 192, 192)',
-            'rgb(153, 102, 255)'
-        ],
-        hoverOffset: 4
-    }]
-};
-
-// Create the chart
-var donutChart = new Chart(document.getElementById('donutGraph'), {
-    type: 'doughnut',
-    data: chartData,
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'bottom'
-            },
-            title: {
-                display: true,
-                text: 'Number of products recently purchased by users'
-            }
+      var layout = {
+        title: 'Product Stock Levels',
+        xaxis: {
+          title: 'Product Name'
+        },
+        yaxis: {
+          title: 'Stock Quantity'
         }
-    }
-});
+      };
 
-	</script>
+      var data = [trace];
 
+      Plotly.newPlot('chart', data, layout);
+    });
+  </script>
 </body>
-
 </html>
+

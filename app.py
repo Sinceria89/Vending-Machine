@@ -1,5 +1,6 @@
 from __future__ import print_function  # In python 2.7
 from router import *
+from graph import*
 from test import *
 import sys
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,6 +10,9 @@ import logging
 import urllib.request
 import os
 import re
+
+
+
 
 
 
@@ -446,7 +450,24 @@ def admin():
     if 'logged_in' not in session:
         # abort(403)
         return render_template("test.html")
-    return render_template("admin.html")
+  # Establish a connection to your SQL database
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    # Execute a query to fetch the product_name and stock_quantity from the products table
+    cursor.execute("SELECT product_name, stock FROM products")
+
+    # Fetch all the rows returned by the query
+    rows = cursor.fetchall()
+    print(rows)
+    # Close the database connection
+    cursor.close()
+    conn.close()
+
+
+    # Render the HTML template and pass the product information to it
+    return render_template('admin.html', products=rows)
+
 
 
 if __name__ == "__main__":
