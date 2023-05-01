@@ -3,42 +3,210 @@
 
 <head>
     <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.5.4"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
         crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Product Manage</title>
+    <style>
+        body {
+            font-family: "Lato", sans-serif;
+            background-color: #03A9F4;
+        }
+
+        .clock {
+            font-family: system-ui;
+            color: rgb(255, 255, 255);
+            font-size: 16px;
+            text-align: center;
+            padding-right: 5px;
+        }
+
+        td {
+            height: 70px;
+        }
+
+        .navbar {
+            background-color: #065488;
+        }
+
+        .nav-item {
+            border-right: 1px solid #84B6D0;
+        }
+
+        .nav-link {
+            color: #FFFFFF;
+        }
+
+        .main-panel {
+            padding-top: 3%;
+            padding-left: 20px;
+            padding-right: 20px;
+            border: 1px solid #BDBDBD;
+            background-color: #FFFFFF;
+            margin-top: 5%;
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container-fluid">
+    <nav class="navbar fixed-top navbar-expand-lg ">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Icon</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02"
+                aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link text-white active" aria-current="page" href="/homepage">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        {% if 'Shoppingcart' in session %}
+                        <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart"> Shopping Cart: ({{
+                            session['Shoppingcart']|length }})</a>
+                        {% else %}
+                        <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart"> Shopping Cart: (0)</a>
+                        {% endif %}
+                    </li>
+                </ul>
+                <div class="clock flex-nowrap" id="clock" onload="clock"></div>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            ยินดีต้อนรับคุณ {{ user['first_name'] }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="navbarDarkDropdownMenuLink">
+                            <li><a class="dropdown-item" href="#">ข้อมูลผู้ใช้</a></li>
+                            {% if 'admin' in session %}
+                            <li><a class="dropdown-item" href="/admin">จัดการระบบ (Admin)</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="/logout">ออกจากระบบ</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="modal fade" id="Cart">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title">Shopping Cart</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm">
+                        {% set max_value = 3%}
+                        {% if 'Shoppingcart' in session %}
+                        <thead>
+                            <th></th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Update</th>
+                            <th>Delete</th>
+                        </thead>
+                        <tbody>
+                            {% for Cart_list in session['Shoppingcart'] %}
+                            <tr>
+                                <td>{{loop.index}}</td>
+                                <td><img src="/static/upload/{{ Cart_list.image }}" class="display"
+                                        alt="{{Cart_list.product_name}}">
+                                </td>
+                                <input type="hidden" name="cart_item_id" value="{{ Cart_list.cart_item_id }}" />
+                                <input type="hidden" name="product_id" value="{{ Cart_list.product_id }}" />
+                                <td>{{Cart_list.product_name}}</td>
+                                <form action="{{url_for('update_cart_item', cart_item_id=Cart_list.cart_item_id)}}"
+                                    method="POST">
+                                    <td>${{"%.2f"|format(Cart_list.price)}}</td>
+                                    <input type="hidden" name="cart_item_id" value="{{ Cart_list.cart_item_id }}" />
+                                    {% for product in products %}
+                                    {% if product.stock < max_value %} {% set max_value=product.stock%} {% endif %}{%
+                                        endfor %} <td>
+                                        <input type="number" name="cart_quantity" min="1" max="{{ max_value }}"
+                                            value="{{ Cart_list.quantity|default('1') }}">
+                                        </td>
+
+                                        {% set Subtotal = Cart_list.quantity | int * Cart_list.price| int%}
+                                        <td>{{ Subtotal }}</td>
+                                        <td><button type="submit" class="btn btn-sm btn-info">Update</button> </td>
+                                </form>
+                                <td><a href="{{ url_for('delete_cart_item', cart_item_id=Cart_list.cart_item_id) }}"
+                                        class="btn btn-danger btn-sm">Remove</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        {% else: %}
+                        <div>
+                            <h3>Your Cart is Empty</h3>
+                        </div>
+                        {% endif %}
+                    </table>
+                    <table class="table table-sm">
+                        {% if 'Shoppingcart' in session %}
+                        <tr>
+                            <td> <a href="{{url_for('transaction')}}" class="btn btn-success"> Order now </a> </td>
+                            <td width="35%"></td>
+                            <td>
+                                <h5>Total Quantity: {{ session['Shoppingcart'][0]['total_quantity'] }}</h5>
+                            </td>
+                            <td>
+                                <h5>Total Price: ฿{{ session['Shoppingcart'][0]['total_price'] }}</h5>
+                            </td>
+                            <td> <a href="{{url_for('empty_cart')}}" class="btn btn-danger  float-right "> Clear
+                                    cart</a>
+                            <td></td>
+                        </tr>
+                        {% else: %}
+                        {% endif %}
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">
+                        <span class="glyphicon glyphicon-shopping-cart"></span> Continue Shopping
+                    </button></td>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="main-panel">
         <h1 class="text-center alert alert-danger">Products Management</h1>
         <div class="row">
-            <div class="col-sm-2"></div>
-            <div class="col-sm-8">
-                <div>
-                    <h2>Products List
-                        <div class="float-right">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Add
-                                Products</button>
-                            <a href="/logout" class="btn btn-danger">logout</a>
-                    </h2>
-                </div>
+            <div class="col-sm-4">
+                <h2>Products List</h2>
+            </div>
+            <div class="col ">
+                <button class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#myModal">Add
+                    Products</button>
             </div>
             {%with messages = get_flashed_messages()%}
             {%if messages%}
             {% for message in messages %}
             <div class="alert alert-success alert-dismissable" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close">
                 </button>
                 {{message}}
             </div>
@@ -54,7 +222,7 @@
                         <div class="modal-header">
                             <h5 class="modal-title text-primary" style="align-content: center;">Please Add New Product
                             </h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -121,7 +289,7 @@
                                     <textarea name="description" id="description" class="form-control" rows="6"
                                         placeholder="Enter your message"></textarea>
                                 </div>
-
+                                <br>
                                 <button type="submit" class="btn btn-primary mb-2 Save">Save</button>
 
                             </form>
@@ -165,8 +333,8 @@
                         <td>{{data.category_name}}</td>
                         <td>{{data.description}}</td>
                         <td>
-                            <a href="/update/{{data.product_id}}" class="btn btn-warning btn-sm" data-toggle="modal"
-                                data-target="#modaledit{{data['product_id']}}">Edit</a>
+                            <a href="/update/{{data.product_id}}" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#modaledit{{data['product_id']}}">Edit</a>
                             <a href="/delete/{{data.product_id}}" onclick="return confirm('Are Sure Want To Deleted ?')"
                                 class="btn btn-danger btn-sm">Delete</a>
 
@@ -182,7 +350,7 @@
                                 <div class="modal-header">
                                     <h5 class="modal-title text-primary" style="align-content: center;">Update Product
                                         Details</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>

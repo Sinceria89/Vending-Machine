@@ -2,6 +2,7 @@ from __future__ import print_function  # In python 2.7
 from test import *
 from router import *
 from decimal import Decimal
+from Qrcode import *
 import sys
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -53,7 +54,7 @@ def homepage():
             curr.execute(
                 "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
             cur.execute(
-                "SELECT cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
+                "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
             rows = cursor.fetchall()
             user = curr.fetchone()
             Cart_list = cur.fetchall()
@@ -82,6 +83,7 @@ def AddCart():
         carts = conn.cursor(pymysql.cursors.DictCursor)
         cart_items = conn.cursor(pymysql.cursors.DictCursor)
         transc = conn.cursor(pymysql.cursors.DictCursor)
+        log = conn.cursor(pymysql.cursors.DictCursor)
         if request.method == "POST":
             DateTime = datetime.now()
             total_price = 0.0
@@ -152,10 +154,12 @@ def AddCart():
             print(cart_id)
             conn.commit()
             select.execute(
-                "SELECT * FROM cart_items WHERE cart_id=%s", cart_id)
+                "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
             Cart_list = select.fetchall()
             session['Shoppingcart'] = Cart_list
-
+            log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Shopping Cart added', %s, %s)",
+                              (DateTime, user_id))
+            conn.commit()
             return redirect(request.referrer)
 
     except Exception as e:
@@ -177,6 +181,8 @@ def empty_cart():
         clear_transactions = conn.cursor(pymysql.cursors.DictCursor)
         clear_cart_items = conn.cursor(pymysql.cursors.DictCursor)
         clear_carts = conn.cursor(pymysql.cursors.DictCursor)
+        log = conn.cursor(pymysql.cursors.DictCursor)
+        DateTime = datetime.now()
         cart_id_query.execute(
             "SELECT * FROM carts LEFT JOIN transactions ON carts.cart_id = transactions.cart_id WHERE user_id=%s AND transactions.status='pending'", (user_id,))
         cart_id = cart_id_query.fetchone()['cart_id']
@@ -186,6 +192,8 @@ def empty_cart():
             "DELETE FROM cart_items WHERE cart_id=%s", (cart_id,))
         clear_carts.execute("DELETE FROM carts WHERE cart_id=%s", (cart_id,))
         flash("Cart has been empty.", "success")
+        log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Shopping Cart empty', %s, %s)",
+                              (DateTime, user_id))
         conn.commit()
         session.pop('Shoppingcart', None)
         session.pop('cart_id', None)
@@ -214,6 +222,8 @@ def delete_cart_item(cart_item_id):
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         Cart_list = session.get('Shoppingcart')
         cart_id = session.get('Shoppingcart')[0].get('cart_id')
+        log = conn.cursor(pymysql.cursors.DictCursor)
+        DateTime = datetime.now()
         total_price = 0
         total_quantity = 0
         if Cart_list:
@@ -223,7 +233,7 @@ def delete_cart_item(cart_item_id):
                     cart_items.execute(
                         "DELETE cart_items FROM cart_items WHERE cart_item_id = %s", (cart_item_id,))
                     cur.execute(
-                        "SELECT cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
+                        "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
                     for row in cur:
                         current_price = row['price']
                         current_quantity = row['quantity']
@@ -262,7 +272,8 @@ def delete_cart_item(cart_item_id):
             session.pop('Shoppingcart')
             session.pop('cart_id', None)
             session.pop('cart_item_id', None)
-
+        log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Shopping Cart item deleted', %s, %s)",
+            (DateTime, user_id))
         conn.commit()
         return redirect(request.referrer)
     except Exception as e:
@@ -288,10 +299,12 @@ def update_cart_item(cart_item_id):
             cursor = conn.cursor(pymysql.cursors.DictCursor)
             cur = conn.cursor(pymysql.cursors.DictCursor)
             new_quantity = int(request.form.get('cart_quantity'))
+            log = conn.cursor(pymysql.cursors.DictCursor)
+            DateTime = datetime.now()
             cursor.execute(
                 "UPDATE cart_items SET quantity = %s WHERE cart_item_id = %s", (new_quantity, cart_item_id))
             cur.execute(
-                "SELECT cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
+                "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
             Cart_list = cur.fetchall()
             print(Cart_list)
             for row in Cart_list:
@@ -320,6 +333,8 @@ def update_cart_item(cart_item_id):
                 }
                 session['Shoppingcart'].append(item)
             session.modified = True
+            log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Shopping Cart updated', %s, %s)",
+                (DateTime, user_id))            
             conn.commit()
             flash("Item in cart has successfully updated.", "danger")
             return redirect(request.referrer)
@@ -442,6 +457,8 @@ def login_submit():
         password = request.cookies.get('password')
         conn = mysql.connect()
         cursor = conn.cursor()
+        log = conn.cursor(pymysql.cursors.DictCursor)
+        DateTime = datetime.now()
         sql = "SELECT * FROM users WHERE username=%s"
         sql_where = (username,)
 
@@ -452,13 +469,21 @@ def login_submit():
             session['username'] = row[1]
             cursor.close()
             if row[3] == 'admin':
+                user_id = row[0]
                 session['user_id'] = row[0]
                 session['admin'] = True
                 session['logged_in'] = True
+                log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has logged in', %s, %s)",
+                (DateTime, user_id))            
+                conn.commit()
                 return redirect('/homepage')
             elif row[3] == 'user':
+                user_id = row[0]
                 session['user_id'] = row[0]
                 session['logged_in'] = True
+                log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has logged in', %s, %s)",
+                (DateTime, user_id))            
+                conn.commit()
                 return redirect('/homepage')
             else:
                 return redirect('/')
@@ -468,6 +493,8 @@ def login_submit():
     elif _username and _password:
         conn = mysql.connect()
         cursor = conn.cursor()
+        log = conn.cursor(pymysql.cursors.DictCursor)
+        DateTime = datetime.now()
         sql = "SELECT * FROM users WHERE username=%s"
         sql_where = (_username,)
         cursor.execute(sql, sql_where)
@@ -477,13 +504,21 @@ def login_submit():
                 session['username'] = row[1]
                 cursor.close()
                 if row[3] == 'admin':
+                    user_id = row[0]
                     session['user_id'] = row[0]
                     session['admin'] = True
                     session['logged_in'] = True
+                    log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has logged in', %s, %s)",
+                        (DateTime, user_id))            
+                    conn.commit()
                     return redirect('/homepage')
                 elif row[3] == 'user':
+                    user_id = row[0]
                     session['user_id'] = row[0]
                     session['logged_in'] = True
+                    log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has logged in', %s, %s)",
+                        (DateTime, user_id))            
+                    conn.commit()
                     return redirect('/homepage')
                 else:
                     return redirect('/')
@@ -501,6 +536,13 @@ def login_submit():
 @app.route('/logout')
 def logout():
     if 'logged_in' in session:
+        conn = mysql.connect()
+        log = conn.cursor(pymysql.cursors.DictCursor)
+        DateTime = datetime.now()
+        user_id = session['user_id']
+        log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has logged out', %s, %s)",
+                        (DateTime, user_id))            
+        conn.commit()
         session.clear()
     return redirect('/')
 
@@ -518,11 +560,25 @@ def products():
     cur1.execute("SELECT * FROM `categories`")
     data = cur.fetchall()
     cate = cur1.fetchall()
+    user_id = session.get('user_id')
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    curr = conn.cursor(pymysql.cursors.DictCursor)
+    curr1 = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM products")
+    curr.execute(
+        "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
+    curr1.execute(
+        "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
+    rows = cursor.fetchall()
+    user = curr.fetchone()
+    Cart_list = curr1.fetchall()
+    if len(Cart_list) > 0:
+        session['Shoppingcart'] = Cart_list
+        session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
     cur.close()
     cur1.close()
-    # app.logger.info(data)
-    # app.logger.info(cate)
-    return render_template('products_manage.html', products=data, categories=cate, time=time)
+    return render_template('products_manage.html', products=data, categories=cate, time=time, user=user, Cart_list=Cart_list, user_id=user_id, product_list=rows)
 
 
 @app.route('/product_add', methods=['POST'])
@@ -540,11 +596,16 @@ def product_add():
         description = request.form['description']
         conn = mysql.connect()
         cur = conn.cursor(pymysql.cursors.DictCursor)
+        log = conn.cursor(pymysql.cursors.DictCursor)
+        DateTime = datetime.now()
+        user_id = session['user_id']
         if image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         cur.execute("INSERT INTO products (product_name, price, stock, row, category_id, image, description) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                     (product_name, price, stock, row, category, filename, description))
+        log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Product added', %s, %s)",
+                        (DateTime, user_id))   
         conn.commit()
         print(image)
         return redirect(url_for('products'))
@@ -564,10 +625,15 @@ def update():
         description = request.form['description']
         conn = mysql.connect()
         cur = conn.cursor(pymysql.cursors.DictCursor)
+        log = conn.cursor(pymysql.cursors.DictCursor)
+        DateTime = datetime.now()
+        user_id = session['user_id']
         cur.execute("""
         UPDATE products SET product_name=%s, price=%s, stock=%s, row=%s, category_id=%s, description=%s
         WHERE product_id=%s
         """, (product_name, price, stock, row, category, description, product_id))
+        log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Product updated', %s, %s)",
+                        (DateTime, user_id))   
         flash("Data Updated Successfully")
         conn.commit()
         return redirect(url_for('products'))
@@ -600,7 +666,12 @@ def delete(product_id):
     flash("Record Has Been Deleted Successfully")
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
+    log = conn.cursor(pymysql.cursors.DictCursor)
+    DateTime = datetime.now()
+    user_id = session['user_id']
     cur.execute("DELETE FROM products WHERE product_id=%s", (product_id))
+    log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Product deleted', %s, %s)",
+        (DateTime, user_id)) 
     conn.commit()
     return redirect(url_for('products'))
 
@@ -612,15 +683,22 @@ def admin():
         return render_template("test.html")
     user_id = session.get('user_id')
     conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     curr = conn.cursor(pymysql.cursors.DictCursor)
     cur = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM products")
     curr.execute(
         "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
-    user = curr.fetchone()
     cur.execute(
-        "SELECT cart_items.cart_item_id,cart_items.cart_id,carts.user_id,products.product_id,products.image,products.product_name,cart_items.quantity,products.price,carts.total_price,carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN users ON users.user_id = carts.user_id WHERE cart_items.quantity > 0 AND carts.user_id=%s", (user_id,))
+        "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
+    rows = cursor.fetchall()
+    user = curr.fetchone()
     Cart_list = cur.fetchall()
-    return render_template("admin.html", user=user, Cart_list=Cart_list, user_id=user_id)
+
+    if len(Cart_list) > 0:
+        session['Shoppingcart'] = Cart_list
+        session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
+    return render_template('admin.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
 
 
 if __name__ == "__main__":
