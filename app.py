@@ -44,6 +44,7 @@ def homepage():
     else:
         try:
             user_id = session.get('user_id')
+            
             conn = mysql.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
             curr = conn.cursor(pymysql.cursors.DictCursor)
@@ -59,6 +60,7 @@ def homepage():
             # app.logger.info(Cart_list)
             if len(Cart_list) > 0:
                 session['Shoppingcart'] = Cart_list
+                session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
             return render_template('homepage.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
 
         finally:
@@ -204,27 +206,55 @@ def empty_cart():
 def delete_cart_item(cart_item_id):
     try:
         conn = mysql.connect()
-        cart_items = conn.cursor()
-        transactions = conn.cursor()
-        carts = conn.cursor()
-        # Delete the cart item with the given cart_item_id from the database
-
-        # Remove the cart item with the given cart_item_id from the session variable
+        user_id = session.get('user_id')
+        cart_items = conn.cursor(pymysql.cursors.DictCursor)
+        transactions = conn.cursor(pymysql.cursors.DictCursor)
+        cur = conn.cursor(pymysql.cursors.DictCursor)
+        carts = conn.cursor(pymysql.cursors.DictCursor)
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
         Cart_list = session.get('Shoppingcart')
         cart_id = session.get('Shoppingcart')[0].get('cart_id')
-        print(cart_id)
-        print(Cart_list)
+        total_price = 0
+        total_quantity = 0
         if Cart_list:
             for item in Cart_list:
                 if item['cart_item_id'] == cart_item_id:
                     Cart_list.remove(item)
                     cart_items.execute(
                         "DELETE cart_items FROM cart_items WHERE cart_item_id = %s", (cart_item_id,))
+                    cur.execute(
+                        "SELECT cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
+                    for row in cur:
+                        current_price = row['price']
+                        current_quantity = row['quantity']
+                        subtotal = current_price * current_quantity
+                        total_quantity += current_quantity
+                        total_price += subtotal
+                        print(total_quantity)
+                        print(subtotal)
+                        print(total_price)
+                    cursor.execute(
+                        "UPDATE carts SET total_price = %s, total_quantity = %s WHERE cart_id = %s", (total_price ,total_quantity ,cart_id))
+                    session['Shoppingcart'] = []
+                    for row in cur:
+                        item = {
+                            'cart_item_id': row['cart_item_id'],
+                            'cart_id': row['cart_id'],
+                            'user_id': row['user_id'],
+                            'product_id': row['product_id'],
+                            'image': row['image'],
+                            'product_name': row['product_name'],
+                            'quantity': row['quantity'],
+                            'price': row['price'],
+                            'total_price': row['total_price'],
+                            'total_quantity': row['total_quantity']
+                        }
+                        session['Shoppingcart'].append(item)
+                    session.modified = True
                     flash("Item successfully removed from cart.", "success")
                     session['Shoppingcart'] = Cart_list
-                    print(cart_id)
+                    print(Cart_list)
         if len(Cart_list) == 0:
-            print(cart_id)
             transactions.execute(
                 "DELETE FROM transactions WHERE cart_id = %s", (cart_id,))
             carts.execute(
@@ -244,6 +274,62 @@ def delete_cart_item(cart_item_id):
         cart_items.close()
         carts.close()
         conn.close()
+
+
+@app.route('/update_cart_item/<int:cart_item_id>', methods=['POST', 'GET'])
+def update_cart_item(cart_item_id):
+    if request.method == 'POST':
+        try:
+            user_id = session.get('user_id')
+            cart_id = session.get('cart_id')
+            total_price = 0
+            total_quantity = 0
+            conn = mysql.connect()
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cur = conn.cursor(pymysql.cursors.DictCursor)
+            new_quantity = int(request.form.get('cart_quantity'))
+            cursor.execute(
+                "UPDATE cart_items SET quantity = %s WHERE cart_item_id = %s", (new_quantity, cart_item_id))
+            cur.execute(
+                "SELECT cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
+            Cart_list = cur.fetchall()
+            print(Cart_list)
+            for row in Cart_list:
+                current_price = row['price']
+                current_quantity = row['quantity']
+                subtotal = current_price * current_quantity
+                total_quantity += current_quantity
+                total_price += subtotal
+                print(total_quantity)
+                print(total_price)
+            cursor.execute(
+                "UPDATE carts SET total_price = %s, total_quantity = %s WHERE cart_id = %s", (total_price ,total_quantity ,cart_id))
+            session['Shoppingcart'] = []
+            for row in cur:
+                item = {
+                    'cart_item_id': row['cart_item_id'],
+                    'cart_id': row['cart_id'],
+                    'user_id': row['user_id'],
+                    'product_id': row['product_id'],
+                    'image': row['image'],
+                    'product_name': row['product_name'],
+                    'quantity': row['quantity'],
+                    'price': row['price'],
+                    'total_price': row['total_price'],
+                    'total_quantity': row['total_quantity']
+                }
+                session['Shoppingcart'].append(item)
+            session.modified = True
+            conn.commit()
+            flash("Item in cart has successfully updated.", "danger")
+            return redirect(request.referrer)
+        except Exception as e:
+            print(e)
+            flash(
+                "An error occurred while updating item in cart. Please try again later.", "danger")
+            return redirect(request.referrer)
+        finally:
+            conn.close()
 
 
 @app.route('/login')
