@@ -49,8 +49,7 @@
       height: 70px;
     }
 
-    .navbar,
-    .main-panel {
+    .navbar{
       background-color: #065488;
     }
 
@@ -275,7 +274,7 @@
             <table class="table table-sm">
               {% if 'Shoppingcart' in session %}
               <tr>
-                <td> <a href="#" class="btn btn-success"> Order now </a> </td>
+                <td> <a href="{{url_for('transaction')}}" class="btn btn-success"> Order now </a> </td>
                 <td width="35%"></td>
                 <td>
                   <h5>Total Quantity: {{ session['Shoppingcart'][0]['total_quantity'] }}</h5>
