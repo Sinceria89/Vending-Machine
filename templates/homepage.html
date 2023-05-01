@@ -246,9 +246,11 @@
                   <td><img src="/static/upload/{{ Cart_list.image }}" class="display" alt="{{Cart_list.product_name}}">
                   </td>
                   <input type="hidden" name="cart_item_id" value="{{ Cart_list.cart_item_id }}" />
+                  <input type="hidden" name="product_id" value="{{ Cart_list.product_id }}" />
                   <td>{{Cart_list.product_name}}</td>
-                  <form action="#" method="post">
+                  <form action="{{url_for('update_cart_item', cart_item_id=Cart_list.cart_item_id)}}" method="POST">
                     <td>${{"%.2f"|format(Cart_list.price)}}</td>
+                    <input type="hidden" name="cart_item_id" value="{{ Cart_list.cart_item_id }}" />
                     {% for product in products %}
                     {% if product.stock < max_value %} {% set max_value=product.stock%} {% endif %}{% endfor %} <td>
                       <input type="number" name="cart_quantity" min="1" max="{{ max_value }}"
