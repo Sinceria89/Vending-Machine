@@ -357,7 +357,18 @@
 
 
                                 <div class="modal-body">
-
+                                    <form enctype="multipart/form-data" action="{{ url_for('upload')}}" method="POST">
+                                        <div class="form-group">
+                                            <div class="example"><img id="image-preview"
+                                                    src="/static/upload/{{ data.image }}" style="z-index: 999;"></div>
+                                            <input value="{{data.product_id}}" type="hidden" name="product_id_image">
+                                            <label>Choose Images: <span class="required"> * </span></label>
+                                            <input type="file" id="input-image" onchange="handleFileSelect(event)"
+                                                name="image" class="form-control fileInput"
+                                                style="margin-bottom: 15px;">
+                                            <input type="submit" class="btn btn-primary mb-2" value="Upload">
+                                        </div>
+                                    </form>
                                     <form enctype="multipart/form-data" action="{{ url_for('update')}}" method="POST">
                                         <input value="{{data.product_id}}" type="hidden" name="product_id">
                                         <div class="form-group">
@@ -416,23 +427,13 @@
                                                 placeholder="Enter your message">{{ data.description }}</textarea>
 
                                         </div>
-
-                                        <input type="submit" id="submit-form" hidden>
+                                        <br>
+                                        <input type="submit" class="btn btn-success mb-2" id="submit-form"
+                                            value="Update">
 
                                     </form>
-                                    <form enctype="multipart/form-data" action="{{ url_for('upload')}}" method="POST">
-                                        <div class="form-group">
-                                            <input value="{{data.product_id}}" type="hidden" name="product_id_image">
-                                            <label>Choose Images: <span class="required"> * </span></label>
-                                            <input type="file" id="input-image" onchange="handleFileSelect(event)"
-                                                name="image" class="form-control fileInput"
-                                                style="margin-bottom: 15px;">
-                                            <input type="submit" class="btn btn-primary mb-2" value="Upload">
-                                            <div class="example"><img id="image-preview"
-                                                    src="/static/upload/{{ data.image }}" style="z-index: 999;"></div>
-                                        </div>
-                                    </form>
-                                    <label for="submit-form" class="btn btn-success mb-2" tabindex="0">Update</label>
+
+
                                 </div>
                             </div>
                         </div>
