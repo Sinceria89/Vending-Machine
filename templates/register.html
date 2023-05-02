@@ -14,7 +14,7 @@
     }
 
     body {
-        background-image: url("../static/japanesecastle.png");
+        background-color: #03A9F4;
         height: 400px;
         width: 800px;
     }
@@ -33,9 +33,9 @@
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col">
                 <div class="card card-registration my-4">
-                    <div class="row">
-                        <div class="col-xl-6">
-                            <div class="card-body p-md-5 text-black" style="background-color: #72d39c;">
+                    <div class="row ">
+                        <div class="col-xl-6 ">
+                            <div class="card-body p-md-5 text-white shadow" style="background-color: #065488;">
                                 <h3 class="mb-3 text-uppercase">Registration form</h3>
                                 <h4 class="text-uppercase" style="padding-bottom: 20px;">ข้อมูลทั่วไป</h4>
                                 <form name="Register" enctype="multipart/form-data" action="{{ url_for('register')}}"
@@ -180,12 +180,12 @@
                                     <div class="submit-form">
                                         <button type="submit"
                                             class="btn btn-warning btn-lg btn-block">สมัครสมาชิก</button>
-                                        <a href="/" class="btn btn-light btn-lg btn-block">ย้อนกลับ</a>
+                                        <a href="javascript:history.back()" class="btn btn-light btn-lg btn-block">ย้อนกลับ</a>
                                     </div>
                             </div>
 
                         </div>
-                        <div class="col-xl-6" style="padding-top: 100px;">
+                        <div class="col-xl-6 " style="padding-top: 100px;">
                             <h4 class="text-uppercase">ข้อมูลการติดต่อ</h4>
                             <div class="card-body text-black">
                                 <div class="form-outline mb-4">
