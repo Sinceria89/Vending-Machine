@@ -50,25 +50,59 @@ def homepage():
             cursor = conn.cursor(pymysql.cursors.DictCursor)
             curr = conn.cursor(pymysql.cursors.DictCursor)
             cur = conn.cursor(pymysql.cursors.DictCursor)
+            categories = conn.cursor(pymysql.cursors.DictCursor)
+            categories.execute("SELECT * FROM categories")
             cursor.execute("SELECT * FROM products")
             curr.execute(
                 "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
             cur.execute(
                 "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
             rows = cursor.fetchall()
+            cat = categories.fetchall()
             user = curr.fetchone()
             Cart_list = cur.fetchall()
             # app.logger.info(Cart_list)
             if len(Cart_list) > 0:
                 session['Shoppingcart'] = Cart_list
                 session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
-            return render_template('homepage.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
+            return render_template('homepage.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows, categories=cat)
 
         finally:
             if 'cursor' in locals() and cursor is not None:
                 cursor.close()
             if 'conn' in locals() and conn is not None:
                 conn.close()
+
+
+
+@app.route('/category/<int:category_id>')
+def show_items_by_category(category_id):
+    try:
+        user_id = session.get('user_id')
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        curr = conn.cursor(pymysql.cursors.DictCursor)
+        cur = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM products WHERE category_id = %s", category_id)
+        curr.execute(
+        "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
+        cur.execute(
+        "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
+        products = cursor.fetchall()
+        user = curr.fetchone()
+        Cart_list = cur.fetchall()
+
+        if len(Cart_list) > 0:
+            session['Shoppingcart'] = Cart_list
+            session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
+        return render_template('category.html', user=user, Cart_list=Cart_list, user_id=user_id, products=products)
+    except Exception as e:
+        print(e)
+        flash("An error occurred while retrieving products. Please try again later.", "danger")
+        return redirect(request.referrer)
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @app.route('/cart_add', methods=['POST'])
@@ -361,7 +395,6 @@ def register():
     prov = conn.cursor(pymysql.cursors.DictCursor)
     prov.execute(
         "SELECT `id`,`code`,`name_th` FROM `provinces`")
-    msg = ''
     # Check if "username", "password" and "email" POST requests exist (user submitted form)
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
         # Create variables for easy access
@@ -392,27 +425,29 @@ def register():
         account = cursor.fetchone()
         # If account exists show error and validation checks
         if account:
-            msg = 'Account already exists!'
+            flash('Account already exists!')
         elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            msg = 'Invalid email address!'
+            flash('Invalid email address!')
         elif not re.match(r'[A-Za-z0-9]+', username):
-            msg = 'Username must contain only characters and numbers!'
+            flash('Username must contain only characters and numbers!')
         elif password != confirm_password:
-            msg = 'Password is not matcing!'
+            flash('Password is not matcing!')
         else:
             # Account doesnt exists and the form data is valid, now insert new account into accounts table
             cursor.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, 'user')",
                            (username, generate_password_hash(password)))
             user_id = cursor.lastrowid
+            print("Hi!")
             cursor.execute("INSERT INTO users_detail (first_name, last_name, gender, email, blood_type, age, ethnicity, weight, height, congenital_disease, drug_allergy, phone_no, provinces, districts, sub_districts, address, post_code, user_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                            (first_name, last_name, gender, email, blood_type, age, ethnicity, weight, height, congenital_disease, drug_allergy, phone_no, provinces, districts, sub_districts, address, post_code, user_id))
             conn.commit()
-            msg = 'You have successfully registered!'
+            flash('You have successfully registered!')
+            return redirect('/login')
     elif request.method == 'POST':
         # Form is empty... (no POST data)
-        msg = 'Please fill out the form!'
+       flash('Please fill out the form!')
     # Show registration form with message (if any)
-    return render_template('register.html', msg=msg, prov=prov)
+    return render_template('register.html', prov=prov)
 
 
 @app.route('/amphure/<get_amphure>')

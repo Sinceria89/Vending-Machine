@@ -38,6 +38,20 @@
                             <div class="card-body p-md-5 text-white shadow" style="background-color: #065488;">
                                 <h3 class="mb-3 text-uppercase">Registration form</h3>
                                 <h4 class="text-uppercase" style="padding-bottom: 20px;">ข้อมูลทั่วไป</h4>
+                                <label>
+                                    {% with messages = get_flashed_messages() %}
+                                    {% if messages %}
+                                    {% for message in messages %}
+
+                                    <div class="alert info">
+                                        <span class="alertClose">X</span>
+                                        <span class="alertText">{{ message }}</span>
+                                    </div>
+
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% endwith %}
+                                </label>
                                 <form name="Register" enctype="multipart/form-data" action="{{ url_for('register')}}"
                                     method="POST">
                                     <div class="row">
@@ -95,14 +109,14 @@
                                         </div>
 
                                         <div class="form-check form-check-inline mb-0 me-4">
-                                            <input class="form-check-input" type="radio" name="gender"
-                                                id="maleGender" value="male" />
+                                            <input class="form-check-input" type="radio" name="gender" id="maleGender"
+                                                value="male" />
                                             <label class="form-check-label" for="maleGender">ชาย</label>
                                         </div>
 
                                         <div class="form-check form-check-inline mb-0">
-                                            <input class="form-check-input" type="radio" name="gender"
-                                                id="otherGender" value="other" />
+                                            <input class="form-check-input" type="radio" name="gender" id="otherGender"
+                                                value="other" />
                                             <label class="form-check-label" for="otherGender">อื่นๆ</label>
                                         </div>
 
@@ -180,7 +194,8 @@
                                     <div class="submit-form">
                                         <button type="submit"
                                             class="btn btn-warning btn-lg btn-block">สมัครสมาชิก</button>
-                                        <a href="javascript:history.back()" class="btn btn-light btn-lg btn-block">ย้อนกลับ</a>
+                                        <a href="javascript:history.back()"
+                                            class="btn btn-light btn-lg btn-block">ย้อนกลับ</a>
                                     </div>
                             </div>
 
@@ -241,11 +256,6 @@
                             </div>
                         </div>
                         </form>
-
-
-
-
-
                     </div>
 
                 </div>

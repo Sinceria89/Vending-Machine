@@ -35,14 +35,24 @@
                 <div class="clock" id="clock">/</div>
             </div>
         </div>
-        <div class="container h-120 text-white"
-            style="background-color: #065488;">
+        <div class="container h-120 text-white" style="background-color: #065488;">
             <h4 align="center">เข้าสู่ระบบ</h4>
             <br>
             <div class="d-flex justify-content-center h-100">
                 <div>
                     <div class="d-flex justify-content-center">
                         <form method="post" action="/submit">
+                            <div class="mt-4">
+                                <div>
+                                    {% with messages = get_flashed_messages() %}
+                                    {% if messages %}
+                                    {% for message in messages %}
+                                    <div class="alert alert-info" role="alert">{{ message }}</div>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% endwith %}
+                                </div>
+                            </div>
                             <div class=" mb-3">
                                 <input type="text" name="UsernameInput" placeholder="username" required
                                     class="form-control input_user">
@@ -62,17 +72,7 @@
                     </form>
                 </div>
 
-                <div class="mt-4">
-                    <div>
-                        {% with messages = get_flashed_messages() %}
-                        {% if messages %}
-                        {% for message in messages %}
-                        <div class="alert alert-danger" role="alert">{{ message }}</div>
-                        {% endfor %}
-                        {% endif %}
-                        {% endwith %}
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
