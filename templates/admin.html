@@ -29,7 +29,7 @@
     <style>
         body {
             font-family: "Lato", sans-serif;
-            background-color: #ffffff;
+            background-color: #03A9F4;
         }
 
         .clock {
@@ -55,50 +55,69 @@
         .nav-link {
             color: #FFFFFF;
         }
+
+        .main-panel {
+            padding-top: 3%;
+            padding-left: 20px;
+            padding-right: 20px;
+            border: 1px solid #BDBDBD;
+            background-color: #FFFFFF;
+            margin-top: 8%;
+            margin-bottom: 7.6%;
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+
+        }
+
+
+        .about {
+            margin-top: 5%;
+        }
     </style>
 </head>
 
 <body>
     <nav class="navbar fixed-top navbar-expand-lg ">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">Icon</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02"
-            aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link text-white active" aria-current="page" href="/homepage">Home</a>
-              </li>
-              <li class="nav-item">
-                {% if 'Shoppingcart' in session %}
-                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart"> Shopping Cart: ({{
-                  session['Shoppingcart']|length }})</a>
-                {% else %}
-                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart"> Shopping Cart: (0)</a>
-                {% endif %}
-              </li>
-            </ul>
-            <div class="clock flex-nowrap" id="clock" onload="clock"></div>
-            <ul class="navbar-nav">
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
-                  data-bs-toggle="dropdown" aria-expanded="false">
-                  ยินดีต้อนรับคุณ {{ user['first_name'] }}
-                </a>
-                <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="navbarDarkDropdownMenuLink">
-                  <li><a class="dropdown-item" href="#">ข้อมูลผู้ใช้</a></li>
-                  {% if 'admin' in session %}
-                  <li><a class="dropdown-item" href="/admin">จัดการระบบ (Admin)</a></li>
-                  {% endif %}
-                  <li><a class="dropdown-item" href="/logout">ออกจากระบบ</a></li>
+            <a class="navbar-brand" href="#">Icon</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02"
+                aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link text-white active" aria-current="page" href="/homepage">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        {% if 'Shoppingcart' in session %}
+                        <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart"> Shopping Cart: ({{
+                            session['Shoppingcart']|length }})</a>
+                        {% else %}
+                        <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart"> Shopping Cart: (0)</a>
+                        {% endif %}
+                    </li>
                 </ul>
-              </li>
-            </ul>
-          </div>
+                <div class="clock flex-nowrap" id="clock" onload="clock"></div>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            ยินดีต้อนรับคุณ {{ user['first_name'] }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="navbarDarkDropdownMenuLink">
+                            <li><a class="dropdown-item" href="#">ข้อมูลผู้ใช้</a></li>
+                            {% if 'admin' in session %}
+                            <li><a class="dropdown-item" href="/admin">จัดการระบบ (Admin)</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="/logout">ออกจากระบบ</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </nav>
+    </nav>
     <div class="modal fade" id="Cart">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -184,15 +203,34 @@
         </div>
     </div>
 
-    <div>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore cumque, quidem laboriosam, similique modi
-            aspernatur
-            esse ad iure officia voluptas blanditiis necessitatibus voluptatem, vitae iste pariatur labore. Omnis,
-            similique
-            explicabo.</p>
+
+    <div class="main-panel shadow">
+        <div>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore cumque, quidem laboriosam, similique
+                modi
+                aspernatur
+                esse ad iure officia voluptas blanditiis necessitatibus voluptatem, vitae iste pariatur labore. Omnis,
+                similique
+                explicabo.</p>
+        </div>
+        <img src="../static/2Q.png" alt=""><br>
+        <a href="/products_manage">Manage Product</a>
     </div>
-    <img src="../static/2Q.png" alt=""><br>
-    <a href="/products_manage">Manage Product</a>
+    <div class="about">
+        <h1>Quote of the day: live life</h1>
+    </div>
+    <footer>
+        <div>
+            <i class="fa fa-facebook-official"></i>
+            <i class="fa fa-instagram"></i>
+            <i class="fa fa-snapchaty"></i>
+            <i class="fa fa-pinterest-p "></i>
+            <i class="fa fa-twitter"></i>
+            <i class="fa fa-linkedin"></i>
+        </div>
+        <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+    </footer>
+
 </body>
 
 </html>
