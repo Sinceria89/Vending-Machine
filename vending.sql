@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 24, 2023 at 04:10 AM
+-- Generation Time: May 01, 2023 at 10:53 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -20,6 +20,43 @@ SET time_zone = "+00:00";
 --
 -- Database: `vending`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `activity_log`
+--
+
+CREATE TABLE `activity_log` (
+  `log_id` int(11) NOT NULL,
+  `action` varchar(255) NOT NULL,
+  `date` datetime NOT NULL,
+  `user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `activity_log`
+--
+
+INSERT INTO `activity_log` (`log_id`, `action`, `date`, `user_id`) VALUES
+(1, 'Shopping Cart added', '2023-05-02 03:22:27', 1),
+(2, 'User has logged out', '2023-05-02 03:34:23', 1),
+(3, 'User has logged in', '2023-05-02 03:34:32', 6),
+(4, 'Shopping Cart added', '2023-05-02 03:34:35', 6),
+(5, 'Shopping Cart updated', '2023-05-02 03:34:43', 6),
+(6, 'Shopping Cart item deleted', '2023-05-02 03:34:50', 6),
+(7, 'Shopping Cart added', '2023-05-02 03:34:55', 6),
+(8, 'Shopping Cart empty', '2023-05-02 03:35:00', 6),
+(9, 'User has logged out', '2023-05-02 03:35:04', 6),
+(10, 'User has logged in', '2023-05-02 03:35:11', 1),
+(11, 'Product updated', '2023-05-02 03:35:31', 1),
+(12, 'Product updated', '2023-05-02 03:41:46', 1),
+(13, 'Product added', '2023-05-02 03:42:26', 1),
+(14, 'Product deleted', '2023-05-02 03:42:31', 1),
+(15, 'Product updated', '2023-05-02 03:51:47', 1),
+(16, 'Product updated', '2023-05-02 03:52:25', 1),
+(17, 'Product deleted', '2023-05-02 03:52:29', 1),
+(18, 'User has logged out', '2023-05-02 03:52:41', 1);
 
 -- --------------------------------------------------------
 
@@ -1049,8 +1086,16 @@ CREATE TABLE `carts` (
   `cart_id` int(11) NOT NULL,
   `total_price` decimal(10,2) NOT NULL,
   `total_quantity` int(11) NOT NULL,
-  `date` datetime NOT NULL
+  `date` datetime NOT NULL,
+  `user_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `carts`
+--
+
+INSERT INTO `carts` (`cart_id`, `total_price`, `total_quantity`, `date`, `user_id`) VALUES
+(65, '190.00', 3, '2023-05-01 06:44:17', 1);
 
 -- --------------------------------------------------------
 
@@ -1064,6 +1109,14 @@ CREATE TABLE `cart_items` (
   `product_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cart_items`
+--
+
+INSERT INTO `cart_items` (`cart_item_id`, `cart_id`, `product_id`, `quantity`) VALUES
+(104, 65, 1, 1),
+(123, 65, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -10015,11 +10068,9 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`product_id`, `product_name`, `price`, `stock`, `row`, `image`, `description`, `category_id`) VALUES
-(1, 'TYLENOL Paracetamol(500mg)', '150.00', 10, 1, 'tylenol-paracetamol-500-100.png', '-ใช้บรรเทาอาการปวดเล็กน้อยถึงปานกลางและลดไข้', 1),
+(1, 'TYLENOL Paracetamol(500mg)', '150.00', 10, 3, 'tylenol-paracetamol-500-100.png', '-ใช้บรรเทาอาการปวดเล็กน้อยถึงปานกลางและลดไข้', 1),
 (2, 'Chlorpheniramine(2mg)', '20.00', 5, 1, 'wegzkl.png', '-ใช้บรรเทาอาการแพ้ต่างๆ เช่น น้ำมูกไหล, ผื่นคัน, ลมพิษ, น้ำตาไหล, ตาแดง, คันตา, คันจมูก, คันคอ, จาม หรือ ลดน้ำมูกในโรคหวัด', 2),
-(3, 'Calamine Lotion Siribuncha(120ml)', '20.00', 10, 3, 'image_164492525384736107919d0501.png', '-ช่วยบรรเทาอาการคันหรือระคายเคืองผิวหนัง เช่น ผดผื่นคัน ผื่นแดง ผื่นแพ้ ลมพิษ อาการแพ้พืชบางชนิด \r\n-ผื่นแพ้ ยุงกัด แมลงกัดต่อย\r\n-ผิวไหม้เนื่องจากแสงแดด รอยขีดข่วน ผื่นคันจากผ้าอ้อม', 9),
-(30, 'test', '125.00', 6, 3, '3faa8107a517e4ef229d8d2bb23fda0a.png', 'ya ha lO', 10),
-(32, 'test2', '140.00', 10, 3, '2Q.png', 'ssstt', 9);
+(3, 'Calamine Lotion Siribuncha(120ml)', '20.00', 10, 3, 'image_164492525384736107919d0501.png', '-ช่วยบรรเทาอาการคันหรือระคายเคืองผิวหนัง เช่น ผดผื่นคัน ผื่นแดง ผื่นแพ้ ลมพิษ อาการแพ้พืชบางชนิด \r\n-ผื่นแพ้ ยุงกัด แมลงกัดต่อย\r\n-ผิวไหม้เนื่องจากแสงแดด รอยขีดข่วน ผื่นคันจากผ้าอ้อม', 9);
 
 -- --------------------------------------------------------
 
@@ -10131,6 +10182,13 @@ CREATE TABLE `transactions` (
   `date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `transactions`
+--
+
+INSERT INTO `transactions` (`transaction_id`, `cart_id`, `status`, `date`) VALUES
+(70, 65, 'pending', '2023-05-01 06:44:17');
+
 -- --------------------------------------------------------
 
 --
@@ -10193,6 +10251,13 @@ INSERT INTO `users_detail` (`users_detail_Id`, `first_name`, `last_name`, `gende
 --
 
 --
+-- Indexes for table `activity_log`
+--
+ALTER TABLE `activity_log`
+  ADD PRIMARY KEY (`log_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `amphures`
 --
 ALTER TABLE `amphures`
@@ -10202,7 +10267,8 @@ ALTER TABLE `amphures`
 -- Indexes for table `carts`
 --
 ALTER TABLE `carts`
-  ADD PRIMARY KEY (`cart_id`);
+  ADD PRIMARY KEY (`cart_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `cart_items`
@@ -10268,6 +10334,12 @@ ALTER TABLE `users_detail`
 --
 
 --
+-- AUTO_INCREMENT for table `activity_log`
+--
+ALTER TABLE `activity_log`
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
 -- AUTO_INCREMENT for table `amphures`
 --
 ALTER TABLE `amphures`
@@ -10277,13 +10349,13 @@ ALTER TABLE `amphures`
 -- AUTO_INCREMENT for table `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -10301,7 +10373,7 @@ ALTER TABLE `geographies`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `provinces`
@@ -10313,7 +10385,7 @@ ALTER TABLE `provinces`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -10330,6 +10402,18 @@ ALTER TABLE `users_detail`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `activity_log`
+--
+ALTER TABLE `activity_log`
+  ADD CONSTRAINT `activity_log_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `carts`
+--
+ALTER TABLE `carts`
+  ADD CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `cart_items`
