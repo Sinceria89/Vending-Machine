@@ -38,6 +38,18 @@
                             <div class="card-body p-md-5 text-white shadow" style="background-color: #065488;">
                                 <h3 class="mb-3 text-uppercase">Registration form</h3>
                                 <h4 class="text-uppercase" style="padding-bottom: 20px;">ข้อมูลทั่วไป</h4>
+                                {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                {% for message in messages %}
+                          
+                                <div class="alert info">
+                                  <span class="alertClose">X</span>
+                                  <span class="alertText">{{ message }}</span>
+                                </div>
+                          
+                                {% endfor %}
+                                {% endif %}
+                                {% endwith %}
                                 <form name="Register" enctype="multipart/form-data" action="{{ url_for('register')}}"
                                     method="POST">
                                     <div class="row">

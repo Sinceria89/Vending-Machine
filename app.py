@@ -361,7 +361,7 @@ def register():
     prov = conn.cursor(pymysql.cursors.DictCursor)
     prov.execute(
         "SELECT `id`,`code`,`name_th` FROM `provinces`")
-    msg = ''
+
     # Check if "username", "password" and "email" POST requests exist (user submitted form)
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
         # Create variables for easy access
@@ -385,6 +385,15 @@ def register():
         sub_districts = request.form['district']
         post_code = request.form['post_code']
         address = request.form['address']
+        
+        # Retrieve province, amphure, and district names
+        cursor.execute("SELECT `name_th` FROM `provinces` WHERE `id`=%s", provinces)
+        provinces = cursor.fetchone()['name_th']
+        cursor.execute("SELECT `name_th` FROM `amphures` WHERE `id`=%s", districts)
+        districts = cursor.fetchone()['name_th']
+        cursor.execute("SELECT `name_th` FROM `districts` WHERE `id`=%s", sub_districts)
+        sub_districts = cursor.fetchone()['name_th']
+
 
   # Check if account exists using MySQL
         cursor.execute(
@@ -392,27 +401,28 @@ def register():
         account = cursor.fetchone()
         # If account exists show error and validation checks
         if account:
-            msg = 'Account already exists!'
+            flash('Account already exists!')
         elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            msg = 'Invalid email address!'
+            flash('Invalid email address!')
         elif not re.match(r'[A-Za-z0-9]+', username):
-            msg = 'Username must contain only characters and numbers!'
+            flash('Username must contain only characters and numbers!')
         elif password != confirm_password:
-            msg = 'Password is not matcing!'
+           flash('Password is not matcing!')
         else:
             # Account doesnt exists and the form data is valid, now insert new account into accounts table
             cursor.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, 'user')",
                            (username, generate_password_hash(password)))
+            print("test")
             user_id = cursor.lastrowid
             cursor.execute("INSERT INTO users_detail (first_name, last_name, gender, email, blood_type, age, ethnicity, weight, height, congenital_disease, drug_allergy, phone_no, provinces, districts, sub_districts, address, post_code, user_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                            (first_name, last_name, gender, email, blood_type, age, ethnicity, weight, height, congenital_disease, drug_allergy, phone_no, provinces, districts, sub_districts, address, post_code, user_id))
             conn.commit()
-            msg = 'You have successfully registered!'
+            flash('You have successfully registered!')
     elif request.method == 'POST':
         # Form is empty... (no POST data)
-        msg = 'Please fill out the form!'
+        flash('Please fill out the form!')
     # Show registration form with message (if any)
-    return render_template('register.html', msg=msg, prov=prov)
+    return render_template('register.html', prov=prov)
 
 
 @app.route('/amphure/<get_amphure>')
