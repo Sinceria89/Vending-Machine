@@ -63,12 +63,19 @@
 
         .main-panel {
             padding-top: 3%;
+            padding-bottom: 3%;
+            padding-left: 5%;
+            padding-right: 5%;
             border: 1px solid #BDBDBD;
             background-color: #FFFFFF;
             margin-left: auto;
             margin-right: auto;
             width: 80%;
 
+        }
+
+        .card {
+            height: 500 px;
         }
 
         .about {
@@ -119,21 +126,183 @@
             </div>
         </div>
     </nav>
-    <h1>{{ category_name }}</h1>
-    <div class="row">
-        {% for product in products %}
-        <div class="col-md-4 mb-3">
-            <div class="card">
-                <img src="/static/{{ product.image }}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">{{ product.product_name }}</h5>
-                    <p class="card-text">{{ product.description }}</p>
-                    <p class="card-text">{{ product.price }} THB</p>
-                    <a href="#" class="btn btn-primary">Add to cart</a>
+    <div class="modal fade" id="Cart">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title">Shopping Cart</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm">
+                        {% set max_value = 3%}
+                        {% if 'Shoppingcart' in session %}
+                        <thead>
+                            <th></th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Update</th>
+                            <th>Delete</th>
+                        </thead>
+                        <tbody>
+                            {% for Cart_list in session['Shoppingcart'] %}
+                            <tr>
+                                <td>{{loop.index}}</td>
+                                <td><img src="/static/upload/{{ Cart_list.image }}" class="display"
+                                        alt="{{Cart_list.product_name}}">
+                                </td>
+                                <input type="hidden" name="cart_item_id" value="{{ Cart_list.cart_item_id }}" />
+                                <input type="hidden" name="product_id" value="{{ Cart_list.product_id }}" />
+                                <td>{{Cart_list.product_name}}</td>
+                                <form action="{{url_for('update_cart_item', cart_item_id=Cart_list.cart_item_id)}}"
+                                    method="POST">
+                                    <td>${{"%.2f"|format(Cart_list.price)}}</td>
+                                    <input type="hidden" name="cart_item_id" value="{{ Cart_list.cart_item_id }}" />
+                                    {% for product in products %}
+                                    {% if product.stock < max_value %} {% set max_value=product.stock%} {% endif %}{%
+                                        endfor %} <td>
+                                        <input type="number" name="cart_quantity" min="1" max="{{ max_value }}"
+                                            value="{{ Cart_list.quantity|default('1') }}">
+                                        </td>
+
+                                        {% set Subtotal = Cart_list.quantity | int * Cart_list.price| int%}
+                                        <td>{{ Subtotal }}</td>
+                                        <td><button type="submit" class="btn btn-sm btn-info">Update</button> </td>
+                                </form>
+                                <td><a href="{{ url_for('delete_cart_item', cart_item_id=Cart_list.cart_item_id) }}"
+                                        class="btn btn-danger btn-sm">Remove</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        {% else: %}
+                        <div>
+                            <h3>Your Cart is Empty</h3>
+                        </div>
+                        {% endif %}
+                    </table>
+                    <table class="table table-sm">
+                        {% if 'Shoppingcart' in session %}
+                        <tr>
+                            <td> <a href="{{url_for('transaction')}}" class="btn btn-success"> Order now </a> </td>
+                            <td width="35%"></td>
+                            <td>
+                                <h5>Total Quantity: {{ session['Shoppingcart'][0]['total_quantity'] }}</h5>
+                            </td>
+                            <td>
+                                <h5>Total Price: ฿{{ session['Shoppingcart'][0]['total_price'] }}</h5>
+                            </td>
+                            <td> <a href="{{url_for('empty_cart')}}" class="btn btn-danger  float-right "> Clear
+                                    cart</a>
+                            <td></td>
+                        </tr>
+                        {% else: %}
+                        {% endif %}
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">
+                        <span class="glyphicon glyphicon-shopping-cart"></span> Continue Shopping
+                    </button></td>
                 </div>
             </div>
         </div>
-        {% endfor %}
+    </div>
+    <div class="justify-content-center text-center">
+        <label>
+            <input type="checkbox" class="alertCheckbox" autocomplete="off" />
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+
+            <div class="alert info">
+                <span class="alertClose">X</span>
+                <span class="alertText">{{ message }}</span>
+            </div>
+
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </label>
+    </div>
+    <div class="main-panel">
+        
+        <h1><b>{{ session['category_name'] }}</b></h1>
+        
+        <div class="row" style="margin-top: 20px">
+            
+            {% set max_value = 3%}
+            {% for product in products %}
+            {% if product.stock < max_value %} {% set max_value=product.stock%} {% endif %} {% if product.stock> 0 %}
+                <div class="col-xs-6 col-sm-4">
+                    <form method="post" action="{{url_for('AddCart')}}">
+                        <div class="single-publication shadow rounded">
+                            <figure class="display">
+                                <img src="/static/upload/{{ product.image }}" class="image">
+                            </figure>
+
+                            <div class="publication-content">
+                                <span class="category">{{ product.product_category }}</span>
+                                <h3>{{ product.product_name }}</h3>
+                                <h4 class="price">฿ {{ product.price }}</h4>
+                            </div>
+
+                            <div class="add-to-cart">
+                                <input type="hidden" name="product_id" value="{{ product.product_id }}" />
+                                <input type="hidden" name="price" value="{{ product.price }}" />
+                                <div class="touchspin d-flex align-items-center justify-content-center gap-2">
+                                    <button type="button" class="btn btn-danger" data-touchspin-down>-</button>
+                                    <input type="number" class="form-control form-control-lg text-center "
+                                        style="width: 50%;" name="quantity" value="1" min="1" max="{{ max_value }}"
+                                        data-touchspin-input />
+                                    <button type="button" class="btn btn-success" data-touchspin-up>+</button>
+                                </div>
+
+                                <div class="button-def">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#detailsModal{{ product.product_id }}">
+                                        Detail
+                                    </button>
+
+                                    <input type="submit" value="Add to Cart" class="btn btn-warning" />
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+
+                <div class="modal fade" id="detailsModal{{ product.product_id }}">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2 class="modal-title text-primary" style="align-content: center;">{{
+                                    product.product_name }}'s
+                                    Detail</h2>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" style="align-content: center; text-align: center;">
+                                <img src="/static/upload/{{ product.image }}" class="image">
+                                <p>Description: {{ product.description }}</p>
+                                <p>Price: ฿ {{ product.price }}</p>
+                                <p>In-Stock: {{ product.stock }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    aria-label="Close">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+        </div>
+    </div>
     </div>
     <div class="about">
         <h1>Quote of the day: live life</h1>
@@ -151,4 +320,10 @@
         </div>
         <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
     </footer>
+    <script>
+        const touchspins = document.querySelectorAll('.touchspin');
+        for (const touchspin of touchspins) {
+            new InputTouchspin(touchspin);
+        }
+    </script>
 </body>

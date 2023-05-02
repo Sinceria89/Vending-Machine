@@ -1,10 +1,11 @@
 import json
 import base64
-import qrcode
 from router import *
+import io
 import time
 from flask import request
 from flask import Flask, jsonify, request, render_template, abort, flash, session, request, redirect, url_for
+from promptpay import qrcode
 
 
 @app.route('/transaction')
@@ -22,9 +23,15 @@ def transaction():
     rows = cursor.fetchall()
     user = curr.fetchone()
     Cart_list = cur.fetchall()
+    total = float(session.get('Shoppingcart')[0].get('total_price'))
     if len(Cart_list) > 0:
         session['Shoppingcart'] = Cart_list
         session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
-    return render_template('Qrcode.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
 
+    id_or_phone_number = "0861510487"
+    payload_with_amount = qrcode.generate_payload(id_or_phone_number, total)
+    qrcode.to_file(payload_with_amount,
+                   "./static/qrcodes/qrcode-0861510487.png")
+    img = qrcode.to_image(payload_with_amount)
 
+    return render_template('Qrcode.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows, img=img)

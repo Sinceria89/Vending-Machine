@@ -1,40 +1,44 @@
 <html>
-<title>Transaction QR Code</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
-<style>
-  /* Center the white container */
-  .container {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 10px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    white-space: nowrap;
-  }
 
-  body {
-    background-color: #03A9F4;
-    height: 400px;
-    width: 800px;
-  }
-</style>
+<head>
+  <title>Transaction QR Code</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <style>
+    /* Center the white container */
+    .container {
+      max-width: 500px;
+      margin-top: 3%;
+      margin-bottom: 3%;
+      padding: 20px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+
+    body {
+      background-color: #03A9F4;
+    }
+
+    td{
+      width: 70%;
+    }
+  </style>
+</head>
 
 <body>
   <div class="container justify-content-center text-center " style="background-color: white;">
     {% if 'Shoppingcart' in session %}
     <h1>PromptPay QR Code</h1>
-    <img src="/static/qrcodes/qrcode.png" alt="QR Code">
+    <img src="/static/qrcodes/qrcode-0861510487.png" alt="QR Code">
     <div class="card mx-auto p-2">
       <div class="card-header">
         <h5>transaction id: {{ session['Shoppingcart'][0]['transaction_id'] }} </h5>
       </div>
       <div class="card-body">
-        {% for Cart_list in session['Shoppingcart'] %}
+        
         <table class="table table-sm">
           <thead>
             <th>Name</th>
@@ -42,14 +46,16 @@
             <th>Price</th>
           </thead>
           <tbody>
+            {% for Cart_list in session['Shoppingcart'] %}
             <tr>
               <td>{{Cart_list.product_name}}</td>
-              <td>{{Cart_list.quantity}}</td>  
-              <td>{{Cart_list.price}}</td> 
+              <td>{{Cart_list.quantity}}</td>
+              <td>{{Cart_list.price}}</td>
             </tr>
+            {% endfor %}
           </tbody>
         </table>
-        {% endfor %}
+        
       </div>
       <div class="card-footer text-right">
         <h5>ราคาทั้งหมด: {{ session['Shoppingcart'][0]['total_price'] }} บาท</h5>

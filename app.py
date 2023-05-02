@@ -83,7 +83,7 @@ def show_items_by_category(category_id):
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         curr = conn.cursor(pymysql.cursors.DictCursor)
         cur = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM products WHERE category_id = %s", category_id)
+        cursor.execute("SELECT * FROM products LEFT JOIN categories ON products.category_id = categories.category_id WHERE categories.category_id = %s", category_id)
         curr.execute(
         "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
         cur.execute(
@@ -91,10 +91,13 @@ def show_items_by_category(category_id):
         products = cursor.fetchall()
         user = curr.fetchone()
         Cart_list = cur.fetchall()
-
+        session['category_name'] = products[0]['category_name'] if len(products) > 0 else None
         if len(Cart_list) > 0:
             session['Shoppingcart'] = Cart_list
             session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
+        if not products:
+            flash("ไม่พบสินค้าในหมวดหมู่ดังกล่าว", "warning")
+            return redirect(request.referrer)
         return render_template('category.html', user=user, Cart_list=Cart_list, user_id=user_id, products=products)
     except Exception as e:
         print(e)
