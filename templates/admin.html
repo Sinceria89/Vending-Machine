@@ -26,12 +26,25 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/brands.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/solid.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
     <style>
         body {
             font-family: "Lato", sans-serif;
             background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
 
+        .container {
+      width: 800x;
+      height: 400px;
+      background-color: #f0f0f0;
+      margin: 10px;
+    }
         .clock {
             font-family: system-ui;
             color: rgb(255, 255, 255);
@@ -55,6 +68,7 @@
         .nav-link {
             color: #FFFFFF;
         }
+        
     </style>
 </head>
 
@@ -79,6 +93,9 @@
                 <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart"> Shopping Cart: (0)</a>
                 {% endif %}
               </li>
+              <li class="nav-item">
+              <a class="nav-link text-white active" aria-current="page" href="/products_manage">Manage Product</a>
+            </li>
             </ul>
             <div class="clock flex-nowrap" id="clock" onload="clock"></div>
             <ul class="navbar-nav">
@@ -183,16 +200,13 @@
             </div>
         </div>
     </div>
-
-    <div>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore cumque, quidem laboriosam, similique modi
-            aspernatur
-            esse ad iure officia voluptas blanditiis necessitatibus voluptatem, vitae iste pariatur labore. Omnis,
-            similique
-            explicabo.</p>
-    </div>
-    <img src="../static/2Q.png" alt=""><br>
-    <a href="/products_manage">Manage Product</a>
+    <div class="container">
+    <img src="{{ url_for('static', filename='barchart.png') }}" alt="Product Stock Chart">
+  </div>
+    
+    
+    
+  
 </body>
 
 </html>

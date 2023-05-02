@@ -3,6 +3,8 @@ from test import *
 from router import *
 from decimal import Decimal
 from Qrcode import *
+import numpy as np
+import matplotlib.pyplot as plt
 import sys
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -11,6 +13,9 @@ import logging
 import urllib.request
 import os
 import re
+import matplotlib.pyplot as plt
+import io
+import base64
 
 
 class Config:
@@ -686,19 +691,54 @@ def admin():
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     curr = conn.cursor(pymysql.cursors.DictCursor)
     cur = conn.cursor(pymysql.cursors.DictCursor)
+    graph = conn.cursor(pymysql.cursors.DictCursor)
+    graph.execute("SELECT product_name, stock FROM products")
     cursor.execute("SELECT * FROM products")
     curr.execute(
         "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
     cur.execute(
         "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
     rows = cursor.fetchall()
+    graphs = graph.fetchall()
     user = curr.fetchone()
     Cart_list = cur.fetchall()
-
+    curr.close()
+    cur.close()
+    cursor.close()
+    conn.close()
     if len(Cart_list) > 0:
         session['Shoppingcart'] = Cart_list
         session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
-    return render_template('admin.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
+    product_name = [row['product_name'] for row in graphs]
+    stock = [row['stock'] for row in graphs]
+    print(product_name)
+    print(stock)
+    # Define custom colors for the bars
+    colors = ['blue', 'green', 'orange', 'red']
+
+    # Create a bar chart using matplotlib with custom colors
+    fig, ax = plt.subplots()
+    x = np.arange(len(product_name))
+    width = 0.4
+
+    # Plot each bar with a different color
+    for i in range(len(product_name)):
+        ax.bar(x[i], stock[i], width, color=colors[i])
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(product_name, rotation=45)
+    ax.set_xlabel('Product Name')
+    ax.set_ylabel('Stock')
+    ax.set_title('Product Stock Quantity')
+    plt.tight_layout()
+
+    # Save the chart to a file
+    chart_path = 'static/barchart.png'
+    plt.savefig(chart_path)
+    return render_template('admin.html', user=user, Cart_list=Cart_list, user_id=user_id, product=rows, products = graphs)
+
+    # ... existing code ...
+
 
 
 if __name__ == "__main__":
