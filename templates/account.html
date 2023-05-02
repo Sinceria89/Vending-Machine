@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+    <head>
+<body>
+    {% for user in users %}
+    <h2>Welcome to your account, {{ current_user.username }}!</h2>
+    <p>First Name: {{ user_data.first_name }}</p>
+    <p>Last Name: {{ user_data.last_name }}</p>
+    <p>Email: {{ user_data.email }}</p>
+    <p>Blood Type: {{ user_data.blood_type }}</p>
+    <p>Age: {{ user_data.age }}</p>
+    <p>height:{{user_data.hight}}</p>
+    <p>weight:{{user_data.wight}}</p>
+    <p>Congenital Disease:{{user_data.Congenital_Disease}}</p>
+    <p>Drug Allergy:{{user_data.Drug_Allergy}}</p>
+    <p>Phone Number:{{user_data.Phone_Number}}</p>
+    <p>Province:{{user_data.Province}}</p>
+    <p>District:{{user_data.District}}</p>
+    <p>Sub-district:{{user_data.Sub_District}}</p>
+    <p>Address:{{user_data.Address}}</p>
+    <p>Postal Code:{{user_data.Postal_Code}}</p>
+    {% endfor %}
+</body>
+
+    </head>
+</html>

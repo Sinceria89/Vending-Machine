@@ -351,6 +351,7 @@ def update_cart_item(cart_item_id):
 def login():
     return render_template("login.html")
 
+
     # login
 
 
@@ -455,6 +456,15 @@ def districtbyamphure(get_district):
             'name': row['name_th']}
         districtArray.append(districtObj)
     return jsonify({'districtamphure': districtArray})
+
+@app.route('/account')
+def account():
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    user_id = session.get('user_id')
+    cursor.execute("SELECT * FROM `users_detail` WHERE `user_id`=%s", user_id)
+    user_data = cursor.fetchone()
+    return render_template('account.html', user_data=user_data)
 
 
 @app.route('/submit', methods=['POST'])
