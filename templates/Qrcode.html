@@ -22,7 +22,7 @@
       background-color: #03A9F4;
     }
 
-    td{
+    td {
       width: 70%;
     }
   </style>
@@ -38,7 +38,7 @@
         <h5>transaction id: {{ session['Shoppingcart'][0]['transaction_id'] }} </h5>
       </div>
       <div class="card-body">
-        
+
         <table class="table table-sm">
           <thead>
             <th>Name</th>
@@ -55,7 +55,7 @@
             {% endfor %}
           </tbody>
         </table>
-        
+
       </div>
       <div class="card-footer text-right">
         <h5>ราคาทั้งหมด: {{ session['Shoppingcart'][0]['total_price'] }} บาท</h5>
@@ -64,6 +64,16 @@
     <a href="/homepage" class="btn btn-light btn-lg btn-block">ย้อนกลับ</a>
     {% endif %}
   </div>
+  <script>
+    fetch('/checkout_complete')
+      .then(response => {
+        console.log('Checkout complete');
+        window.location.href = "/transaction_success";
+      })
+      .catch(error => {
+        console.error('Error completing checkout:', error);
+      });
+  </script>
 </body>
 
 </html>
