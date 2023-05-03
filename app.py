@@ -45,7 +45,7 @@ def homepage():
     else:
         try:
             user_id = session.get('user_id')
-            
+
             conn = mysql.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
             curr = conn.cursor(pymysql.cursors.DictCursor)
@@ -61,7 +61,8 @@ def homepage():
             # app.logger.info(Cart_list)
             if len(Cart_list) > 0:
                 session['Shoppingcart'] = Cart_list
-                session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
+                session['cart_id'] = session.get('Shoppingcart')[
+                    0].get('cart_id')
             return render_template('homepage.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
 
         finally:
@@ -158,7 +159,7 @@ def AddCart():
             Cart_list = select.fetchall()
             session['Shoppingcart'] = Cart_list
             log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Shopping Cart added', %s, %s)",
-                              (DateTime, user_id))
+                        (DateTime, user_id))
             conn.commit()
             return redirect(request.referrer)
 
@@ -193,7 +194,7 @@ def empty_cart():
         clear_carts.execute("DELETE FROM carts WHERE cart_id=%s", (cart_id,))
         flash("Cart has been empty.", "success")
         log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Shopping Cart empty', %s, %s)",
-                              (DateTime, user_id))
+                    (DateTime, user_id))
         conn.commit()
         session.pop('Shoppingcart', None)
         session.pop('cart_id', None)
@@ -244,7 +245,7 @@ def delete_cart_item(cart_item_id):
                         print(subtotal)
                         print(total_price)
                     cursor.execute(
-                        "UPDATE carts SET total_price = %s, total_quantity = %s WHERE cart_id = %s", (total_price ,total_quantity ,cart_id))
+                        "UPDATE carts SET total_price = %s, total_quantity = %s WHERE cart_id = %s", (total_price, total_quantity, cart_id))
                     session['Shoppingcart'] = []
                     for row in cur:
                         item = {
@@ -273,7 +274,7 @@ def delete_cart_item(cart_item_id):
             session.pop('cart_id', None)
             session.pop('cart_item_id', None)
         log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Shopping Cart item deleted', %s, %s)",
-            (DateTime, user_id))
+                    (DateTime, user_id))
         conn.commit()
         return redirect(request.referrer)
     except Exception as e:
@@ -316,7 +317,7 @@ def update_cart_item(cart_item_id):
                 print(total_quantity)
                 print(total_price)
             cursor.execute(
-                "UPDATE carts SET total_price = %s, total_quantity = %s WHERE cart_id = %s", (total_price ,total_quantity ,cart_id))
+                "UPDATE carts SET total_price = %s, total_quantity = %s WHERE cart_id = %s", (total_price, total_quantity, cart_id))
             session['Shoppingcart'] = []
             for row in cur:
                 item = {
@@ -334,7 +335,7 @@ def update_cart_item(cart_item_id):
                 session['Shoppingcart'].append(item)
             session.modified = True
             log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Shopping Cart updated', %s, %s)",
-                (DateTime, user_id))            
+                        (DateTime, user_id))
             conn.commit()
             flash("Item in cart has successfully updated.", "danger")
             return redirect(request.referrer)
@@ -350,7 +351,6 @@ def update_cart_item(cart_item_id):
 @app.route('/login')
 def login():
     return render_template("login.html")
-
 
     # login
 
@@ -386,15 +386,17 @@ def register():
         sub_districts = request.form['district']
         post_code = request.form['post_code']
         address = request.form['address']
-        
-        # Retrieve province, amphure, and district names
-        cursor.execute("SELECT `name_th` FROM `provinces` WHERE `id`=%s", provinces)
-        provinces = cursor.fetchone()['name_th']
-        cursor.execute("SELECT `name_th` FROM `amphures` WHERE `id`=%s", districts)
-        districts = cursor.fetchone()['name_th']
-        cursor.execute("SELECT `name_th` FROM `districts` WHERE `id`=%s", sub_districts)
-        sub_districts = cursor.fetchone()['name_th']
 
+        # Retrieve province, amphure, and district names
+        cursor.execute(
+            "SELECT `name_th` FROM `provinces` WHERE `id`=%s", provinces)
+        provinces = cursor.fetchone()['name_th']
+        cursor.execute(
+            "SELECT `name_th` FROM `amphures` WHERE `id`=%s", districts)
+        districts = cursor.fetchone()['name_th']
+        cursor.execute(
+            "SELECT `name_th` FROM `districts` WHERE `id`=%s", sub_districts)
+        sub_districts = cursor.fetchone()['name_th']
 
   # Check if account exists using MySQL
         cursor.execute(
@@ -408,7 +410,7 @@ def register():
         elif not re.match(r'[A-Za-z0-9]+', username):
             flash('Username must contain only characters and numbers!')
         elif password != confirm_password:
-           flash('Password is not matcing!')
+            flash('Password is not matcing!')
         else:
             # Account doesnt exists and the form data is valid, now insert new account into accounts table
             cursor.execute("INSERT INTO users (username, password, role) VALUES (%s, %s, 'user')",
@@ -457,6 +459,7 @@ def districtbyamphure(get_district):
         districtArray.append(districtObj)
     return jsonify({'districtamphure': districtArray})
 
+
 @app.route('/account')
 def account():
     conn = mysql.connect()
@@ -465,6 +468,58 @@ def account():
     cursor.execute("SELECT * FROM `users_detail` WHERE `user_id`=%s", user_id)
     user_data = cursor.fetchone()
     return render_template('account.html', user_data=user_data)
+
+
+@app.route('/account_edit', methods=['GET', 'POST'])
+def edit_account():
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    address = conn.cursor(pymysql.cursors.DictCursor)
+    user_id = session.get('user_id')
+    cursor.execute("SELECT * FROM `users_detail` WHERE `user_id`=%s", user_id)
+    user_data = cursor.fetchone()
+    prov = conn.cursor(pymysql.cursors.DictCursor)
+    prov.execute(
+        "SELECT `id`,`code`,`name_th` FROM `provinces`")
+
+    if request.method == 'POST':
+        # Get the form data
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        gender = request.form['gender']
+        email = request.form['email']
+        blood_type = request.form['blood_type']
+        age = request.form['age']
+        ethnicity = request.form['ethnicity']
+        weight = request.form['weight']
+        height = request.form['height']
+        congenital_disease = request.form['congenital_disease']
+        drug_allergy = request.form['drug_allergy']
+        phone_no = request.form['phone_no']
+        provinces = request.form['province']
+        districts = request.form['amphure']
+        sub_districts = request.form['district']
+        post_code = request.form['post_code']
+        address = request.form['address']
+
+        # Update the user data in the database
+        cursor.execute("UPDATE `users_detail` SET `first_name`=%s, `last_name`=%s, `email`=%s, `blood_type`=%s, `age`=%s, `height`=%s, `weight`=%s, `congenital_disease`=%s, `drug_allergy`=%s, `phone_number`=%s, `province`=%s, `district`=%s, `sub_district`=%s, `address`=%s, `postal_code`=%s WHERE `user_id`=%s",
+                       (first_name, last_name, email, blood_type, age, height, weight, congenital_disease, drug_allergy, phone_number, province, district, sub_district, address, postal_code, user_id))
+
+        address.execute(
+            "SELECT `name_th` FROM `provinces` WHERE `id`=%s", provinces)
+        provinces = address.fetchone()['name_th']
+        address.execute(
+            "SELECT `name_th` FROM `amphures` WHERE `id`=%s", districts)
+        districts = address.fetchone()['name_th']
+        address.execute(
+            "SELECT `name_th` FROM `districts` WHERE `id`=%s", sub_districts)
+        sub_districts = address.fetchone()['name_th']
+        # Redirect to the account page
+        conn.commit()
+        return redirect('/account')
+
+    return render_template('edit_account.html', user_data=user_data, prov=prov)
 
 
 @app.route('/submit', methods=['POST'])
@@ -494,7 +549,7 @@ def login_submit():
                 session['admin'] = True
                 session['logged_in'] = True
                 log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has logged in', %s, %s)",
-                (DateTime, user_id))            
+                            (DateTime, user_id))
                 conn.commit()
                 return redirect('/homepage')
             elif row[3] == 'user':
@@ -502,7 +557,7 @@ def login_submit():
                 session['user_id'] = row[0]
                 session['logged_in'] = True
                 log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has logged in', %s, %s)",
-                (DateTime, user_id))            
+                            (DateTime, user_id))
                 conn.commit()
                 return redirect('/homepage')
             else:
@@ -529,7 +584,7 @@ def login_submit():
                     session['admin'] = True
                     session['logged_in'] = True
                     log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has logged in', %s, %s)",
-                        (DateTime, user_id))            
+                                (DateTime, user_id))
                     conn.commit()
                     return redirect('/homepage')
                 elif row[3] == 'user':
@@ -537,7 +592,7 @@ def login_submit():
                     session['user_id'] = row[0]
                     session['logged_in'] = True
                     log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has logged in', %s, %s)",
-                        (DateTime, user_id))            
+                                (DateTime, user_id))
                     conn.commit()
                     return redirect('/homepage')
                 else:
@@ -561,7 +616,7 @@ def logout():
         DateTime = datetime.now()
         user_id = session['user_id']
         log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has logged out', %s, %s)",
-                        (DateTime, user_id))            
+                    (DateTime, user_id))
         conn.commit()
         session.clear()
     return redirect('/')
@@ -625,7 +680,7 @@ def product_add():
         cur.execute("INSERT INTO products (product_name, price, stock, row, category_id, image, description) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                     (product_name, price, stock, row, category, filename, description))
         log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Product added', %s, %s)",
-                        (DateTime, user_id))   
+                    (DateTime, user_id))
         conn.commit()
         print(image)
         return redirect(url_for('products'))
@@ -653,7 +708,7 @@ def update():
         WHERE product_id=%s
         """, (product_name, price, stock, row, category, description, product_id))
         log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Product updated', %s, %s)",
-                        (DateTime, user_id))   
+                    (DateTime, user_id))
         flash("Data Updated Successfully")
         conn.commit()
         return redirect(url_for('products'))
@@ -691,7 +746,7 @@ def delete(product_id):
     user_id = session['user_id']
     cur.execute("DELETE FROM products WHERE product_id=%s", (product_id))
     log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('Product deleted', %s, %s)",
-        (DateTime, user_id)) 
+                (DateTime, user_id))
     conn.commit()
     return redirect(url_for('products'))
 
