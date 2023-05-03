@@ -18,6 +18,11 @@
                     <a class="nav-link" data-bs-toggle="modal" data-bs-target="#Cart"> Shopping Cart: (0)</a>
                     {% endif %}
                 </li>
+                {% if 'admin' in session %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/products_manage">Manage Product</a>
+                </li>
+                {% endif %}
             </ul>
             <div class="clock flex-nowrap" id="clock" onload="clock"></div>
             <ul class="navbar-nav">
@@ -74,8 +79,8 @@
                                 <td>${{"%.2f"|format(Cart_list.price)}}</td>
                                 <input type="hidden" name="cart_item_id" value="{{ Cart_list.cart_item_id }}" />
                                 {% for product in products %}
-                                {% if product.stock < max_value %} {% set max_value=product.stock%} {% endif %}{%
-                                    endfor %} <td>
+                                {% if product.stock < max_value %} {% set max_value=product.stock%} {% endif %}{% endfor
+                                    %} <td>
                                     <input type="number" name="cart_quantity" min="1" max="{{ max_value }}"
                                         value="{{ Cart_list.quantity|default('1') }}">
                                     </td>
