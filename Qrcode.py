@@ -33,5 +33,21 @@ def transaction():
     qrcode.to_file(payload_with_amount,
                    "./static/qrcodes/qrcode-0861510487.png")
     img = qrcode.to_image(payload_with_amount)
-
     return render_template('Qrcode.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows, img=img)
+
+
+@app.route('/transaction_success')
+def transaction_success():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE transactions SET status='success' WHERE cart_id=%s", (session['cart_id']))
+    session.pop('Shoppingcart', None)
+    session.pop('cart_id', None)
+    session.pop('cart_item_id', None)
+    conn.commit()
+    return render_template('success.html')
+
+@app.route('/checkout_complete')
+def checkout_complete():
+    time.sleep(60)
+    return redirect(url_for('transaction_success'))
