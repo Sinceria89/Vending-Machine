@@ -3,8 +3,9 @@ from flask import Flask, render_template
 from router import *
 import numpy as np
 import matplotlib.pyplot as plt
-
-
+from io import BytesIO
+import base64
+import pandas as pd
 
 # Define a route to render the HTML template and retrieve product information
 @app.route('/graph')
@@ -24,32 +25,40 @@ def product_list():
 
     product_name = [row[0] for row in rows]
     stock = [row[1] for row in rows]
-    print(product_name)
-    print(stock)
+
     # Define custom colors for the bars
     colors = ['blue', 'green', 'orange', 'red']
 
     # Create a bar chart using matplotlib with custom colors
-    fig, ax = plt.subplots()
+    fig1, ax1 = plt.subplots()  # Create a new figure for the bar chart
     x = np.arange(len(product_name))
     width = 0.4
 
     # Plot each bar with a different color
     for i in range(len(product_name)):
-        ax.bar(x[i], stock[i], width, color=colors[i])
+        ax1.bar(x[i], stock[i], width, color=colors[i])
 
-    ax.set_xticks(x)
-    ax.set_xticklabels(product_name, rotation=45)
-    ax.set_xlabel('Product Name')
-    ax.set_ylabel('Stock')
-    ax.set_title('Product Stock Quantity')
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(product_name, rotation=45)
+    ax1.set_xlabel('Product Name')
+    ax1.set_ylabel('Stock')
+    ax1.set_title('Product Stock Quantity')
     plt.tight_layout()
 
-    # Save the chart to a file
+    # Save the bar chart to a file
     chart_path = 'static/barchart.png'
     plt.savefig(chart_path)
+    plt.close(fig1)  # Close the bar chart figure
 
-    # Render the HTML template and pass the product information to it
-    return render_template('admin.html', products=rows)
+    # Establish a connection to your SQL database
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    # Execute a query to get the top 3 best-selling items
+
+   
+    
+
+    return render_template('admin.html', products=rows,)
 
 

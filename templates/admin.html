@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/solid.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
 
     <style>
         body {
@@ -201,12 +202,17 @@
         </div>
     </div>
     <div class="container">
-    <img src="{{ url_for('static', filename='barchart.png') }}" alt="Product Stock Chart">
+        <img src="{{ url_for('static', filename='barchart.png') }}" alt="Product Stock Chart">
   </div>
+   <div class="container">
+    <img src="{{ url_for('static', filename='donutchart.png') }}" alt="Top 3 seller">
+   </div>
+  <div class="container">
+    <h2>Income:</h2>
+    <p>{{ combined_total_price }}</p>
+  </div>
+   
     
-    
-    
-  
 </body>
 
 </html>

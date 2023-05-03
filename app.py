@@ -16,7 +16,8 @@ import re
 import matplotlib.pyplot as plt
 import io
 import base64
-
+import numpy as np
+import pandas as pd
 
 class Config:
     SCHEDULER_API_ENABLED = True
@@ -681,6 +682,7 @@ def delete(product_id):
     return redirect(url_for('products'))
 
 
+
 @app.route('/admin')
 def admin():
     if 'admin' not in session:
@@ -692,50 +694,53 @@ def admin():
     curr = conn.cursor(pymysql.cursors.DictCursor)
     cur = conn.cursor(pymysql.cursors.DictCursor)
     graph = conn.cursor(pymysql.cursors.DictCursor)
+    cone = conn.cursor(pymysql.cursors.DictCursor)
     graph.execute("SELECT product_name, stock FROM products")
     cursor.execute("SELECT * FROM products")
     curr.execute(
         "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
     cur.execute(
         "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
-    rows = cursor.fetchall()
+    cone.execute("SELECT SUM(carts.total_price) as sum FROM carts LEFT JOIN transactions ON carts.cart_id = transactions.cart_id WHERE status='pending'")
+    result = cone.fetchone()
+    combined_total_price = result['sum']
+    rows = cursor.fetchall()    
     graphs = graph.fetchall()
     user = curr.fetchone()
     Cart_list = cur.fetchall()
-    curr.close()
-    cur.close()
-    cursor.close()
-    conn.close()
+    
     if len(Cart_list) > 0:
         session['Shoppingcart'] = Cart_list
         session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
     product_name = [row['product_name'] for row in graphs]
     stock = [row['stock'] for row in graphs]
-    print(product_name)
-    print(stock)
-    # Define custom colors for the bars
-    colors = ['blue', 'green', 'orange', 'red']
 
-    # Create a bar chart using matplotlib with custom colors
-    fig, ax = plt.subplots()
-    x = np.arange(len(product_name))
-    width = 0.4
+    
 
-    # Plot each bar with a different color
-    for i in range(len(product_name)):
-        ax.bar(x[i], stock[i], width, color=colors[i])
+    # Convert the SQL results to a pandas DataFrame
+    df = pd.DataFrame(graphs, columns=['product_name', 'stock'])
+ 
+    # Plotting the donut graph
+    plt.pie(df['stock'], labels=df['product_name'], autopct='%1.1f%%', pctdistance=0.85)
+    center_circle = plt.Circle((0, 0), 0.70, fc='white')
+    fig = plt.gcf()
+    fig.gca().add_artist(center_circle)
+    plt.axis('equal')  # Equal aspect ratio ensures that the pie is drawn as a circle.
+    plt.title('Top 3 Products by Total Quantity')
 
-    ax.set_xticks(x)
-    ax.set_xticklabels(product_name, rotation=45)
-    ax.set_xlabel('Product Name')
-    ax.set_ylabel('Stock')
-    ax.set_title('Product Stock Quantity')
-    plt.tight_layout()
-
-    # Save the chart to a file
-    chart_path = 'static/barchart.png'
+    # Save the graph as an image file
+    chart_path = 'static/donutchart.png'
     plt.savefig(chart_path)
-    return render_template('admin.html', user=user, Cart_list=Cart_list, user_id=user_id, product=rows, products = graphs)
+    plt.close(fig)  
+    # Close the cursor and database connection
+    cone.close()
+    curr.close()
+    cur.close()
+    cursor.close()
+    conn.close()
+
+    print("combined_total_price", combined_total_price)
+    return render_template('admin.html', user=user, Cart_list=Cart_list, user_id=user_id, product=rows, products=graphs, combined_total_price=combined_total_price, )
 
     # ... existing code ...
 
