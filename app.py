@@ -3,6 +3,8 @@ from test import *
 from router import *
 from decimal import Decimal
 from Qrcode import *
+import numpy as np
+import matplotlib.pyplot as plt
 import sys
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -11,7 +13,11 @@ import logging
 import urllib.request
 import os
 import re
-
+import matplotlib.pyplot as plt
+import io
+import base64
+import numpy as np
+import pandas as pd
 
 class Config:
     SCHEDULER_API_ENABLED = True
@@ -714,6 +720,7 @@ def delete(product_id):
     return redirect(url_for('products'))
 
 
+
 @app.route('/admin')
 def admin():
     if 'admin' not in session:
@@ -724,19 +731,57 @@ def admin():
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     curr = conn.cursor(pymysql.cursors.DictCursor)
     cur = conn.cursor(pymysql.cursors.DictCursor)
+    graph = conn.cursor(pymysql.cursors.DictCursor)
+    cone = conn.cursor(pymysql.cursors.DictCursor)
+    graph.execute("SELECT product_name, stock FROM products")
     cursor.execute("SELECT * FROM products")
     curr.execute(
         "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
     cur.execute(
         "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
-    rows = cursor.fetchall()
+    cone.execute("SELECT SUM(carts.total_price) as sum FROM carts LEFT JOIN transactions ON carts.cart_id = transactions.cart_id WHERE status='pending'")
+    result = cone.fetchone()
+    combined_total_price = result['sum']
+    rows = cursor.fetchall()    
+    graphs = graph.fetchall()
     user = curr.fetchone()
     Cart_list = cur.fetchall()
-
+    
     if len(Cart_list) > 0:
         session['Shoppingcart'] = Cart_list
         session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
-    return render_template('admin.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
+    product_name = [row['product_name'] for row in graphs]
+    stock = [row['stock'] for row in graphs]
+
+    
+
+    # Convert the SQL results to a pandas DataFrame
+    df = pd.DataFrame(graphs, columns=['product_name', 'stock'])
+    top_products = df_sorted.head(3)
+    # Plotting the donut graph
+    plt.pie(df['stock'], labels=df['product_name'], autopct='%1.1f%%', pctdistance=0.85)
+    center_circle = plt.Circle((0, 0), 0.70, fc='white')
+    fig = plt.gcf()
+    fig.gca().add_artist(center_circle)
+    plt.axis('equal')  # Equal aspect ratio ensures that the pie is drawn as a circle.
+    plt.title('Top 3 Products by Total Quantity')
+
+    # Save the graph as an image file
+    chart_path = 'static/donutchart.png'
+    plt.savefig(chart_path)
+    plt.close(fig)  
+    # Close the cursor and database connection
+    cone.close()
+    curr.close()
+    cur.close()
+    cursor.close()
+    conn.close()
+
+    print("combined_total_price", combined_total_price)
+    return render_template('admin.html', user=user, Cart_list=Cart_list, user_id=user_id, product=rows, products=graphs, combined_total_price=combined_total_price, )
+
+    # ... existing code ...
+
 
 
 if __name__ == "__main__":
