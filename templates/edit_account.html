@@ -4,7 +4,10 @@
         <title>Edit Information</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
         <style>
+
         .body {
             background-image: url("../static/japanesecastle.png");
             height: 400px;
@@ -23,219 +26,140 @@
         left: 50%;
         transform: translate(-50%, -50%);
         }
-     
-          
+       .form{
+        positon: relative
+        width:85%;
+        height:15vh;
+        margin: 0 auto;
+        display:flex;
+        justify-content:space-between;
+        padding:17px;
+        font-family: arial;
+       }
+       .form1{
+        positon: relative
+        width:85%;
+        height:15vh;
+        margin: 0 auto;
+        display:flex;
+        justify-content:space-between;
+        padding:25px;
+        font-family: arial;
+       }
+       .form2{
+        positon: relative
+        width:85%;
+        height:15vh;
+        margin: 0 auto;
+        display:flex;
+        justify-content:space-between;
+        padding:17px;
+        font-family: arial;
+       }
+       .form3{
+        positon: relative
+        width:85%;
+        height:15vh;
+        margin: 0 auto;
+        display:flex;
+        justify-content:space-between;
+        padding:17px;
+        font-family: arial;
+       }
+       .form4{
+        positon: relative
+        width:85%;
+        height:15vh;
+        margin: 0 auto;
+        display:flex;
+        justify-content:space-between;
+        padding:17px;
+        font-family: arial;
+       }
+       .submit-form {
+        text-align: center;
+        padding-right: 20px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        width:150px;
+    }
     
     </style>
     </head>
     <body class ="body">
        
         <div class="container">
+            <br>
+            <br>
             <h1>Edit Your Information</h1>
             <br>
 
-        <form action="{{ url_for('edit_account')}}" method="POST">
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="form-outline">
-                        <label class="form-label" for="first_name">ชื่อ</label>
-                        <input type="text" id="first_name" name="first_name"
-                            class="form-control form-control-lg" placeholder="ชื่อ">
-                    </div>
-                </div>
-                <div class="col-md-6 mb-4">
-                    <div class="form-outline">
-                        <label class="form-label" for="last_name">นามสกุล</label>
-                        <input type="text" id="last_name" name="last_name"
-                            class="form-control form-control-lg" placeholder="นามสกุล">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="username" class="cols-sm-2 form-label">ชื่อผู้ใช้</label>
-                <div class="cols-sm-10">
-                    <div class="input-group">
-                        <input type="text" class="form-control form-control-lg" name="username"
-                            id="username" placeholder="ชื่อผู้ใช้" required>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="form-outline">
-                        <label class="form-label" for="password">รหัสผ่าน</label>
-                        <input type="text" id="password" name="password"
-                            class="form-control form-control-lg" placeholder="รหัสผ่าน" />
-                    </div>
-                </div>
-                <div class="col-md-6 mb-4">
-                    <div class="form-outline">
-                        <label class="form-label" for="confirm_password">ยืนยันรหัสผ่าน</label>
-                        <input type="text" id="confirm_password" name="confirm_password"
-                            class="form-control form-control-lg" placeholder="ยืนยันรหัสผ่าน" />
-                    </div>
-                </div>
-            </div>
-
-            <div class="d-md-flex justify-content-start align-items-center mb-4 py-2">
-
-                <h6 class="mb-1 me-4">เพศ: </h6>
-
-                <div class="form-check form-check-inline mb-0 me-4">
-                    <input class="form-check-input ml-2" type="radio" name="gender"
-                        id="femaleGender" value="female" />
-                    <label class="form-check-label" for="femaleGender">หญิง</label>
-                </div>
-
-                <div class="form-check form-check-inline mb-0 me-4">
-                    <input class="form-check-input" type="radio" name="gender"
-                        id="maleGender" value="male" />
-                    <label class="form-check-label" for="maleGender">ชาย</label>
-                </div>
-
-                <div class="form-check form-check-inline mb-0">
-                    <input class="form-check-input" type="radio" name="gender"
-                        id="otherGender" value="other" />
-                    <label class="form-check-label" for="otherGender">อื่นๆ</label>
-                </div>
-
-            </div>
-
-            <div class="form-outline mb-4">
-                <label class="form-label" for="email">Email</label>
-                <input type="text" id="email" name="email" class="form-control form-control-lg"
-                    placeholder="Email">
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="form-outline">
-                        <label class="form-label" for="blood_type">กรุ๊ปเลือด</label>
-                        <select class="custom-select custom-select-lg" id="blood_type"
-                            name="blood_type">
-                            <option></option>
-                            <option value="O">O</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="AB">AB</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-6 mb-4">
-                    <div class="form-outline">
-                        <label class="form-label" for="age">อายุ</label>
-                        <input type="text" id="age" name="age"
-                            class="form-control form-control-lg" placeholder="อายุ">
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="form-outline">
-                        <label class="form-label" for="weight">น้ำหนัก</label>
-                        <input type="text" id="weight" name="weight"
-                            class="form-control form-control-lg" placeholder="น้ำหนัก">
-                    </div>
-                </div>
-
-                <div class="col-md-6 mb-4">
-                    <div class="form-outline">
-                        <label class="form-label" for="height">ส่วนสูง</label>
-                        <input type="text" id="height" name="height"
-                            class="form-control form-control-lg" placeholder="ส่วนสูง">
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="form-outline mb-4">
-                <label class="form-label" for="ethnicity">สัญชาติ</label>
-                <input type="text" id="ethnicity" name="ethnicity"
-                    class="form-control form-control-lg" placeholder="สัญชาติ">
-            </div>
-            <div class="form-outline mb-4">
-                <label class="form-label" for="congenital_disease">โรคประจำตัว</label>
-                <input type="text" id="congenital_disease" name="congenital_disease"
-                    class="form-control form-control-lg" placeholder="โรคประจำตัว">
-
-            </div>
-
-            <div class="form-outline mb-4">
-                <label class="form-label" for="drug_allergy">แพ้ยา</label>
-                <input type="text" id="drug_allergy" name="drug_allergy"
-                    class="form-control form-control-lg" placeholder="แพ้ยา">
-
-            </div>
-
+        <form action="{{ url_for('edit_account')}}" method="POST" class="form">
+            <p >First Name: <input type="text" name="first_name" value="{{ user_data.first_name }}"></p>
+       
+            <p >Last Name: <input type="text" name="last_name" value="{{ user_data.last_name }}"></p>
+            <p>Email: <input type="email" name="email" value="{{ user_data.email }}"></p>
+            <label for="blood_type">Blood Type:</label>
+            <select name="blood_type" id="blood_type">
+                <option value="A" {% if user_data.blood_type == "A" %}selected{% endif %}>A</option>
+                <option value="B" {% if user_data.blood_type == "B" %}selected{% endif %}>B</option>
+                <option value="AB" {% if user_data.blood_type == "AB" %}selected{% endif %}>AB</option>
+                <option value="O" {% if user_data.blood_type == "O" %}selected{% endif %}>O</option>
+            </select>
+        </form>
+        <form action="{{ url_for('edit_account')}}" method="POST" class="form1">
             
-    </div>
-
-</div>
-<div class="col-xl-6 " style="padding-top: 100px;">
-    <h4 class="text-uppercase">ข้อมูลการติดต่อ</h4>
-    <div class="card-body text-black">
-        <div class="form-outline mb-4">
-            <label class="form-label" for="phone_no">เบอร์โทรศัพท์</label>
-            <input type="text" id="phone_no" name="phone_no" placeholder="เบอร์โทรศัพท์"
-                class="form-control form-control-lg">
-        </div>
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="form-outline">
-                    <label class="form-label" for="province">จังหวัด</label>
-                    <select class="custom-select custom-select-lg" id="province"
-                        name="province">
-                        <option></option>
-                        {% for provinces in prov %}
-                        <option value="{{ provinces.id }}">{{ provinces.name_th }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+            <label class="form-label" for="gender">Gender</label>
+            <select name="gender" id="gender">   
+                <option value="Male" {% if user_data.gender == "Male" %}selected{% endif %}>Male</option>
+                <option value="Female" {% if user_data.gender == "Female" %}selected{% endif %}>Female</option>
+                <option value="Other" {% if user_data.gender == "Other" %}selected{% endif %}>Other</option>
+            </select>
+            &nbsp; &nbsp;
+            <p>Age: <input type="number" name="age" value="{{ user_data.age }}"></p>
+            &nbsp;&nbsp;
+            <p>Height: <input type="number" name="height" value="{{ user_data.height }}"></p>
+            <p>Weight: <input type="number" name="weight" value="{{ user_data.weight }}"></p>
+        </form>
+        <form action="{{ url_for('edit_account')}}" method="POST" class="form2">
+            <p>Congenital Disease: <input type="text" name="congenital_disease" value="{{ user_data.congenital_disease }}"></p>
+            <p>Drug Allergy:<input type="text" name="drug_allergy" value="{{ user_data.drug_allergy }}"></p>
+            <p>Phone Number:<input type="number" name="phone_no" value="{{ user_data.phone_no }}"></p>
+        </form>
+        <form action="{{ url_for('edit_account')}}" method="POST" class="form3">
+            <label class="form-label" for="provinces">Province</label>
+                                            <select class="custom-select custom-select-lg" id="provinces"
+                                                name="provinces">
+                                                <option></option>
+                                                {% for provinces in prov %}
+                                                <option value="{{ provinces.id }}">{{ provinces.name_th }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <br>
+                                            <br>
+            <label class="form-label" for="amphure">District</label>
+                                            <select class="custom-select custom-select-lg" class="form-control"
+                                                id="amphure" name="amphure">
+                                  </select>
+                                  <br>
+                                  <br>
+            <label class="form-label" for="district">Sub District</label>
+                                  <select class="custom-select custom-select-lg" class="form-control"
+                                      id="district" name="district">
+                                  </select>                  
+                  </form>
+                  <form action="{{ url_for('edit_account')}}" method="POST" class="form4">
+            <p>Address:<input type="text" name="address" value="{{ user_data.address }}"></p>
+            <p>Postal Code:<input type="text" name="post_code" value="{{ user_data.post_code }}"></p>
+             </form>
+             <center>
+            <div class="submit-form">
+                <button type="submit"
+                    class="btn btn-warning btn-lg btn-block">Update</button> 
+                    <a href="javascript:history.back()" class="btn btn-light btn-lg btn-block">ย้อนกลับ</a>
             </div>
-            <div class="col-md-6 mb-4">
-                <div class="form-outline">
-                    <label class="form-label" for="amphure">อำเภอ</label>
-                    <select class="custom-select custom-select-lg" class="form-control"
-                        id="amphure" name="amphure">
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="form-outline">
-                    <label class="form-label" for="district">ตำบล</label>
-                    <select class="custom-select custom-select-lg" class="form-control"
-                        id="district" name="district">
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-6 mb-4">
-                <div class="form-outline">
-                    <label class="form-label" for="post_code">รหัสไปรษณีย์</label>
-                    <input type="text" id="post_code" name="post_code"
-                        placeholder="รหัสไปรษณีย์" class="form-control form-control-lg" />
-                </div>
-            </div>
-        </div>
-        <div class="form-outline mb-4">
-            <label class="form-label" for="address">ที่อยู่</label>
-            <textarea class="form-control form-control-lg" rows="3" placeholder="ที่อยู่"
-                id="address" name="address"></textarea>
-
-        </div>
-        <div class="submit-form">
-            <button type="submit"
-                class="btn btn-warning btn-lg btn-block">สมัครสมาชิก</button>
-            <a href="javascript:history.back()" class="btn btn-light btn-lg btn-block">ย้อนกลับ</a>
-        </div>
-    </div>
-</div>
+            
+            </center>
 </form>
                                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
                             </div>

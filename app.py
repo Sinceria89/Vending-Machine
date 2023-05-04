@@ -481,47 +481,40 @@ def edit_account():
     prov = conn.cursor(pymysql.cursors.DictCursor)
     prov.execute(
         "SELECT `id`,`code`,`name_th` FROM `provinces`")
-
+  
+    
     if request.method == 'POST':
         # Get the form data
         first_name = request.form['first_name']
         last_name = request.form['last_name']
-        gender = request.form['gender']
         email = request.form['email']
         blood_type = request.form['blood_type']
         age = request.form['age']
-        ethnicity = request.form['ethnicity']
-        weight = request.form['weight']
         height = request.form['height']
+        weight = request.form['weight']
         congenital_disease = request.form['congenital_disease']
         drug_allergy = request.form['drug_allergy']
-        phone_no = request.form['phone_no']
+        phone_number = request.form['phone_no']
         provinces = request.form['province']
         districts = request.form['amphure']
         sub_districts = request.form['district']
-        post_code = request.form['post_code']
         address = request.form['address']
+        postal_code = request.form['postal_code']
 
         # Update the user data in the database
-        cursor.execute("UPDATE `users_detail` SET `first_name`=%s, `last_name`=%s, `email`=%s, `blood_type`=%s, `age`=%s, `height`=%s, `weight`=%s, `congenital_disease`=%s, `drug_allergy`=%s, `phone_number`=%s, `province`=%s, `district`=%s, `sub_district`=%s, `address`=%s, `postal_code`=%s WHERE `user_id`=%s",
-                       (first_name, last_name, email, blood_type, age, height, weight, congenital_disease, drug_allergy, phone_number, province, district, sub_district, address, postal_code, user_id))
-
-        address.execute(
-            "SELECT `name_th` FROM `provinces` WHERE `id`=%s", provinces)
+        cursor.execute("UPDATE `users_detail` SET `first_name`=%s, `last_name`=%s, `email`=%s, `blood_type`=%s, `age`=%s, `height`=%s, `weight`=%s, `congenital_disease`=%s, `drug_allergy`=%s, `phone_number`=%s, `province`=%s, `district`=%s, `sub_district`=%s, `address`=%s, `postal_code`=%s WHERE `user_id`=%s", (first_name, last_name, email, blood_type, age, height, weight, congenital_disease, drug_allergy, phone_number, provinces, districts, sub_districts, address, postal_code, user_id))
+        
+        address.execute("SELECT `name_th` FROM `provinces` WHERE `id`=%s", provinces)
         provinces = address.fetchone()['name_th']
-        address.execute(
-            "SELECT `name_th` FROM `amphures` WHERE `id`=%s", districts)
+        address.execute("SELECT `name_th` FROM `amphures` WHERE `id`=%s", districts)
         districts = address.fetchone()['name_th']
-        address.execute(
-            "SELECT `name_th` FROM `districts` WHERE `id`=%s", sub_districts)
+        address.execute("SELECT `name_th` FROM `districts` WHERE `id`=%s", sub_districts)
         sub_districts = address.fetchone()['name_th']
         # Redirect to the account page
         conn.commit()
         return redirect('/account')
 
-    return render_template('edit_account.html', user_data=user_data, prov=prov)
-
-
+    return render_template('edit_account.html', user_data=user_data,prov=prov)
 @app.route('/submit', methods=['POST'])
 def login_submit():
     _username = request.form['UsernameInput']
