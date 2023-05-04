@@ -5,6 +5,7 @@ from decimal import Decimal
 from Qrcode import *
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 import sys
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -13,11 +14,9 @@ import logging
 import urllib.request
 import os
 import re
-import matplotlib.pyplot as plt
 import io
 import base64
-import numpy as np
-import pandas as pd
+
 
 class Config:
     SCHEDULER_API_ENABLED = True
