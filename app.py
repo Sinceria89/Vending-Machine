@@ -719,7 +719,7 @@ def admin():
 
     # Convert the SQL results to a pandas DataFrame
     df = pd.DataFrame(graphs, columns=['product_name', 'stock'])
- 
+    top_products = df_sorted.head(3)
     # Plotting the donut graph
     plt.pie(df['stock'], labels=df['product_name'], autopct='%1.1f%%', pctdistance=0.85)
     center_circle = plt.Circle((0, 0), 0.70, fc='white')
