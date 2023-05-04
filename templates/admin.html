@@ -40,12 +40,6 @@
             margin: 0;
         }
 
-        .container {
-      width: 800x;
-      height: 400px;
-      background-color: #f0f0f0;
-      margin: 10px;
-    }
         .clock {
             font-family: system-ui;
             color: rgb(255, 255, 255);
@@ -69,7 +63,10 @@
         .nav-link {
             color: #FFFFFF;
         }
-        
+        .baht-sign::before {
+         content: "\0E3F";
+         font-family: "Arial";
+        }
     </style>
 </head>
 
@@ -201,17 +198,74 @@
             </div>
         </div>
     </div>
-    <div class="container">
-        <img src="{{ url_for('static', filename='barchart.png') }}" alt="Product Stock Chart">
-  </div>
-   <div class="container">
-    <img src="{{ url_for('static', filename='donutchart.png') }}" alt="Top 3 seller">
-   </div>
-  <div class="container">
-    <h2>Income:</h2>
-    <p>{{ combined_total_price }}</p>
-  </div>
-   
+  
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="text-black-800">Dashboard</h1>
+        </div>
+
+        <!-- Content Row -->
+        <div class="row">
+
+            <!-- Income-DASHBOARD-->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Income</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ combined_total_price }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="baht-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+        <!-- Content Row -->
+
+        <div class="row">
+
+            <!-- Area Chart -->
+            <div class="col-xl-8 col-lg-7">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Product Stock</h6>  
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <img src="{{ url_for('static', filename='barchart.png') }}" alt="Product Stock Chart">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pie Chart -->
+            <div class="col-xl-4 col-lg-5">
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Dropdown -->
+                    <div
+                        class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Top 3 Best Seller</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <div class="chart-pie pt-4 pb-2">
+                                <img src="{{ url_for('static', filename='donutchart.png') }}" alt="Top 3 seller">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     
 </body>
 
