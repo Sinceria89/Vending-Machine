@@ -739,7 +739,7 @@ def admin():
         "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
     cur.execute(
         "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
-    cone.execute("SELECT SUM(carts.total_price) as sum FROM carts LEFT JOIN transactions ON carts.cart_id = transactions.cart_id WHERE status='pending'")
+    cone.execute("SELECT SUM(carts.total_price) as sum FROM carts LEFT JOIN transactions ON carts.cart_id = transactions.cart_id WHERE status='success'")
     result = cone.fetchone()
     combined_total_price = result['sum']
     rows = cursor.fetchall()    
