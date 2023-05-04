@@ -32,7 +32,7 @@
                         ยินดีต้อนรับคุณ {{ user['first_name'] }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="navbarDarkDropdownMenuLink">
-                        <li><a class="dropdown-item" href="#">ข้อมูลผู้ใช้</a></li>
+                        <li><a class="dropdown-item" href="/user_profile">ข้อมูลผู้ใช้</a></li>
                         {% if 'admin' in session %}
                         <li><a class="dropdown-item" href="/admin">จัดการระบบ (Admin)</a></li>
                         {% endif %}
