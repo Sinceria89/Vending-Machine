@@ -34,6 +34,9 @@ def stockChecking():
 
 @app.route('/')
 def index():
+    if 'logged_in' in session:
+        return redirect('/homepage')
+
     return render_template('index.html')
 
 
