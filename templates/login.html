@@ -43,15 +43,7 @@
                     <div class="d-flex justify-content-center">
                         <form method="post" action="/submit">
                             <div class="mt-4">
-                                <div>
-                                    {% with messages = get_flashed_messages() %}
-                                    {% if messages %}
-                                    {% for message in messages %}
-                                    <div class="alert alert-info" role="alert">{{ message }}</div>
-                                    {% endfor %}
-                                    {% endif %}
-                                    {% endwith %}
-                                </div>
+
                             </div>
                             <div class=" mb-3">
                                 <input type="text" name="UsernameInput" placeholder="username" required
@@ -61,6 +53,21 @@
                                 <input type="password" name="PasswordInput" placeholder="Password" autocomplete="off"
                                     required class="form-control input_pass" value="">
                             </div>
+                    </div>
+                    <div>
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        {% for message in messages %}
+
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
                     </div>
                     <div class="d-flex justify-content-center links">
                         Don't have an account? <a href="/register" class="ml-2">register</a>
