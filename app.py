@@ -16,8 +16,6 @@ import os
 import re
 import io
 import base64
-import numpy as np
-import pandas as pd
 import threading
 
 class Config:
