@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html>
+{% include "fav.html" %}
+
+
 
 <head>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Administrator</title>
+    <title>User Profile</title>
     <script src="https://unpkg.com/@erwinstone/input-touchspin@1.0.3/dist/input-touchspin.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
@@ -28,6 +32,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body {
+            padding-top: 4%;
             font-family: "Lato", sans-serif;
             background-color: #03A9F4;
         }
@@ -71,6 +76,29 @@
 
         }
 
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .btn {
+            border: 2px solid #1976D2;
+            color: #1976D2;
+            background-color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .upload-btn-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
 
         .about {
             margin-top: 5%;
@@ -79,8 +107,25 @@
 </head>
 
 <body>
-    {% include "navbar.html" %}
 
+    {% include "navbar.html" %}
+    <div class="justify-content-center text-center">
+        <label>
+            <input type="checkbox" class="alertCheckbox" autocomplete="off" />
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+
+            <div class="alert info">
+                <span class="alertClose">X</span>
+                <span class="alertText">{{ message }}</span>
+            </div>
+
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </label>
+    </div>
     <div class="main-panel shadow">
 
         <div class="container py-5">
@@ -88,22 +133,110 @@
 
             <div class="row">
                 <div class="col-lg-4">
-                    <div class="card mb-4" style="height: 284px;">
+                    <div class="card mb-4">
                         <div class="card-body text-center">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                                alt="avatar" class="rounded-circle img-fluid" style="width: 150px; ">
+                            <img src="static/user_pic/{{ user['user_image'] }}" alt="avatar"
+                                onerror="this.src='static/doge.png';" class="rounded-circle img-fluid"
+                                style="width: 200px; height: 200px;">
                             <h5 class="my-3">{{ user['first_name'] }} {{ user['last_name'] }}</h5>
-                            <div class="d-flex justify-content-center mb-2">
+                            <form enctype="multipart/form-data" action="{{ url_for('profile_pic')}}" method="POST">
+                                <div class="form-group upload-btn-wrapper">
+                                    <input type="file" id="input-image" onchange="handleFileSelect(event)" name="image"
+                                        class="form-control fileInput" style="margin-bottom: 15px;">
+                                    <input type="submit" class="btn btn-primary mb-2" value="Upload">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card mb-4 mb-lg-0">
+                        <div clas="card-header"
+                            style="padding-top: 15px; padding-left: 15px; padding-right: 15px; padding-bottom: 15px; border-bottom: var(--bs-card-border-width) solid var(--bs-card-border-color);background-color: var(--bs-card-cap-bg);">
+                            <div class="row" style="white-space: nowrap;">
+                                <div class="col-sm-4">
+                                    <h5><b>ข้อมูลการติดต่อ</b></h5>
+                                </div>
+                                <div class="col-sm-8 text-end">
+                                    <a href="/user_contact_edit/{{ user['user_id'] }}" data-bs-toggle="modal"
+                                        data-bs-target="#user_contact_edit{{ user['user_id'] }}">
+                                        <i class="fa fa-cog fa-solid" style="color: black; font-size: xx-large;"
+                                            aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">เบอร์โทรศัพท์</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">{{ user['phone_no'] }}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">จังหวัด</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">{{ user['province_name'] }}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">อำเภอ</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">{{ user['district_name'] }}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">ตำบล</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">{{ user['sub_district_name'] }}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">รหัสไปรษณีย์</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">{{ user['post_code'] }}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">ที่อยู่</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">{{ user['address'] }}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
+
                 <div class="col-lg-8">
                     <div class="card mb-4">
-                        <div class="card-header" style="padding-top: 15px;">
-                            <h5><b>ข้อมูลทั่วไป</b></h5>
+                        <div class="card-header" style="padding-top: 15px; white-space: nowrap;">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <h5><b>ข้อมูลทั่วไป</b></h5>
+                                </div>
+                                <div class="col-sm-10 text-end">
+                                    <a href="/user_general_edit/{{ user['user_id'] }}" data-bs-toggle="modal"
+                                        data-bs-target="#user_general_edit{{ user['user_id'] }}"><i
+                                            class="fa fa-cog fa-solid" style="color: black; font-size: xx-large;"
+                                            aria-hidden="true"></i></a></a>
+                                </div>
+                            </div>
                         </div>
+
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-sm-3">
@@ -190,71 +323,165 @@
                             </div>
                         </div>
                     </div>
+                    <h3>ประวัติการสั่งซื้อ</h3>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="card mb-4 mb-md-0">
                                 <div class="card-body">
-                                    <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project
-                                        Status
-                                    </p>
-                                    <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 80%"
-                                            aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 72%"
-                                            aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 89%"
-                                            aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 55%"
-                                            aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
-                                    <div class="progress rounded mb-2" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 66%"
-                                            aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>ชื่อสินค้า</th>
+                                                <th>จำนวน</th>
+                                                <th>ราคา</th>
+                                                <th>ราคารวม</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for history in history %}
+                                            <tr>
+                                                <td>{{ loop.index }}</td>
+                                                <td>{{ history.product_name }}</td>
+                                                <td>{{ history.quantity }}</td>
+                                                <td>{{ history.price }}</td>
+                                                <td>{{ history.quantity * history.price }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <nav>
+                                        <ul class="pagination">
+                                            {% if current_page > 1 %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ current_page - 1 }}"
+                                                    aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            {% else %}
+                                            <li class="page-item disabled">
+                                                <span class="page-link" aria-hidden="true">&laquo;</span>
+                                            </li>
+                                            {% endif %}
+                                            {% for page_num in range(1, total_pages+1) %}
+                                            {% if page_num == current_page %}
+                                            <li class="page-item active"><span class="page-link">{{ page_num }}</span>
+                                            </li>
+                                            {% else %}
+                                            <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{
+                                                    page_num }}</a></li>
+                                            {% endif %}
+                                            {% endfor %}
+                                            {% if current_page < total_pages %} <li class="page-item">
+                                                <a class="page-link" href="?page={{ current_page + 1 }}"
+                                                    aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                                </li>
+                                                {% else %}
+                                                <li class="page-item disabled">
+                                                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                                                </li>
+                                                {% endif %}
+                                        </ul>
+                                    </nav>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card mb-4 mb-md-0">
-                                <div class="card-body">
-                                    <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project
-                                        Status
-                                    </p>
-                                    <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 80%"
-                                            aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="modal fade" id="user_contact_edit{{ user['user_id'] }}" data-bs-backdrop="static"
+                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">ข้อมูลการติดต่อ</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
                                     </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 72%"
-                                            aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 89%"
-                                            aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 55%"
-                                            aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
-                                    <div class="progress rounded mb-2" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 66%"
-                                            aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="modal-body">
+                                        <form enctype="multipart/form-data" action="{{ url_for('user_contact_edit')}}"
+                                            method="POST">
+                                            <input value="{{ user['user_id'] }}" type="hidden" name="user_id">
+                                            <div class="form-group">
+                                                <label label class="form-label" for="phone_no">เบอร์โทรศัพท์ </label>
+                                                <input value="{{ user['phone_no'] }}" type="text" name="phone_no"
+                                                    class="form-control form-control-lg phone_no" placeholder="สัญชาติ">
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6 mb-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="province">จังหวัด<span
+                                                                class="required"> * </span></label>
+                                                        <select class="form-select form-select-lg" id="province"
+                                                            name="province">
+                                                            {% for province in provi %}
+                                                            <option {% if province.id==selected_prov %} selected {%
+                                                                endif %} value="{{ province.id }}">
+                                                                {{ province.name_th }}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6 mb-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="district">อำเภอ<span
+                                                                class="required"> * </span></label>
+                                                        <select class="form-select form-select-lg" class="form-control"
+                                                            id="district" name="district">
+                                                            {% for district in distri %}
+                                                            <option {% if district.id==selected_distri %} selected {%
+                                                                endif %} value="{{ district.id }}">
+                                                                {{ district.name_th }}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="sub_district">ตำบล<span
+                                                                class="required"> * </span></label>
+                                                        <select class="form-select form-select-lg" class="form-control"
+                                                            id="sub_district" name="sub_district">
+                                                            {% for sub_district in sub_dist %}
+                                                            <option {% if sub_district.id==selected_sub_dist %} selected
+                                                                {% endif %} value="{{ sub_district.id }}">
+                                                                {{ sub_district.name_th }}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-4">
+                                                    <label label class="form-label" for="post_code">รหัสไปรษณีย์</label>
+                                                    <input value="{{ user['post_code'] }}" type="text" name="post_code"
+                                                        class="form-control form-control-lg post_code"
+                                                        placeholder="สัญชาติ">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label" for="address">ที่อยู่</label>
+                                                <textarea class="form-control form-control-lg address" rows="3"
+                                                    placeholder="ที่อยู่" id="address"
+                                                    name="address">{{ user['address'] }}</textarea>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <input type="submit" class="btn btn-success mb-2" id="submit-form"
+                                                    value="Update">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </form>
+
                                     </div>
                                 </div>
                             </div>
@@ -264,10 +491,165 @@
             </div>
         </div>
 
+        <div class="modal fade" id="user_general_edit{{ user['user_id'] }}" data-bs-backdrop="static"
+            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">ข้อมูลทั่วไป</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form enctype="multipart/form-data" action="{{ url_for('user_general_edit')}}" method="POST">
+                            <input value="{{ user['user_id'] }}" type="hidden" name="user_id">
+                            <div class="form-group">
+                                <label label class="form-label">ชื่อ <span class="required"> * </span></label>
+                                <input value="{{ user['first_name'] }}" type="text" name="first_name" required
+                                    class="form-control form-control-lg first_name" placeholder="ชื่อ">
+                            </div>
 
+                            <div class="form-group">
+                                <label label class="form-label">สกุล<span class="required"> * </span> </label>
+                                <input value="{{ user['last_name'] }}" type="text" name="last_name" required
+                                    class="form-control form-control-lg last_name" placeholder="นามสกุล">
+                            </div>
+
+                            <div class="form-group">
+                                <label label class="form-label">เพศ <span class="required"> * </span></label>
+                                <div class="form-check">
+                                    <input type="radio" name="gender" id="num1" class="form-check-input" value="female"
+                                        {{ 'checked' if user['gender']=='female' else '' }}>
+                                    <label class="form-check-label" for="num1">หญิง</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="gender" id="num2" class="form-check-input" value="male"
+                                        {{ 'checked' if user['gender']=='male' else '' }}>
+                                    <label class="form-check-label" for="num2">ชาย</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="gender" id="num3" class="form-check-input" value="other"
+                                        {{ 'checked' if user['gender']=='other' else '' }}>
+                                    <label class="form-check-label" for="num3">อื่นๆ</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="blood_type">กรุ๊ปเลือด</label>
+                                        <select class="form-select form-select-lg" id="blood_type" name="blood_type">
+                                            <option value="O" {{ 'selected' if user['blood_type']=='O' else '' }}>O
+                                            </option>
+                                            <option value="A" {{ 'selected' if user['blood_type']=='A' else '' }}>A
+                                            </option>
+                                            <option value="B" {{ 'selected' if user['blood_type']=='B' else '' }}>B
+                                            </option>
+                                            <option value="AB" {{ 'selected' if user['blood_type']=='AB' else '' }}>AB
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-group">
+                                        <label class="form-label">อายุ</label>
+                                        <input value="{{ user['age'] }}" type="number" name="age"
+                                            class="form-control form-control-lg price" placeholder="อายุ">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-group">
+                                        <label class="form-label">น้ำหนัก</label>
+                                        <input value="{{ user['weight'] }}" type="number" name="weight"
+                                            class="form-control form-control-lg price" placeholder="น้ำหนัก">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-group">
+                                        <label class="form-label">ส่วนสูง</label>
+                                        <input value="{{ user['height'] }}" type="number" name="height"
+                                            class="form-control form-control-lg price" placeholder="ส่วนสูง">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label label class="form-label">สัญชาติ </label>
+                                <input value="{{ user['ethnicity'] }}" type="text" name="ethnicity"
+                                    class="form-control form-control-lg last_name" placeholder="สัญชาติ">
+                            </div>
+
+                            <div class="form-group">
+                                <label label class="form-label">โรคประจำตัว</label>
+                                <input value="{{ user['congenital_disease'] }}" type="text" name="congenital_disease"
+                                    class="form-control form-control-lg last_name" placeholder="โรคประจำตัว">
+                            </div>
+
+                            <div class="form-group">
+                                <label label class="form-label">อาการแพ้ยา</span> </label>
+                                <input value="{{ user['drug_allergy'] }}" type="text" name="drug_allergy"
+                                    class="form-control form-control-lg last_name" placeholder="อาการแพ้ยา">
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-success mb-2" id="submit-form" value="Update">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
     </div>
-
+    </div>
     {% include "footer.html" %}
+    <script>
+        province_select = document.getElementById('province');
+        amphure_select = document.getElementById('district');
+        district_select = document.getElementById('sub_district');
+
+        province_select.onchange = function () {
+            province = province_select.value;
+            fetch('amphure/' + province).then(function (response) {
+                response.json().then(function (data) {
+                    optionHTML = '';
+                    optionHTML += '<option value=" "</option>';
+                    for (amphure of data.amphureprovince) {
+                        optionHTML += '<option value="' + amphure.id + '">' + amphure.name + '</option>'
+                    }
+                    amphure_select.innerHTML = optionHTML;
+                });
+            });
+        }
+
+        amphure_select.onchange = function () {
+            amphure = amphure_select.value;
+            fetch('district/' + amphure).then(function (response) {
+                response.json().then(function (data) {
+                    optionHTML = '';
+                    optionHTML += '<option value=" "</option>';
+                    for (district of data.districtamphure) {
+                        optionHTML += '<option value="' + district.id + '">' + district.name + '</option>'
+                    }
+                    district_select.innerHTML = optionHTML;
+                });
+            });
+        }
+
+        function handleFileSelect(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('image-preview');
+                if (output) {
+                    output.src = reader.result;
+                    console.log(output)
+                }
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+    </script>
 </body>
 
 </html>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 01, 2023 at 10:53 PM
+-- Generation Time: May 05, 2023 at 06:35 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -39,24 +39,80 @@ CREATE TABLE `activity_log` (
 --
 
 INSERT INTO `activity_log` (`log_id`, `action`, `date`, `user_id`) VALUES
-(1, 'Shopping Cart added', '2023-05-02 03:22:27', 1),
-(2, 'User has logged out', '2023-05-02 03:34:23', 1),
-(3, 'User has logged in', '2023-05-02 03:34:32', 6),
-(4, 'Shopping Cart added', '2023-05-02 03:34:35', 6),
-(5, 'Shopping Cart updated', '2023-05-02 03:34:43', 6),
-(6, 'Shopping Cart item deleted', '2023-05-02 03:34:50', 6),
-(7, 'Shopping Cart added', '2023-05-02 03:34:55', 6),
-(8, 'Shopping Cart empty', '2023-05-02 03:35:00', 6),
-(9, 'User has logged out', '2023-05-02 03:35:04', 6),
-(10, 'User has logged in', '2023-05-02 03:35:11', 1),
-(11, 'Product updated', '2023-05-02 03:35:31', 1),
-(12, 'Product updated', '2023-05-02 03:41:46', 1),
-(13, 'Product added', '2023-05-02 03:42:26', 1),
-(14, 'Product deleted', '2023-05-02 03:42:31', 1),
-(15, 'Product updated', '2023-05-02 03:51:47', 1),
-(16, 'Product updated', '2023-05-02 03:52:25', 1),
-(17, 'Product deleted', '2023-05-02 03:52:29', 1),
-(18, 'User has logged out', '2023-05-02 03:52:41', 1);
+(37, 'User has logged in', '2023-05-02 09:25:55', 1),
+(38, 'User has logged out', '2023-05-02 10:01:58', 1),
+(39, 'User has logged in', '2023-05-02 10:11:03', 1),
+(40, 'User has logged in', '2023-05-02 10:13:00', 1),
+(41, 'User has logged out', '2023-05-02 10:13:03', 1),
+(42, 'User has logged in', '2023-05-02 11:12:19', 1),
+(43, 'User has logged out', '2023-05-02 14:09:07', 1),
+(44, 'User has logged in', '2023-05-02 14:14:06', 7),
+(45, 'User has logged out', '2023-05-02 14:14:15', 7),
+(46, 'User has logged in', '2023-05-02 14:20:51', 2),
+(47, 'User has logged in', '2023-05-03 02:04:32', 1),
+(48, 'Shopping Cart updated', '2023-05-03 03:03:12', 1),
+(49, 'Shopping Cart added', '2023-05-03 03:06:51', 1),
+(50, 'Shopping Cart added', '2023-05-03 03:15:54', 1),
+(51, 'Shopping Cart added', '2023-05-03 03:16:23', 1),
+(52, 'Shopping Cart added', '2023-05-03 03:17:00', 1),
+(53, 'Shopping Cart added', '2023-05-03 03:17:06', 1),
+(54, 'Shopping Cart added', '2023-05-03 03:17:16', 1),
+(55, 'Shopping Cart added', '2023-05-03 03:17:48', 1),
+(56, 'Shopping Cart item deleted', '2023-05-03 03:19:09', 1),
+(57, 'User has logged out', '2023-05-03 03:37:33', 1),
+(58, 'User has logged in', '2023-05-03 09:33:10', 1),
+(59, 'User has logged in', '2023-05-03 10:19:54', 1),
+(60, 'Shopping Cart added', '2023-05-03 10:33:47', 1),
+(61, 'Shopping Cart item deleted', '2023-05-03 10:34:30', 1),
+(62, 'User has logged out', '2023-05-03 10:34:37', 1),
+(63, 'User has logged in', '2023-05-03 10:42:50', 1),
+(64, 'User has logged out', '2023-05-03 10:45:18', 1),
+(65, 'User has logged in', '2023-05-03 11:10:10', 6),
+(66, 'User has logged out', '2023-05-03 11:50:43', 6),
+(67, 'User has logged in', '2023-05-03 11:50:47', 1),
+(68, 'User has logged out', '2023-05-03 13:59:38', 1),
+(69, 'User has logged in', '2023-05-04 23:39:54', 1),
+(70, 'User has logged in', '2023-05-04 23:40:11', 1),
+(71, 'User has logged out', '2023-05-04 23:43:14', 1),
+(72, 'User has logged in', '2023-05-04 23:43:34', 1),
+(73, 'User has logged out', '2023-05-04 23:53:20', 1),
+(74, 'User has logged in', '2023-05-04 23:53:24', 6),
+(75, 'User has logged out', '2023-05-04 23:53:30', 6),
+(76, 'User has logged in', '2023-05-04 23:55:34', 1),
+(77, 'User has logged out', '2023-05-05 00:01:17', 1),
+(78, 'User has logged in', '2023-05-05 00:01:36', 1),
+(79, 'User has logged out', '2023-05-05 00:09:27', 1),
+(80, 'User has logged in', '2023-05-05 00:09:33', 1),
+(81, 'User has logged out', '2023-05-05 00:26:44', 1),
+(82, 'User has logged in', '2023-05-05 00:27:14', 1),
+(83, 'User has logged out', '2023-05-05 00:27:58', 1),
+(84, 'User has logged in', '2023-05-05 00:28:08', 6),
+(85, 'User has logged out', '2023-05-05 00:28:22', 6),
+(86, 'User has logged in', '2023-05-05 02:22:24', 1),
+(87, 'User has logged out', '2023-05-05 02:24:04', 1),
+(88, 'User has logged in', '2023-05-05 02:24:08', 1),
+(89, 'User has logged out', '2023-05-05 02:39:21', 1),
+(90, 'User has logged in', '2023-05-05 02:39:25', 6),
+(91, 'Shopping Cart added', '2023-05-05 02:58:42', 6),
+(92, 'User has logged out', '2023-05-05 03:04:24', 6),
+(93, 'User has logged in', '2023-05-05 03:10:40', 1),
+(94, 'User has logged out', '2023-05-05 03:10:46', 1),
+(95, 'User has logged in', '2023-05-05 03:10:50', 6),
+(96, 'Product updated', '2023-05-05 05:16:03', 6),
+(97, 'Product updated', '2023-05-05 05:17:26', 6),
+(98, 'Product updated', '2023-05-05 06:36:53', 6),
+(99, 'User has logged in', '2023-05-05 08:50:11', 6),
+(100, 'User has logged out', '2023-05-05 10:16:44', 6),
+(101, 'User has logged in', '2023-05-05 10:16:49', 1),
+(102, 'User has updated a profile', '2023-05-05 10:23:10', 1),
+(103, 'User has updated a profile', '2023-05-05 10:23:39', 1),
+(104, 'User has updated a profile', '2023-05-05 10:26:19', 1),
+(105, 'Shopping Cart added', '2023-05-05 11:16:28', 1),
+(106, 'Shopping Cart added', '2023-05-05 11:19:19', 1),
+(107, 'Shopping Cart added', '2023-05-05 11:22:44', 1),
+(108, 'Shopping Cart added', '2023-05-05 11:28:40', 1),
+(109, 'Shopping Cart added', '2023-05-05 11:30:28', 1),
+(110, 'Shopping Cart added', '2023-05-05 11:31:39', 1);
 
 -- --------------------------------------------------------
 
@@ -1095,7 +1151,14 @@ CREATE TABLE `carts` (
 --
 
 INSERT INTO `carts` (`cart_id`, `total_price`, `total_quantity`, `date`, `user_id`) VALUES
-(65, '190.00', 3, '2023-05-01 06:44:17', 1);
+(65, '190.00', 3, '2023-05-01 06:44:17', 1),
+(71, '150.00', 1, '2023-05-05 02:58:42', 6),
+(72, '150.00', 1, '2023-05-05 11:16:28', 1),
+(73, '300.00', 2, '2023-05-05 11:19:19', 1),
+(74, '20.00', 1, '2023-05-05 11:22:44', 1),
+(75, '500.00', 1, '2023-05-05 11:28:40', 1),
+(76, '1500.00', 3, '2023-05-05 11:30:28', 1),
+(77, '500.00', 1, '2023-05-05 11:31:39', 1);
 
 -- --------------------------------------------------------
 
@@ -1116,7 +1179,14 @@ CREATE TABLE `cart_items` (
 
 INSERT INTO `cart_items` (`cart_item_id`, `cart_id`, `product_id`, `quantity`) VALUES
 (104, 65, 1, 1),
-(123, 65, 2, 2);
+(123, 65, 2, 2),
+(130, 71, 1, 1),
+(131, 72, 1, 1),
+(132, 73, 1, 2),
+(133, 74, 2, 1),
+(134, 75, 36, 1),
+(135, 76, 36, 3),
+(136, 77, 36, 1);
 
 -- --------------------------------------------------------
 
@@ -1127,24 +1197,25 @@ INSERT INTO `cart_items` (`cart_item_id`, `cart_id`, `product_id`, `quantity`) V
 CREATE TABLE `categories` (
   `category_id` int(11) NOT NULL,
   `category_name` varchar(50) NOT NULL,
-  `description` varchar(250) DEFAULT NULL
+  `description` varchar(250) DEFAULT NULL,
+  `image` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `categories`
 --
 
-INSERT INTO `categories` (`category_id`, `category_name`, `description`) VALUES
-(1, 'ยาแก้ไข้/แก้ปวด', NULL),
-(2, 'ยาแก้แพ้', NULL),
-(3, 'ยาแก้ปวดกล้ามเนื้อ', NULL),
-(4, 'ยาแก้ท้องอืดท้องเฟ้อ', NULL),
-(5, 'ยาแก้เมารถ', NULL),
-(6, 'ยาแก้ไอ', NULL),
-(7, 'ยาดม ', NULL),
-(8, 'ยารักษาแผล/สำลี ', NULL),
-(9, 'ยาทาผิวหนัง', NULL),
-(10, ' ถุงยางอนามัย', NULL);
+INSERT INTO `categories` (`category_id`, `category_name`, `description`, `image`) VALUES
+(1, 'ยาแก้ไข้/แก้ปวด', NULL, 'painkiller.png'),
+(2, 'ยาแก้แพ้', NULL, 'anti_allergy.png'),
+(3, 'ยาแก้ปวดกล้ามเนื้อ', NULL, 'pain_reliever.png'),
+(4, 'ยาแก้ท้องอืดท้องเฟ้อ', NULL, 'flatulence_remedy.png'),
+(5, 'ยาแก้เมารถ', NULL, 'pills-motion-sickness.png'),
+(6, 'ยาแก้ไอ', NULL, 'cough-syrup.png'),
+(7, 'ยาดม ', NULL, 'inhaler.png'),
+(8, 'ยารักษาแผล/สำลี ', NULL, 'bandage.png'),
+(9, 'ยาทาผิวหนัง', NULL, 'skin-ointment.png'),
+(10, ' ถุงยางอนามัย', NULL, 'condom.png');
 
 -- --------------------------------------------------------
 
@@ -10068,9 +10139,10 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`product_id`, `product_name`, `price`, `stock`, `row`, `image`, `description`, `category_id`) VALUES
-(1, 'TYLENOL Paracetamol(500mg)', '150.00', 10, 3, 'tylenol-paracetamol-500-100.png', '-ใช้บรรเทาอาการปวดเล็กน้อยถึงปานกลางและลดไข้', 1),
-(2, 'Chlorpheniramine(2mg)', '20.00', 5, 1, 'wegzkl.png', '-ใช้บรรเทาอาการแพ้ต่างๆ เช่น น้ำมูกไหล, ผื่นคัน, ลมพิษ, น้ำตาไหล, ตาแดง, คันตา, คันจมูก, คันคอ, จาม หรือ ลดน้ำมูกในโรคหวัด', 2),
-(3, 'Calamine Lotion Siribuncha(120ml)', '20.00', 10, 3, 'image_164492525384736107919d0501.png', '-ช่วยบรรเทาอาการคันหรือระคายเคืองผิวหนัง เช่น ผดผื่นคัน ผื่นแดง ผื่นแพ้ ลมพิษ อาการแพ้พืชบางชนิด \r\n-ผื่นแพ้ ยุงกัด แมลงกัดต่อย\r\n-ผิวไหม้เนื่องจากแสงแดด รอยขีดข่วน ผื่นคันจากผ้าอ้อม', 9);
+(1, 'TYLENOL Paracetamol(500mg)', '150.00', 4, 3, 'tylenol-paracetamol-500-100.png', '-ใช้บรรเทาอาการปวดเล็กน้อยถึงปานกลางและลดไข้', 1),
+(2, 'Chlorpheniramine(2mg)', '20.00', 0, 1, 'wegzkl.png', '-ใช้บรรเทาอาการแพ้ต่างๆ เช่น น้ำมูกไหล, ผื่นคัน, ลมพิษ, น้ำตาไหล, ตาแดง, คันตา, คันจมูก, คันคอ, จาม หรือ ลดน้ำมูกในโรคหวัด', 2),
+(3, 'Calamine Lotion Siribuncha(120ml)', '20.00', 10, 3, 'image_164492525384736107919d0501.png', '-ช่วยบรรเทาอาการคันหรือระคายเคืองผิวหนัง เช่น ผดผื่นคัน ผื่นแดง ผื่นแพ้ ลมพิษ อาการแพ้พืชบางชนิด \r\n-ผื่นแพ้ ยุงกัด แมลงกัดต่อย\r\n-ผิวไหม้เนื่องจากแสงแดด รอยขีดข่วน ผื่นคันจากผ้าอ้อม', 9),
+(36, 'test', '500.00', 0, 1, '459.jpg', 'test1', 1);
 
 -- --------------------------------------------------------
 
@@ -10187,7 +10259,14 @@ CREATE TABLE `transactions` (
 --
 
 INSERT INTO `transactions` (`transaction_id`, `cart_id`, `status`, `date`) VALUES
-(70, 65, 'pending', '2023-05-01 06:44:17');
+(70, 65, 'success', '2023-05-01 06:44:17'),
+(76, 71, 'pending', '2023-05-05 02:58:42'),
+(77, 72, 'success', '2023-05-05 11:16:28'),
+(78, 73, 'success', '2023-05-05 11:19:19'),
+(79, 74, 'success', '2023-05-05 11:22:44'),
+(80, 75, 'success', '2023-05-05 11:28:40'),
+(81, 76, 'success', '2023-05-05 11:30:28'),
+(82, 77, 'success', '2023-05-05 11:31:39');
 
 -- --------------------------------------------------------
 
@@ -10209,7 +10288,10 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `username`, `password`, `role`) VALUES
 (1, 'admin1', 'pbkdf2:sha256:260000$eGmPOyaSFCOB5j8E$692a7abf14c4ee86e717fd87c7c27174b1c0e524f759c3fb5ef3452f6069b0f0', 'admin'),
 (2, 'admin2', 'pbkdf2:sha256:260000$BJLIgbRKRsZ9ql4z$68ded8ee1c55ee38d2863e2cae3d65e6c9b8aa6dd772d11aa4be812bcbf29ac3', 'admin'),
-(6, 'user1', 'pbkdf2:sha256:260000$sfdjcAjKQtFF49cq$039453494258544ba23487ca642ebc062d061169dad4efed8f6e8ce40efcd4e8', 'user');
+(6, 'user1', 'pbkdf2:sha256:260000$sfdjcAjKQtFF49cq$039453494258544ba23487ca642ebc062d061169dad4efed8f6e8ce40efcd4e8', 'user'),
+(7, 'user3', 'pbkdf2:sha256:260000$reBLos28pL3cJezX$38065773048ee59f02445c372f81a39586b42a7760dc5a70fea20c57e2e944e8', 'user'),
+(8, 'user4', 'pbkdf2:sha256:260000$irtuK8zfPacIAsE1$369d1b12b504154f99c64e9ec7b78705ea7872d7cb1feb99b7d412a0339ed370', 'user'),
+(9, 'user5', 'pbkdf2:sha256:260000$ivzLBDytiYIC0npq$b9277b9539d222473cad77e5249a5668377da7bc2f2ae8b1b7a6be945c979b51', 'user');
 
 -- --------------------------------------------------------
 
@@ -10219,6 +10301,7 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `role`) VALUES
 
 CREATE TABLE `users_detail` (
   `users_detail_Id` int(11) NOT NULL,
+  `user_image` varchar(250) DEFAULT NULL,
   `first_name` varchar(250) NOT NULL,
   `last_name` varchar(250) NOT NULL,
   `gender` varchar(50) NOT NULL,
@@ -10243,8 +10326,13 @@ CREATE TABLE `users_detail` (
 -- Dumping data for table `users_detail`
 --
 
-INSERT INTO `users_detail` (`users_detail_Id`, `first_name`, `last_name`, `gender`, `email`, `blood_type`, `age`, `ethnicity`, `weight`, `height`, `congenital_disease`, `drug_allergy`, `phone_no`, `provinces`, `districts`, `sub_districts`, `address`, `post_code`, `user_id`) VALUES
-(2, 'test1', 'test1', 'other', 'test1@gmail.com', 'O', 15, 'ไทย', 53, 120, '', '', '1150', '4', '67', '130202', '1234/5', '1150', 6);
+INSERT INTO `users_detail` (`users_detail_Id`, `user_image`, `first_name`, `last_name`, `gender`, `email`, `blood_type`, `age`, `ethnicity`, `weight`, `height`, `congenital_disease`, `drug_allergy`, `phone_no`, `provinces`, `districts`, `sub_districts`, `address`, `post_code`, `user_id`) VALUES
+(2, NULL, 'test1', 'test1', 'other', 'test1@gmail.com', 'A', 15, 'ไทย', 53, 120, 'โรคเอ๋อ', '', '1150', '4', '67', '130202', '1234/5', '1150', 6),
+(3, NULL, 'test', 'test', 'other', 'test3@gmail.com', 'B', 111, 'ee', 53, 120, 'e', 'ee', '123456789', '5', '76', '140302', '123/52', '77558', 7),
+(4, NULL, 'test4', 'test4', 'other', 'test4@gmail.com', 'O', 55, 'จีน', 76, 189, 'test', 'test', '123456789', '15', '180', '240306', '125/5', '77512', 8),
+(5, NULL, 'test5', 'test5', 'female', 'test5@gmail.com', 'B', 15, 'test22', 53, 189, 'tset', 'set', '123546486', '2', '55', '110404', '11508/', '1145', 9),
+(12, '11', '11', '11', '11', '11', '11', 11, '11', 11, 11, '11', '11', '11', '3', '59', '120201', '11', '11', 1),
+(13, '11', '111', '111', '11', '11', '111', 111, '111', 111, 11, '111', '111', '111', '11', '11', '111', '111', '1111', 2);
 
 --
 -- Indexes for dumped tables
@@ -10337,7 +10425,7 @@ ALTER TABLE `users_detail`
 -- AUTO_INCREMENT for table `activity_log`
 --
 ALTER TABLE `activity_log`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
 
 --
 -- AUTO_INCREMENT for table `amphures`
@@ -10349,13 +10437,13 @@ ALTER TABLE `amphures`
 -- AUTO_INCREMENT for table `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
+  MODIFY `cart_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -10373,7 +10461,7 @@ ALTER TABLE `geographies`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `provinces`
@@ -10385,19 +10473,19 @@ ALTER TABLE `provinces`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `users_detail`
 --
 ALTER TABLE `users_detail`
-  MODIFY `users_detail_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `users_detail_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables
