@@ -1,5 +1,7 @@
 <html>
-
+    {% include  "fav.html" %}
+    {% block head %}
+    {% endblock %}
 <head>
     <title>Transaction QR Code</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -32,7 +34,7 @@
     <div class="container justify-content-center text-center " style="background-color: white;">
         <img src="/static/success.png" style="height: 40%; padding-bottom: 30px;">
         <h1><b>ขอบคุณที่ใช้บริการ</b></h1><br>
-        <a href="/homepage" class="btn btn-light btn-lg btn-block">กลับสู่หน้าหลัก</a>
+        <a href="{{ url_for('back') }}" class="btn btn-light btn-lg btn-block">กลับสู่หน้าหลัก</a>
 
     </div>
 </body>

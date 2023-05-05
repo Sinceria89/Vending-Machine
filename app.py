@@ -1,8 +1,12 @@
 from __future__ import print_function  # In python 2.7
-from test import *
+from icon import *
 from router import *
 from decimal import Decimal
 from Qrcode import *
+import math
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
 import sys
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -11,26 +15,23 @@ import logging
 import urllib.request
 import os
 import re
+import io
+import base64
 
 
 class Config:
     SCHEDULER_API_ENABLED = True
 
-
+USER_FOLDER = 'static/user_pic'
 UPLOAD_FOLDER = 'static/upload'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
+app.config['USER_PROFILE'] = USER_FOLDER
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 time = datetime.now()
 
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-def stockChecking():
-    print("This test runs every 5 minutes")
-
 
 @app.route('/')
 def index():
@@ -86,7 +87,7 @@ def show_items_by_category(category_id):
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         curr = conn.cursor(pymysql.cursors.DictCursor)
         cur = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM products LEFT JOIN categories ON products.category_id = categories.category_id WHERE categories.category_id = %s", category_id)
+        cursor.execute("SELECT * FROM products LEFT JOIN categories ON products.category_id = categories.category_id WHERE categories.category_id = %s AND products.stock != 0", category_id)
         curr.execute(
         "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
         cur.execute(
@@ -724,20 +725,131 @@ def user_profile():
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     curr = conn.cursor(pymysql.cursors.DictCursor)
     cur = conn.cursor(pymysql.cursors.DictCursor)
+    prov = conn.cursor(pymysql.cursors.DictCursor)
+    dist = conn.cursor(pymysql.cursors.DictCursor)
+    sub_dist = conn.cursor(pymysql.cursors.DictCursor)
+    history = conn.cursor(pymysql.cursors.DictCursor)
+    prov.execute(
+        "SELECT `id`,`code`,`name_th` FROM `provinces`")
+   
     cursor.execute("SELECT * FROM products")
     curr.execute(
-        "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
+        "SELECT `users_detail_Id`,`user_image`,`first_name`,`last_name`,`gender`,`email`,`blood_type`,`age`,`ethnicity`,`weight`,`height`,`congenital_disease`,`drug_allergy`,`phone_no`,`provinces`,provinces.name_th as province_name,`districts`,amphures.name_th as district_name,`sub_districts`,districts.name_th as sub_district_name,`address`,`post_code`,`user_id` FROM users_detail LEFT JOIN provinces ON provinces.id = users_detail.provinces LEFT JOIN amphures ON amphures.id = users_detail.districts LEFT JOIN districts ON districts.id = users_detail.sub_districts WHERE user_id=%s;", (user_id,))
     cur.execute(
         "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
+    history.execute(
+        "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status = 'success';", (user_id,))
+    histo = history.fetchall()
     rows = cursor.fetchall()
     user = curr.fetchone()
     Cart_list = cur.fetchall()
-
+    provi = prov.fetchall()
+    selected_prov = int(user['provinces'])
+    dist.execute(
+        "SELECT `id`,`code`,`name_th` FROM `amphures` WHERE `province_id` = %s;", (selected_prov,))
+    distri = dist.fetchall()
+    selected_distri = int(user['districts'])
+    sub_dist.execute(
+        "SELECT `id`,`name_th` FROM `districts` WHERE `amphure_id` = %s;", (selected_distri,))
+    sub_distri = sub_dist.fetchall()
+    selected_sub_distri = int(user['sub_districts'])
     if len(Cart_list) > 0:
         session['Shoppingcart'] = Cart_list
         session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
+    data = [
+    ]
     
-    return render_template('user_profile.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
+    # Pagination variables
+    page = int(request.args.get('page', 1))
+    per_page = 4
+    offset = (page - 1) * per_page
+    
+    # Paginated data
+    paginated_data = data[offset:offset+per_page]
+    
+    # Total number of pages
+    total_pages = math.ceil(len(data) / per_page)
+    
+    return render_template('user_profile.html', user=user,history=histo , data=paginated_data, total_pages=total_pages, current_page=page, Cart_list=Cart_list, user_id=user_id, products=rows, provi=provi,distri=distri,sub_dist=sub_distri,selected_distri=selected_distri,selected_sub_dist=selected_sub_distri,selected_prov=selected_prov)
+
+
+@app.route('/user_general_edit', methods=['POST', 'GET'])
+def user_general_edit():
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        gender = request.form['gender']
+        blood_type = request.form['blood_type']
+        age = request.form['age']
+        weight = request.form['weight']
+        height = request.form['height']
+        ethnicity = request.form['ethnicity']
+        congenital_disease = request.form['congenital_disease']
+        drug_allergy = request.form['drug_allergy']
+        conn = mysql.connect()
+        cur = conn.cursor(pymysql.cursors.DictCursor)
+        log = conn.cursor(pymysql.cursors.DictCursor)
+        DateTime = datetime.now()
+        user_id = session['user_id']
+        cur.execute("""
+        UPDATE users_detail SET first_name=%s, last_name=%s, gender=%s, blood_type=%s, age=%s, weight=%s, height=%s, ethnicity=%s, congenital_disease=%s, drug_allergy =%s
+        WHERE user_id=%s
+        """, (first_name, last_name, gender, blood_type, age, weight, height, ethnicity, congenital_disease, drug_allergy,user_id ))
+        log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has updated a profile', %s, %s)",
+                        (DateTime, user_id))   
+        flash("Profile updated")
+        conn.commit()
+        return redirect(request.referrer)
+
+
+@app.route('/user_contact_edit', methods=['POST', 'GET'])
+def user_contact_edit():
+    if request.method == 'POST':
+        phone_no = request.form['phone_no']
+        provinces = request.form['province']
+        districts = request.form['district']
+        sub_districts = request.form['sub_district']
+        post_code = request.form['post_code']
+        address = request.form['address']
+        conn = mysql.connect()
+        cur = conn.cursor(pymysql.cursors.DictCursor)
+        log = conn.cursor(pymysql.cursors.DictCursor)
+        DateTime = datetime.now()
+        user_id = session['user_id']
+        cur.execute("""
+        UPDATE users_detail SET phone_no=%s, provinces=%s, districts=%s, sub_districts=%s, post_code=%s, address=%s
+        WHERE user_id=%s
+        """, (phone_no, provinces, districts, sub_districts, post_code,address,user_id ))
+        log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has updated a profile', %s, %s)",
+                        (DateTime, user_id))   
+        flash("Profile updated")
+        conn.commit()
+        return redirect(request.referrer)
+
+
+@app.route("/profile_pic", methods=["POST", "GET"])
+def profile_pic():
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    log = conn.cursor(pymysql.cursors.DictCursor)
+    DateTime = datetime.now()
+    if request.method == 'POST':
+        user_id = session['user_id']
+        image = request.files['image']
+        # print(files)
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['USER_PROFILE'], filename))
+            cur.execute("""
+            UPDATE users_detail SET user_image=%s
+            WHERE user_id=%s
+            """, (filename, user_id))
+            log.execute("INSERT INTO activity_log (action, date, user_id) VALUES ('User has updated a profile', %s, %s)",
+                        (DateTime, user_id))
+            conn.commit()
+        cur.close()
+        flash('Profile picture updated!')
+    return redirect(request.referrer)
 
 
 @app.route('/admin')
@@ -750,19 +862,57 @@ def admin():
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     curr = conn.cursor(pymysql.cursors.DictCursor)
     cur = conn.cursor(pymysql.cursors.DictCursor)
+    graph = conn.cursor(pymysql.cursors.DictCursor)
+    cone = conn.cursor(pymysql.cursors.DictCursor)
+    graph.execute("SELECT product_name, stock FROM products")
     cursor.execute("SELECT * FROM products")
     curr.execute(
         "SELECT * FROM users_detail WHERE user_id=%s", (user_id,))
     cur.execute(
         "SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id  LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success'", (user_id,))
-    rows = cursor.fetchall()
+    cone.execute("SELECT SUM(carts.total_price) as sum FROM carts LEFT JOIN transactions ON carts.cart_id = transactions.cart_id WHERE status='success'")
+    result = cone.fetchone()
+    combined_total_price = result['sum']
+    rows = cursor.fetchall()    
+    graphs = graph.fetchall()
     user = curr.fetchone()
     Cart_list = cur.fetchall()
-
+    
     if len(Cart_list) > 0:
         session['Shoppingcart'] = Cart_list
         session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
-    return render_template('admin.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
+    product_name = [row['product_name'] for row in graphs]
+    stock = [row['stock'] for row in graphs]
+
+    
+
+    # Convert the SQL results to a pandas DataFrame
+    df = pd.DataFrame(graphs, columns=['product_name', 'stock'])
+ 
+    # Plotting the donut graph
+    plt.pie(df['stock'], labels=df['product_name'], autopct='%1.1f%%', pctdistance=0.85)
+    center_circle = plt.Circle((0, 0), 0.70, fc='white')
+    fig = plt.gcf()
+    fig.gca().add_artist(center_circle)
+    plt.axis('equal')  # Equal aspect ratio ensures that the pie is drawn as a circle.
+    plt.title('Top 3 Products by Total Quantity')
+
+    # Save the graph as an image file
+    chart_path = 'static/donutchart.png'
+    plt.savefig(chart_path)
+    plt.close(fig)  
+    # Close the cursor and database connection
+    cone.close()
+    curr.close()
+    cur.close()
+    cursor.close()
+    conn.close()
+
+    print("combined_total_price", combined_total_price)
+    return render_template('admin.html', user=user, Cart_list=Cart_list, user_id=user_id, product=rows, products=graphs, combined_total_price=combined_total_price, )
+
+    # ... existing code ...
+
 
 
 if __name__ == "__main__":

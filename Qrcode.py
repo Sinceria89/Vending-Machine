@@ -27,7 +27,7 @@ def transaction():
     if len(Cart_list) > 0:
         session['Shoppingcart'] = Cart_list
         session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
-
+    print(session['cart_id'])
     id_or_phone_number = "0861510487"
     payload_with_amount = qrcode.generate_payload(id_or_phone_number, total)
     qrcode.to_file(payload_with_amount,
@@ -38,15 +38,30 @@ def transaction():
 
 @app.route('/transaction_success')
 def transaction_success():
+    user_id = session.get('user_id')
     conn = mysql.connect()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE transactions SET status='success' WHERE cart_id=%s", (session['cart_id']))
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    stock = conn.cursor(pymysql.cursors.DictCursor)
+    update_stock = conn.cursor(pymysql.cursors.DictCursor)
+    stock.execute("SELECT transactions.transaction_id,cart_items.cart_item_id, cart_items.cart_id, carts.user_id, products.product_id, products.image, products.product_name, cart_items.quantity, products.price, carts.total_price, carts.total_quantity FROM products LEFT JOIN cart_items ON products.product_id=cart_items.product_id LEFT JOIN carts ON cart_items.cart_id=carts.cart_id LEFT JOIN transactions ON transactions.cart_id=carts.cart_id WHERE cart_items.quantity > 0 AND carts.user_id=%s AND transactions.status != 'success';", (user_id,))
+    cursor.execute("UPDATE transactions SET status='success' WHERE cart_id=%s", (session['cart_id'])) 
+    for row in stock:
+        current_quantity = row['quantity']
+        current_product_id = row['product_id']
+        update_stock.execute(
+            "UPDATE products SET stock = stock-%s WHERE product_id = %s", (current_quantity ,current_product_id))
+    conn.commit()
+    conn.close()
+    return render_template('success.html')
+
+
+@app.route('/back')
+def back():
     session.pop('Shoppingcart', None)
     session.pop('cart_id', None)
     session.pop('cart_item_id', None)
-    conn.commit()
-    return render_template('success.html')
-
+    return redirect(url_for('homepage'))
+    
 @app.route('/checkout_complete')
 def checkout_complete():
     time.sleep(60)
