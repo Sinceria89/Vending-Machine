@@ -18,6 +18,7 @@ import io
 import base64
 import numpy as np
 import pandas as pd
+import threading
 
 class Config:
     SCHEDULER_API_ENABLED = True
@@ -681,7 +682,36 @@ def delete(product_id):
     conn.commit()
     return redirect(url_for('products'))
 
+def create_plot():
+    conn = mysql.connect()
+    new_cursor = conn.cursor(pymysql.cursors.DictCursor)
+    new_cursor.execute("""
+    SELECT
+        p.product_name,
+        SUM(ci.quantity) AS total_quantity
+    FROM
+        transactions AS t
+        INNER JOIN carts AS c ON t.cart_id = c.cart_id
+        INNER JOIN cart_items AS ci ON c.cart_id = ci.cart_id
+        INNER JOIN products AS p ON ci.product_id = p.product_id
+    WHERE
+        t.status = 'pending'
+    GROUP BY
+        p.product_name
+    ORDER BY
+        total_quantity DESC
+    LIMIT 3
+    """)
+    # extract data from query result
+    data = new_cursor.fetchall()
+    product_names = [row['product_name'] for row in data]
+    sales_totals = [row['total_quantity'] for row in data]
 
+    # create pie chart
+    plt.pie(sales_totals, labels=product_names, shadow=True)
+    plt.title('Top 3 Products by Total Quantity')
+    chart_path = 'static/chart.png'
+    plt.savefig(chart_path)
 
 @app.route('/admin')
 def admin():
@@ -695,6 +725,8 @@ def admin():
     cur = conn.cursor(pymysql.cursors.DictCursor)
     graph = conn.cursor(pymysql.cursors.DictCursor)
     cone = conn.cursor(pymysql.cursors.DictCursor)
+    
+
     graph.execute("SELECT product_name, stock FROM products")
     cursor.execute("SELECT * FROM products")
     curr.execute(
@@ -715,23 +747,12 @@ def admin():
     product_name = [row['product_name'] for row in graphs]
     stock = [row['stock'] for row in graphs]
 
-    
+    t = threading.Thread(target=create_plot)
+    t.start()
+    t.join()
 
-    # Convert the SQL results to a pandas DataFrame
-    df = pd.DataFrame(graphs, columns=['product_name', 'stock'])
- 
-    # Plotting the donut graph
-    plt.pie(df['stock'], labels=df['product_name'], autopct='%1.1f%%', pctdistance=0.85)
-    center_circle = plt.Circle((0, 0), 0.70, fc='white')
-    fig = plt.gcf()
-    fig.gca().add_artist(center_circle)
-    plt.axis('equal')  # Equal aspect ratio ensures that the pie is drawn as a circle.
-    plt.title('Top 3 Products by Total Quantity')
+   
 
-    # Save the graph as an image file
-    chart_path = 'static/donutchart.png'
-    plt.savefig(chart_path)
-    plt.close(fig)  
     # Close the cursor and database connection
     cone.close()
     curr.close()
@@ -740,7 +761,7 @@ def admin():
     conn.close()
 
     print("combined_total_price", combined_total_price)
-    return render_template('admin.html', user=user, Cart_list=Cart_list, user_id=user_id, product=rows, products=graphs, combined_total_price=combined_total_price, )
+    return render_template('admin.html', user=user, Cart_list=Cart_list, user_id=user_id, product=rows, products=graphs, combined_total_price=combined_total_price,)
 
     # ... existing code ...
 
