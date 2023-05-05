@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import sys
+from flask_paginate import Pagination, get_page_parameter
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import timedelta, datetime
@@ -756,21 +757,19 @@ def user_profile():
     if len(Cart_list) > 0:
         session['Shoppingcart'] = Cart_list
         session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
-    data = [
-    ]
-    
-    # Pagination variables
     page = int(request.args.get('page', 1))
-    per_page = 4
+    per_page = 5
     offset = (page - 1) * per_page
     
     # Paginated data
-    paginated_data = data[offset:offset+per_page]
+    paginated_data = histo[offset:offset+per_page]
     
     # Total number of pages
-    total_pages = math.ceil(len(data) / per_page)
+    total_pages = math.ceil(len(histo) / per_page)
+    print(paginated_data)
+
     
-    return render_template('user_profile.html', user=user,history=histo , data=paginated_data, total_pages=total_pages, current_page=page, Cart_list=Cart_list, user_id=user_id, products=rows, provi=provi,distri=distri,sub_dist=sub_distri,selected_distri=selected_distri,selected_sub_dist=selected_sub_distri,selected_prov=selected_prov)
+    return render_template('user_profile.html', user=user,history=histo, data=paginated_data, total_pages=total_pages, current_page=page, Cart_list=Cart_list, user_id=user_id, products=rows, provi=provi,distri=distri,sub_dist=sub_distri,selected_distri=selected_distri,selected_sub_dist=selected_sub_distri,selected_prov=selected_prov)
 
 
 @app.route('/user_general_edit', methods=['POST', 'GET'])
