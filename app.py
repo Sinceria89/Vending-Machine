@@ -882,7 +882,7 @@ def admin():
     if len(Cart_list) > 0:
         session['Shoppingcart'] = Cart_list
         session['cart_id'] = session.get('Shoppingcart')[0].get('cart_id')
-    return render_template('admin.html', user=user, Cart_list=Cart_list, user_id=user_id, products=rows)
+    
 
     t = threading.Thread(target=create_plot)
     t.start()
