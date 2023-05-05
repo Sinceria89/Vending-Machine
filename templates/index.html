@@ -1,8 +1,9 @@
 <!doctype html>
 <html lang="en">
-  {% include  "fav.html" %}
-  {% block head %}
-  {% endblock %}
+{% include "fav.html" %}
+{% block head %}
+{% endblock %}
+
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
@@ -124,6 +125,10 @@
     .fa-coffee {
       font-size: 200px
     }
+
+    .card {
+      height: 600px;
+    }
   </style>
 </head>
 
@@ -132,7 +137,7 @@
     <div class="container justify-content-center text-center p-md-5">
       <img src="/static/logoone.png">
       <h2>Welcome to One.Medicine</h2>
-      
+
       <div class="col-12 col-md-6r">
         <a href="/login" class="signin btn btn-light btn-lg btn-block">เข้าสู่ระบบ</a>
         <a href="/register" class="signin  btn btn-light btn-lg btn-block">สมัครสมาชิก</a>
@@ -155,7 +160,8 @@
         <div class="col-md-6 mb-4 ">
           <h4><b>Generic Drugs Store</b></h4>
           <h1><b>Medicine for all</b></h1>
-          <h5>In major cities, it’s easy to find professional, well-trained pharmacists who can help you. However, out in the provinces you may have to take a chance on whatever local stores are available.</h5>
+          <h5>In major cities, it’s easy to find professional, well-trained pharmacists who can help you. However, out
+            in the provinces you may have to take a chance on whatever local stores are available.</h5>
         </div>
       </div>
     </div>
@@ -168,8 +174,11 @@
             <div class="card-body">
               <image src="https://cdn-icons-png.flaticon.com/512/172/172835.png"></image>
               <h5 class="card-title"><b>Generic Drugs</b></h5>
-              <p class="card-text">You can find a variety of general medications available at your average Thai pharmacy, including antihistamines, common cold remedies, medicines for stomach ailments, and traditional Thai herbal treatments. </p>
-              <a href="#" class="btn btn-primary">More Detail</a>
+              <p class="card-text">You can find a variety of general medications available at your average Thai
+                pharmacy, including antihistamines, common cold remedies, medicines for stomach ailments, and
+                traditional Thai herbal treatments. </p>
+              <a href="#" class="btn btn-primary" style="position: absolute;
+              bottom: 0; left:92px; margin-bottom: 30px;">More Detail</a>
             </div>
           </div>
         </div>
@@ -181,12 +190,14 @@
               </image>
               <h5 class="card-title"><b>First Aid</b></h5>
               <p class="card-text">5 Types of Basic First Aid
-                Cardiopulmonary Resuscitation. Those trained in cardiopulmonary resuscitation (CPR) can help a victim of cardiac arrest to start breathing again. ...
+                Cardiopulmonary Resuscitation. Those trained in cardiopulmonary resuscitation (CPR) can help a victim of
+                cardiac arrest to start breathing again. ...
                 Bleeding. It's important to stop a wound from bleeding to prevent the loss of too much blood. ...
                 Burns. ...
                 Choking. ...
                 Broken Bones.</p>
-              <a href="#" class="btn btn-primary">More Detail</a>
+              <a href="#" class="btn btn-primary" style="position: absolute;
+              bottom: 0; left:92px; margin-bottom: 30px;">More Detail</a>
             </div>
           </div>
         </div>
@@ -196,10 +207,12 @@
               <image src="https://www.iconpacks.net/icons/2/free-healthcare-icon-3610-thumb.png">
               </image>
               <h5 class="card-title"><b>Protection</b></h5>
-              <p class="card-text">Birth-control pills are available over-the-counter at every pharmacy in Thailand, and the bigger pharmacies stock a wide range of brands.
+              <p class="card-text">Birth-control pills are available over-the-counter at every pharmacy in Thailand, and
+                the bigger pharmacies stock a wide range of brands.
 
                 Prophylactics like condoms can be bought everywhere</p>
-              <a href="#" class="btn btn-primary">More Detail</a>
+              <a href="#" class="btn btn-primary" style="position: absolute;
+              bottom: 0; left:92px; margin-bottom: 30px;">More Detail</a>
             </div>
           </div>
         </div>
@@ -208,8 +221,10 @@
             <div class="card-body">
               <image src="https://cdn-icons-png.flaticon.com/512/5295/5295946.png"></image>
               <h5 class="card-title"><b>Health Care</b></h5>
-              <p class="card-text"> Most pharmacies also stock some basic dressings and band-aids, and some of the larger pharmacies even carry heavier items such as crutches or wheelchairs.  </p>
-              <a href="#" class="btn btn-primary">More Detail</a>
+              <p class="card-text"> Most pharmacies also stock some basic dressings and band-aids, and some of the
+                larger pharmacies even carry heavier items such as crutches or wheelchairs. </p>
+              <a href="#" class="btn btn-primary text-center" style="position: absolute;
+              bottom: 0; left:92px; margin-bottom: 30px;">More Detail</a>
             </div>
           </div>
         </div>
